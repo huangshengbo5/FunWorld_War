@@ -4,11 +4,6 @@ namespace Config.TextConfig
 	{
 		public static ConfigTextBase Get(string configName)
 		{
-			switch(configName)
-			{
-				case "Test":
-					return new CfgTest();
-			}
 			return null;
 		}
 	}
