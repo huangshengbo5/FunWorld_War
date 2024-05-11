@@ -8,6 +8,7 @@ namespace Config.JsonConfig
 {
 	public class CfgCamp: ConfigJsonBase
 	{
+		public int ID;
 		public int CampID_1;
 		public int CampID_2;
 		public int CampID_3;

@@ -8,6 +8,7 @@ namespace Config.JsonConfig
 {
 	public class CfgAvalue: ConfigJsonBase
 	{
+		public string ID;
 		public int Id;
 		public int Type;
 		public int ShowNameID;

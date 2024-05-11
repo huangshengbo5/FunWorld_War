@@ -8,6 +8,7 @@ namespace Config.JsonConfig
 {
 	public class CfgNPC: ConfigJsonBase
 	{
+		public int ID;
 		public int nameid;
 		public string icon;
 		public int Type;

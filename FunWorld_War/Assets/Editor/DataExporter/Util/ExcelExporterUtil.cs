@@ -155,7 +155,7 @@ public class ExcelExporterUtil
 
     public static void AddFieldsToSb(StringBuilder sb, List<string> types, List<string> fields)
     {
-        for (int i = 1; i < types.Count; i++)
+        for (int i = 0; i < types.Count; i++)
         {
             var type = SupportTypeUtil.GetIType(types[i]);
             if (type != null)

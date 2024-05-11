@@ -8,6 +8,7 @@ namespace Config.JsonConfig
 {
 	public class CfgConst: ConfigJsonBase
 	{
+		public int ID;
 		public string Chinese;
 		public int parameter_1;
 		public string parameter_2;

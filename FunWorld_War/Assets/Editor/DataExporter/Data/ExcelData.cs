@@ -136,7 +136,7 @@ using UnityEngine;
         public object value;
         public string stringValue;
         public int index;
-        public ExcelRule rule;
+        public ExcelRule rule = ExcelRule.Client;
 
         byte[] _rgb;
         public byte[] rgb
@@ -161,7 +161,7 @@ using UnityEngine;
 
         public bool IsEmpty
         {
-            get
+            get 
             {
                 return value == null || string.IsNullOrEmpty(stringValue);
             }

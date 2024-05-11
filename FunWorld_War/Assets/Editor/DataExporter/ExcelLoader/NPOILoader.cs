@@ -124,10 +124,10 @@ public class NPOILoader : IExcelLoader
         var obj = GetValueType(cell, out type);
         excelCell.value = obj;
         excelCell.stringValue = obj == null ? "" : obj.ToString();
-        if (cell.CellStyle.FillForegroundColorColor != null)
-            excelCell.rgb = cell.CellStyle.FillForegroundColorColor.RGB;
-        else
-            excelCell.rgb = new byte[] { 255, 255, 255 };
+        // if (cell.CellStyle.FillForegroundColorColor != null)
+        //     excelCell.rgb = cell.CellStyle.FillForegroundColorColor.RGB;
+        // else
+        //     excelCell.rgb = new byte[] { 255, 255, 255 };
         excelCell.index = cell.ColumnIndex;
         return excelCell;
     }
