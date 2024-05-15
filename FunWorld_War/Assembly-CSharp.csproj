@@ -962,6 +962,8 @@
      <Folder Include="Assets\UnityPackages\BehaviorTree\Gizmos" />
      <Folder Include="Assets\Script\Core\Base\ReferencePool" />
      <Folder Include="Assets\UnityPackages\BehaviorTree\Behavior Designer\Runtime\Tasks\Decorators" />
+     <Folder Include="Assets\Res\Fbx\Sword and Shield Pack" />
+     <Folder Include="Assets\Res\Fbx" />
      <Folder Include="Assets\Script\Data\Base" />
      <Folder Include="Assets\UnityPackages\BehaviorTree\Behavior Designer\Runtime\Tasks\Unity\Rigidbody2D" />
      <Folder Include="Assets\Res\Horseman\Textures" />
@@ -977,6 +979,7 @@
      <Folder Include="Assets\UnityPackages\BehaviorTree\Behavior Designer\Runtime\Tasks\Unity\Rigidbody" />
      <Folder Include="Assets\UnityPackages\JsonNetSample" />
      <Folder Include="Assets\Script\Core\Base\EventPool" />
+     <Folder Include="Assets\Res\Fbx\test001.fbm" />
      <Folder Include="Assets\Script\Core\Resource" />
      <Folder Include="Assets\Script\Core\Utility" />
      <Folder Include="Assets\Script\Core\ObjectPool" />
@@ -1030,6 +1033,7 @@
      <Folder Include="Assets\Script\Core\Fsm" />
      <None Include="Assets\UnityPackages\JsonNet.unitypackage.json" />
      <Folder Include="Assets\Res\Horseman\Animation" />
+     <Folder Include="Assets\Res\Fbx\Materials" />
      <Folder Include="Assets\Resources\ConfigData" />
      <Folder Include="Assets\UnityPackages" />
      <Folder Include="Assets\UnityPackages\BehaviorTree\Behavior Designer\Runtime\Tasks\Unity\AudioSource" />
