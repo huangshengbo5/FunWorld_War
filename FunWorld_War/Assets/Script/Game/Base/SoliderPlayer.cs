@@ -4,5 +4,14 @@ using UnityEngine;
 
 public class SoliderPlayer : BaseSolider
 {
-       
+
+    public void MoveToTarget()
+    {
+        
+    }
+
+    public void Attack()
+    {
+        
+    }
 }

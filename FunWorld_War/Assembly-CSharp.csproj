@@ -564,6 +564,7 @@
      <Compile Include="Assets\UnityPackages\BehaviorTree\Behavior Designer\Runtime\Tasks\Unity\NavMeshAgent\GetSpeed.cs" />
      <Compile Include="Assets\Script\Data\CfgTrademoney.cs" />
      <Compile Include="Assets\UnityPackages\BehaviorTree\Behavior Designer\Runtime\Tasks\Unity\Rigidbody\SetUseGravity.cs" />
+     <Compile Include="Assets\Script\Game\Base\Town\Town_City.cs" />
      <Compile Include="Assets\UnityPackages\BehaviorTree\Behavior Designer\Runtime\Tasks\Unity\Vector3\SetXYZ.cs" />
      <Compile Include="Assets\UnityPackages\BehaviorTree\Behavior Designer\Runtime\Tasks\Unity\ParticleSystem\Simulate.cs" />
      <Compile Include="Assets\UnityPackages\BehaviorTree\Behavior Designer\Runtime\Tasks\Unity\Animation\GetAnimatePhysics.cs" />
@@ -944,8 +945,10 @@
      <Folder Include="Assets\UnityPackages\BehaviorTree\Behavior Designer" />
      <Folder Include="Assets\UnityPackages\BehaviorTree\Behavior Designer\Runtime\Tasks\Unity\GameObject" />
      <Folder Include="Assets\UnityPackages\BehaviorTree\Behavior Designer\Runtime\Tasks\Unity\Physics" />
+     <Folder Include="Assets\Resources\Prefab" />
      <Folder Include="Assets\Script\Core\Localization" />
      <Folder Include="Assets\UnityPackages\BehaviorTree\Behavior Designer\Integrations" />
+     <Folder Include="Assets\Res\Material" />
      <Folder Include="Assets\UnityPackages\BehaviorTree\Behavior Designer\Runtime\Tasks\Unity\Behaviour" />
      <Folder Include="Assets\UnityPackages\BehaviorTree\Behavior Designer\Runtime\Tasks\Actions" />
      <Folder Include="Assets\Script\Core\Config" />
@@ -975,6 +978,7 @@
      <Folder Include="Assets\Script" />
      <Folder Include="Assets\Script\Core\Scene" />
      <Folder Include="Assets\Script\Core\Event" />
+     <Folder Include="Assets\Resources\Prefab\Town" />
      <Folder Include="Assets\UnityPackages\BehaviorTree\Behavior Designer\Runtime\Tasks\Unity\Physics2D" />
      <Folder Include="Assets\UnityPackages\JsonNet-Lite" />
      <Folder Include="Assets\UnityPackages\BehaviorTree\Behavior Designer\Runtime\Tasks\Unity\Vector3" />
@@ -998,6 +1002,7 @@
      <Folder Include="Assets\Res\model\Horseman\Stand" />
      <Folder Include="Assets\Script\Core\Base\Version" />
      <Folder Include="Assets\Script\Core" />
+     <Folder Include="Assets\Resources\Prefab\Solider" />
      <Folder Include="Assets\Resources\BehaviorTree" />
      <Folder Include="Assets\Script\Core\Sound" />
      <Folder Include="Assets\UnityPackages\BehaviorTree\Behavior Designer\Runtime\Tasks\Unity\Input" />
