@@ -6,7 +6,7 @@ using UnityEngine;
 public class BaseSolider : MonoBehaviour,SoliderInterface
 {
 
-    private Transform target;
+    protected Transform target;
     public void SetTarget(Transform target)
     {
         this.target = target;
@@ -15,6 +15,11 @@ public class BaseSolider : MonoBehaviour,SoliderInterface
     public Transform GetTarget()
     {
         return this.target;
+    }
+
+    public virtual void MoveToTarget(Vector3 targetPoint)
+    {
+        
     }
 
     public void SufferInjure(float injure)

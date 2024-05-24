@@ -1,3 +1,4 @@
+using BehaviorDesigner.Runtime.Tasks.Unity.UnityPhysics;
 using UnityEngine;
 using Random = System.Random;
 
@@ -5,7 +6,7 @@ public class Town_City : MonoBehaviour
 {
     public GameObject ObjSolider;
 
-    public void CreateSolider()
+    public BaseSolider CreateSolider()
     {
         var solider = (GameObject)Instantiate(ObjSolider);
         var soliderTans = solider.GetComponent<Transform>();
@@ -13,7 +14,7 @@ public class Town_City : MonoBehaviour
         soliderTans.localScale = Vector3.one;
         soliderTans.rotation = Quaternion.identity;
         var soliderCom = solider.GetComponent<SoliderPlayer>();
-        soliderCom.MoveToTarget();
+        return soliderCom;
     }
 
     Vector3 GetSoliderPosition()
@@ -30,7 +31,21 @@ public class Town_City : MonoBehaviour
     {
         if (Input.GetMouseButtonDown(0))
         {
-            CreateSolider();
+            var solider = CreateSolider();
+            Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
+            RaycastHit hit;
+            if (Physics.Raycast(ray,out hit))
+            {
+                var terrian = hit.collider.gameObject.GetComponent<Terrain>();
+                if (terrian != null)
+                {
+                    var postion = hit.point;
+                    // Transform trans = new RectTransform();
+                    // trans.transform.position = postion;
+                    // solider.SetTarget(trans.transform);
+                    solider.MoveToTarget(postion);
+                }
+            }
         }
     }
 }

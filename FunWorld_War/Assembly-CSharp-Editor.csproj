@@ -383,6 +383,9 @@
      <Reference Include="EPPlus">
      <HintPath>F:\HuangShengBo\FunWorldGit\FunWorld_War\FunWorld_War\Assets\Editor\Lib\EPP\EPPlus.dll</HintPath>
      </Reference>
+     <Reference Include="DOTweenEditor">
+     <HintPath>F:\HuangShengBo\FunWorldGit\FunWorld_War\FunWorld_War\Assets\Plugins\Demigiant\DOTween\Editor\DOTweenEditor.dll</HintPath>
+     </Reference>
      <Reference Include="Unity.Plastic.Newtonsoft.Json">
      <HintPath>F:\HuangShengBo\FunWorldGit\FunWorld_War\FunWorld_War\Library\PackageCache\com.unity.collab-proxy@2.2.0\Lib\Editor\PlasticSCM\Unity.Plastic.Newtonsoft.Json.dll</HintPath>
      </Reference>
@@ -397,6 +400,9 @@
      </Reference>
      <Reference Include="NPOI">
      <HintPath>F:\HuangShengBo\FunWorldGit\FunWorld_War\FunWorld_War\Assets\Editor\Lib\NPOI\NPOI.dll</HintPath>
+     </Reference>
+     <Reference Include="DOTween">
+     <HintPath>F:\HuangShengBo\FunWorldGit\FunWorld_War\FunWorld_War\Assets\Plugins\Demigiant\DOTween\DOTween.dll</HintPath>
      </Reference>
      <Reference Include="NPOI.OpenXml4Net">
      <HintPath>F:\HuangShengBo\FunWorldGit\FunWorld_War\FunWorld_War\Assets\Editor\Lib\NPOI\NPOI.OpenXml4Net.dll</HintPath>
@@ -418,12 +424,6 @@
      </Reference>
      <Reference Include="BehaviorDesigner.Editor">
      <HintPath>F:\HuangShengBo\FunWorldGit\FunWorld_War\FunWorld_War\Assets\UnityPackages\BehaviorTree\Behavior Designer\Editor\BehaviorDesigner.Editor.dll</HintPath>
-     </Reference>
-     <Reference Include="DOTweenEditor">
-     <HintPath>F:\HuangShengBo\FunWorldGit\FunWorld_War\FunWorld_War\Assets\Plugins\Demigiant\DOTween\Editor\DOTweenEditor.dll</HintPath>
-     </Reference>
-     <Reference Include="DOTween">
-     <HintPath>F:\HuangShengBo\FunWorldGit\FunWorld_War\FunWorld_War\Assets\Plugins\Demigiant\DOTween\DOTween.dll</HintPath>
      </Reference>
      <Reference Include="nunit.framework">
      <HintPath>F:\HuangShengBo\FunWorldGit\FunWorld_War\FunWorld_War\Library\PackageCache\com.unity.ext.nunit@1.0.6\net35\unity-custom\nunit.framework.dll</HintPath>
@@ -899,11 +899,11 @@
      <Reference Include="Unity.VisualScripting.State">
      <HintPath>F:\HuangShengBo\FunWorldGit\FunWorld_War\FunWorld_War\Library\ScriptAssemblies\Unity.VisualScripting.State.dll</HintPath>
      </Reference>
-     <Reference Include="Unity.VSCode.Editor">
-     <HintPath>F:\HuangShengBo\FunWorldGit\FunWorld_War\FunWorld_War\Library\ScriptAssemblies\Unity.VSCode.Editor.dll</HintPath>
-     </Reference>
      <Reference Include="Unity.AI.Navigation.Editor.ConversionSystem">
      <HintPath>F:\HuangShengBo\FunWorldGit\FunWorld_War\FunWorld_War\Library\ScriptAssemblies\Unity.AI.Navigation.Editor.ConversionSystem.dll</HintPath>
+     </Reference>
+     <Reference Include="Unity.VSCode.Editor">
+     <HintPath>F:\HuangShengBo\FunWorldGit\FunWorld_War\FunWorld_War\Library\ScriptAssemblies\Unity.VSCode.Editor.dll</HintPath>
      </Reference>
   </ItemGroup>
   <ItemGroup>
