@@ -1,12 +1,13 @@
 using BehaviorDesigner.Runtime.Tasks.Unity.UnityPhysics;
+using Script.Game.Base;
 using UnityEngine;
 using Random = System.Random;
 
-public class Town_City : MonoBehaviour
+public class Town_City : BaseTown
 {
     public GameObject ObjSolider;
 
-    public BaseSolider CreateSolider()
+    protected BaseSolider CreateSolider()
     {
         var solider = (GameObject)Instantiate(ObjSolider);
         var soliderTans = solider.GetComponent<Transform>();
@@ -29,6 +30,7 @@ public class Town_City : MonoBehaviour
 
     private void Update()
     {
+        
         if (Input.GetMouseButtonDown(0))
         {
             var solider = CreateSolider();
