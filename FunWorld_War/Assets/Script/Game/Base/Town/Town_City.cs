@@ -1,3 +1,4 @@
+using BehaviorDesigner.Runtime.Tasks.Unity.UnityGameObject;
 using BehaviorDesigner.Runtime.Tasks.Unity.UnityPhysics;
 using Script.Game.Base;
 using UnityEngine;
@@ -30,24 +31,33 @@ public class Town_City : BaseTown
 
     private void Update()
     {
-        
-        if (Input.GetMouseButtonDown(0))
+        if (LastCreateTimeStamp >= CreateSoliderInterval)
         {
-            var solider = CreateSolider();
-            Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
-            RaycastHit hit;
-            if (Physics.Raycast(ray,out hit))
-            {
-                var terrian = hit.collider.gameObject.GetComponent<Terrain>();
-                if (terrian != null)
-                {
-                    var postion = hit.point;
-                    // Transform trans = new RectTransform();
-                    // trans.transform.position = postion;
-                    // solider.SetTarget(trans.transform);
-                    solider.MoveToTarget(postion);
-                }
-            }
+            CurSoliderNum += 1;
+            CurSoliderNum_Txt.SetText(CurSoliderNum.ToString());
+            LastCreateTimeStamp = 0;
         }
+        else
+        {
+            LastCreateTimeStamp += Time.deltaTime;
+        }
+        // if (Input.GetMouseButtonDown(0))
+        // {
+        //     var solider = CreateSolider();
+        //     Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
+        //     RaycastHit hit;
+        //     if (Physics.Raycast(ray,out hit))
+        //     {
+        //         var terrian = hit.collider.gameObject.GetComponent<Terrain>();
+        //         if (terrian != null)
+        //         {
+        //             var postion = hit.point;
+        //             // Transform trans = new RectTransform();
+        //             // trans.transform.position = postion;
+        //             // solider.SetTarget(trans.transform);
+        //             solider.MoveToTarget(postion);
+        //         }
+        //     }
+        // }
     }
 }

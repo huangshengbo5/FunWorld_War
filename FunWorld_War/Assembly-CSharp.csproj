@@ -624,6 +624,7 @@
      <Compile Include="Assets\Script\Core\Download\DownloadAgentHelperErrorEventArgs.cs" />
      <Compile Include="Assets\UnityPackages\BehaviorTree\Behavior Designer\Runtime\Tasks\Unity\BoxCollider2D\GetSize.cs" />
      <Compile Include="Assets\UnityPackages\BehaviorTree\Behavior Designer\Runtime\Tasks\Unity\SharedVariables\CompareSharedTransform.cs" />
+     <Compile Include="Assets\Script\Game\Define\EventDefine.cs" />
      <Compile Include="Assets\Script\Core\Utility\Utility.Verifier.cs" />
      <Compile Include="Assets\Script\Data\CfgMultilingual.cs" />
      <Compile Include="Assets\UnityPackages\BehaviorTree\Behavior Designer\Runtime\Tasks\Unity\Math\BoolComparison.cs" />
@@ -706,8 +707,8 @@
      <Compile Include="Assets\UnityPackages\BehaviorTree\Behavior Designer\Runtime\Tasks\Unity\Time\SetTimeScale.cs" />
      <Compile Include="Assets\UnityPackages\BehaviorTree\Behavior Designer\Runtime\Tasks\Unity\String\GetRandomString.cs" />
      <Compile Include="Assets\UnityPackages\BehaviorTree\Behavior Designer\Runtime\Tasks\Unity\Animator\SetIntegerParameter.cs" />
-     <Compile Include="Assets\UnityPackages\BehaviorTree\Behavior Designer\Runtime\Tasks\Unity\Quaternion\AngleAxis.cs" />
      <Compile Include="Assets\Script\Core\Debugger\IDebuggerWindowGroup.cs" />
+     <Compile Include="Assets\UnityPackages\BehaviorTree\Behavior Designer\Runtime\Tasks\Unity\Quaternion\AngleAxis.cs" />
      <Compile Include="Assets\Script\Core\Base\EventPool\BaseEventArgs.cs" />
      <Compile Include="Assets\Script\Core\Resource\ResourceManager.ResourceLoader.cs" />
      <Compile Include="Assets\UnityPackages\BehaviorTree\Behavior Designer\Runtime\Tasks\Unity\CharacterController\SetStepOffset.cs" />
@@ -911,6 +912,7 @@
      <Compile Include="Assets\Script\Core\Setting\SettingManager.cs" />
      <Compile Include="Assets\UnityPackages\BehaviorTree\Behavior Designer\Runtime\Tasks\Unity\NavMeshAgent\SetIsStopped.cs" />
      <Compile Include="Assets\UnityPackages\BehaviorTree\Behavior Designer\Runtime\Tasks\Unity\AudioSource\SetMute.cs" />
+     <Compile Include="Assets\Script\Game\Define\GameDefine.cs" />
      <Compile Include="Assets\UnityPackages\BehaviorTree\Behavior Designer\Runtime\Tasks\Unity\CharacterController\GetRadius.cs" />
      <Compile Include="Assets\UnityPackages\BehaviorTree\Behavior Designer\Runtime\Tasks\Unity\Animation\CrossFade.cs" />
      <Compile Include="Assets\UnityPackages\BehaviorTree\Behavior Designer\Runtime\Tasks\Unity\Light\SetCullingMask.cs" />
@@ -1059,6 +1061,7 @@
      <None Include="Assets\TextMesh Pro\Resources\LineBreaking Following Characters.txt" />
      <Folder Include="Assets\UnityPackages\BehaviorTree\Behavior Designer\Runtime\Tasks\Unity\Animator" />
      <Folder Include="Assets\UnityPackages\BehaviorTree\Behavior Designer\Runtime\Tasks\Unity\CharacterController" />
+     <Folder Include="Assets\Script\Game\Define" />
      <Folder Include="Assets\UnityPackages\BehaviorTree\Behavior Designer\Runtime\Tasks\Actions\Reflection" />
      <Folder Include="Assets\Script\Core\Base\TaskPool" />
      <None Include="Assets\UnityPackages\JsonNet-Lite.unitypackage.json" />

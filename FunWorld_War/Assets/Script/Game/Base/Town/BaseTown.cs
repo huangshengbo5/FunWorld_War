@@ -5,7 +5,8 @@ namespace Script.Game.Base
 {
     public class BaseTown :MonoBehaviour
     {
-        public TextMeshPro CurSoliderNum;
+        public TextMeshProUGUI CurSoliderNum_Txt;
+        
         //生成士兵的时间间隔
         public float CreateSoliderInterval;
 
@@ -13,7 +14,10 @@ namespace Script.Game.Base
         public int DefaultSoliderNum;
         
         protected float LastCreateTimeStamp;
+
+        public TownOwnerType OwnerType = TownOwnerType.None;
         
+        protected int CurSoliderNum;
         
         //生成士兵
         protected BaseSolider CreateSolider()
