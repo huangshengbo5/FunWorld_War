@@ -1,5 +1,7 @@
+using System;
 using BehaviorDesigner.Runtime.Tasks.Unity.UnityGameObject;
 using BehaviorDesigner.Runtime.Tasks.Unity.UnityPhysics;
+using Script.Game;
 using Script.Game.Base;
 using UnityEngine;
 using Random = System.Random;
@@ -8,6 +10,17 @@ public class Town_City : BaseTown
 {
     public GameObject ObjSolider;
 
+
+    private void Start()
+    {
+        CurSoliderNum = DefaultSoliderNum;
+        CurSoliderNum_Txt.SetText(CurSoliderNum.ToString());
+    }
+
+    public void InitTown()
+    {
+        
+    }
     protected BaseSolider CreateSolider()
     {
         var solider = (GameObject)Instantiate(ObjSolider);
@@ -31,16 +44,13 @@ public class Town_City : BaseTown
 
     private void Update()
     {
-        if (LastCreateTimeStamp >= CreateSoliderInterval)
+        switch (OwnerType)
         {
-            CurSoliderNum += 1;
-            CurSoliderNum_Txt.SetText(CurSoliderNum.ToString());
-            LastCreateTimeStamp = 0;
+            case TownOwnerType.Player:
+                Update_Controller_Player();
+                break;
         }
-        else
-        {
-            LastCreateTimeStamp += Time.deltaTime;
-        }
+      
         // if (Input.GetMouseButtonDown(0))
         // {
         //     var solider = CreateSolider();
@@ -59,5 +69,19 @@ public class Town_City : BaseTown
         //         }
         //     }
         // }
+    }
+
+    void Update_Controller_Player()
+    {
+        if (LastCreateTimeStamp >= CreateSoliderInterval)
+        {
+            CurSoliderNum += 1;
+            CurSoliderNum_Txt.SetText(CurSoliderNum.ToString());
+            LastCreateTimeStamp = 0;
+        }
+        else
+        {
+            LastCreateTimeStamp += Time.deltaTime;
+        }
     }
 }
