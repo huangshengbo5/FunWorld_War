@@ -192,7 +192,8 @@ public class GraphUpdateSceneEditor : Editor {
 #else
 				Undo.RecordObject(script, "Moved Point");
 #endif
-				Handles.SphereCap (-i-1,points[i],Quaternion.identity,HandleUtility.GetHandleSize (points[i])*pointGizmosRadius*2);
+				//todo
+				Handles.SphereHandleCap (-i-1,points[i],Quaternion.identity,HandleUtility.GetHandleSize (points[i])*pointGizmosRadius*2,EventType.MouseDown);
 				Vector3 pre = points[i];
 				Vector3 post = Handles.PositionHandle (points[i],Quaternion.identity);
 				if (pre != post) {
@@ -200,7 +201,7 @@ public class GraphUpdateSceneEditor : Editor {
 				}
 			} else {
 				Handles.color = PointColor;
-				Handles.SphereCap (-i-1,points[i],Quaternion.identity,HandleUtility.GetHandleSize (points[i])*pointGizmosRadius);
+				Handles.SphereHandleCap (-i-1,points[i],Quaternion.identity,HandleUtility.GetHandleSize (points[i])*pointGizmosRadius,EventType.MouseDown);
 			}
 		}
 

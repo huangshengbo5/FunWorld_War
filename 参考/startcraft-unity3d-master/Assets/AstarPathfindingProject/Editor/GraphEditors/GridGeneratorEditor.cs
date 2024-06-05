@@ -484,7 +484,7 @@ namespace Pathfinding {
 			
 			Handles.color = AstarColor.BoundsHandles;
 			
-			Handles.DrawCapFunction cap = Handles.CylinderCap;
+			Handles.CapFunction cap = Handles.CylinderHandleCap;
 			
 			Vector2 extents = graph.unclampedSize*0.5F;
 			

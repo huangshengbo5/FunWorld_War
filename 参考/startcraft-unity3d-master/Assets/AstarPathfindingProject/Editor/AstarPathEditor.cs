@@ -1277,12 +1277,12 @@ public class AstarPathEditor : Editor {
 				
 				if (firstShiftNode != null) {
 					Handles.color = Color.yellow;
-					Handles.SphereCap (GUIUtility.GetControlID (FocusType.Passive),(Vector3)firstShiftNode.position,Quaternion.identity,HandleUtility.GetHandleSize ((Vector3)node.position)*0.12F);
+					Handles.SphereHandleCap (GUIUtility.GetControlID (FocusType.Passive),(Vector3)firstShiftNode.position,Quaternion.identity,HandleUtility.GetHandleSize ((Vector3)node.position)*0.12F,EventType.MouseDown);
 				}
 				
 				if (node != null) {
 					Handles.color = Color.yellow;
-					Handles.SphereCap (GUIUtility.GetControlID (FocusType.Passive),(Vector3)node.position,Quaternion.identity,HandleUtility.GetHandleSize ((Vector3)node.position)*0.13F);
+					Handles.SphereHandleCap (GUIUtility.GetControlID (FocusType.Passive),(Vector3)node.position,Quaternion.identity,HandleUtility.GetHandleSize ((Vector3)node.position)*0.13F,EventType.MouseDown);
 					
 					if (firstShiftNode != null) {
 						Handles.DrawLine ((Vector3)firstShiftNode.position,(Vector3)node.position);
@@ -1315,7 +1315,7 @@ public class AstarPathEditor : Editor {
 		for (int i=0;i<conns.Length;i++) {
 			UserConnection conn = conns[i];
 			
-			int controlID = GUIUtility.GetControlID(i, FocusType.Native);
+			int controlID = GUIUtility.GetControlID(i, FocusType.Passive);
 			
 			if (Event.current.type == EventType.Layout && editLinks) {
 				if (conn.type == ConnectionType.Connection) {
@@ -1353,8 +1353,8 @@ public class AstarPathEditor : Editor {
 					//Because of nothing... Why not?
 					Vector3 goldenRatio = (conn.p2-conn.p1)*0.618F;
 					
-					Handles.ConeCap (controlID,conn.p1+goldenRatio,Quaternion.LookRotation (goldenRatio),goldenRatio.magnitude*0.07F);
-					Handles.ConeCap (controlID,conn.p2-goldenRatio,Quaternion.LookRotation (goldenRatio),goldenRatio.magnitude*0.07F);
+					Handles.ConeHandleCap (controlID,conn.p1+goldenRatio,Quaternion.LookRotation (goldenRatio),goldenRatio.magnitude*0.07F,EventType.MouseDown);
+					Handles.ConeHandleCap (controlID,conn.p2-goldenRatio,Quaternion.LookRotation (goldenRatio),goldenRatio.magnitude*0.07F,EventType.MouseDown);
 					Handles.DrawLine (conn.p1,conn.p2);
 				} else {
 					Handles.DrawLine (conn.p1,conn.p2);
@@ -1368,8 +1368,8 @@ public class AstarPathEditor : Editor {
 					Handles.color = new Color (0.651F, 0.125F, 0F, 0.6F);
 				}
 				
-				Handles.SphereCap (controlID,conn.p1,Quaternion.identity,HandleUtility.GetHandleSize (conn.p1)*0.1F);
-				Handles.SphereCap (controlID,conn.p2,Quaternion.identity,HandleUtility.GetHandleSize (conn.p2)*0.1F);
+				Handles.SphereHandleCap (controlID,conn.p1,Quaternion.identity,HandleUtility.GetHandleSize (conn.p1)*0.1F,EventType.MouseDown);
+				Handles.SphereHandleCap (controlID,conn.p2,Quaternion.identity,HandleUtility.GetHandleSize (conn.p2)*0.1F,EventType.MouseDown);
 			} else {
 				if (conn.enable) {
 					//Nice Blue Color
@@ -1379,7 +1379,7 @@ public class AstarPathEditor : Editor {
 					Handles.color = new Color (0.651F, 0.125F, 0F, 0.6F);
 				}
 				
-				Handles.SphereCap (controlID,conn.p1,Quaternion.identity,HandleUtility.GetHandleSize (conn.p1)*0.15F);
+				Handles.SphereHandleCap (controlID,conn.p1,Quaternion.identity,HandleUtility.GetHandleSize (conn.p1)*0.15F,EventType.MouseDown);
 			}
 		}
 		
@@ -2314,10 +2314,10 @@ public class AstarPathEditor : Editor {
 		UnityEditor.EditorUtility.DisplayProgressBar ("Scanning","Scanning...",0);
 		
 		try {
-			OnScanStatus info = delegate (Progress p) {
-				UnityEditor.EditorUtility.DisplayProgressBar ("Scanning",p.description,p.progress);
-			};
-			AstarPath.active.ScanLoop (info);
+			// OnScanStatus info = delegate (Progress p) {
+			// 	UnityEditor.EditorUtility.DisplayProgressBar ("Scanning",p.description,p.progress);
+			// };
+			//AstarPath.active.ScanLoop (info);
 			
 		} catch (System.Exception e) {
 			Debug.LogError ("There was an error generating the graphs:\n"+e.ToString ()+"\n\nIf you think this is a bug, please contact me on arongranberg.com (post a comment)\n");
