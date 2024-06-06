@@ -1,23 +1,23 @@
 Using pre-set license
 Built from '2022.3/china_unity/release' branch; Version is '2022.3.14f1c1 (25540d4d24fc) revision 2446349'; Using compiler version '192829333'; Build Type 'Release'
-OS: 'Windows 10  (10.0.19045) 64bit Professional' Language: 'zh' Physical Memory: 16336 MB
+OS: 'Windows 10  (10.0.19045) 64bit Professional' Language: 'zh' Physical Memory: 32710 MB
 BatchMode: 1, IsHumanControllingUs: 0, StartBugReporterOnCrash: 0, Is64bit: 1, IsPro: 1
 
 COMMAND LINE ARGUMENTS:
-C:\Program Files\Unity 2022.3.14f1c1\Editor\Unity.exe
+C:\Program Files\Unity\Hub\Editor\2022.3.14f1c1\Editor\Unity.exe
 -adb2
 -batchMode
 -noUpm
 -name
 AssetImportWorker1
 -projectPath
-F:/HuangShengBo/FunWorldGit/FunWorld_War/参考/startcraft-unity3d-master
+D:/UnityProject/FunWorld_War/参考/startcraft-unity3d-master
 -logFile
 Logs/AssetImportWorker1.log
 -srvPort
-54951
-Successfully changed project path to: F:/HuangShengBo/FunWorldGit/FunWorld_War/参考/startcraft-unity3d-master
-F:/HuangShengBo/FunWorldGit/FunWorld_War/参考/startcraft-unity3d-master
+62114
+Successfully changed project path to: D:/UnityProject/FunWorld_War/参考/startcraft-unity3d-master
+D:/UnityProject/FunWorld_War/参考/startcraft-unity3d-master
 [UnityMemory] Configuration Parameters - Can be set up in boot.config
     "memorysetup-bucket-allocator-granularity=16"
     "memorysetup-bucket-allocator-bucket-count=8"
@@ -49,67 +49,68 @@ F:/HuangShengBo/FunWorldGit/FunWorld_War/参考/startcraft-unity3d-master
     "memorysetup-temp-allocator-size-cloud-worker=32768"
     "memorysetup-temp-allocator-size-gi-baking-worker=262144"
     "memorysetup-temp-allocator-size-gfx=262144"
-Player connection [20184] Host "[IP] 192.168.0.105 [Port] 0 [Flags] 2 [Guid] 60054411 [EditorId] 60054411 [Version] 1048832 [Id] WindowsEditor(7,WIN10-104012236) [Debug] 1 [PackageName] WindowsEditor [ProjectName] Editor" joined multi-casting on [225.0.0.222:54997]...
+Player connection [16880] Host "[IP] 192.168.13.141 [Port] 0 [Flags] 2 [Guid] 1646226080 [EditorId] 1646226080 [Version] 1048832 [Id] WindowsEditor(7,SK-20220725NFXU) [Debug] 1 [PackageName] WindowsEditor [ProjectName] Editor" joined multi-casting on [225.0.0.222:54997]...
 
-Player connection [20184] Host "[IP] 192.168.0.105 [Port] 0 [Flags] 2 [Guid] 60054411 [EditorId] 60054411 [Version] 1048832 [Id] WindowsEditor(7,WIN10-104012236) [Debug] 1 [PackageName] WindowsEditor [ProjectName] Editor" joined alternative multi-casting on [225.0.0.222:34997]...
+Player connection [16880] Host "[IP] 192.168.13.141 [Port] 0 [Flags] 2 [Guid] 1646226080 [EditorId] 1646226080 [Version] 1048832 [Id] WindowsEditor(7,SK-20220725NFXU) [Debug] 1 [PackageName] WindowsEditor [ProjectName] Editor" joined alternative multi-casting on [225.0.0.222:34997]...
 
 [Physics::Module] Initialized MultithreadedJobDispatcher with 7 workers.
-Refreshing native plugins compatible for Editor in 11.35 ms, found 0 plugins.
+Refreshing native plugins compatible for Editor in 9.59 ms, found 0 plugins.
 Preloading 0 native plugins for Editor in 0.00 ms.
 Initialize engine version: 2022.3.14f1c1 (25540d4d24fc)
-[Subsystems] Discovering subsystems at path C:/Program Files/Unity 2022.3.14f1c1/Editor/Data/Resources/UnitySubsystems
-[Subsystems] Discovering subsystems at path F:/HuangShengBo/FunWorldGit/FunWorld_War/参考/startcraft-unity3d-master/Assets
+[Subsystems] Discovering subsystems at path C:/Program Files/Unity/Hub/Editor/2022.3.14f1c1/Editor/Data/Resources/UnitySubsystems
+[Subsystems] Discovering subsystems at path D:/UnityProject/FunWorld_War/参考/startcraft-unity3d-master/Assets
 GfxDevice: creating device client; threaded=0; jobified=0
 Direct3D:
     Version:  Direct3D 11.0 [level 11.1]
-    Renderer: NVIDIA GeForce GTX 1060 3GB (ID=0x1c02)
+    Renderer: NVIDIA GeForce RTX 2060 (ID=0x1e89)
     Vendor:   NVIDIA
-    VRAM:     2978 MB
+    VRAM:     5958 MB
     Driver:   31.0.15.3623
 Initialize mono
-Mono path[0] = 'C:/Program Files/Unity 2022.3.14f1c1/Editor/Data/Managed'
-Mono path[1] = 'C:/Program Files/Unity 2022.3.14f1c1/Editor/Data/MonoBleedingEdge/lib/mono/unityjit-win32'
-Mono config path = 'C:/Program Files/Unity 2022.3.14f1c1/Editor/Data/MonoBleedingEdge/etc'
-Using monoOptions --debugger-agent=transport=dt_socket,embedding=1,server=y,suspend=n,address=127.0.0.1:56000
+Mono path[0] = 'C:/Program Files/Unity/Hub/Editor/2022.3.14f1c1/Editor/Data/Managed'
+Mono path[1] = 'C:/Program Files/Unity/Hub/Editor/2022.3.14f1c1/Editor/Data/MonoBleedingEdge/lib/mono/unityjit-win32'
+Mono config path = 'C:/Program Files/Unity/Hub/Editor/2022.3.14f1c1/Editor/Data/MonoBleedingEdge/etc'
+Using monoOptions --debugger-agent=transport=dt_socket,embedding=1,server=y,suspend=n,address=127.0.0.1:56268
 Begin MonoManager ReloadAssembly
 Registering precompiled unity dll's ...
-Register platform support module: C:/Program Files/Unity 2022.3.14f1c1/Editor/Data/PlaybackEngines/AndroidPlayer/UnityEditor.Android.Extensions.dll
-Register platform support module: C:/Program Files/Unity 2022.3.14f1c1/Editor/Data/PlaybackEngines/WindowsStandaloneSupport/UnityEditor.WindowsStandalone.Extensions.dll
-Registered in 0.020087 seconds.
-- Loaded All Assemblies, in  0.497 seconds
+Register platform support module: C:/Program Files/Unity/Hub/Editor/2022.3.14f1c1/Editor/Data/PlaybackEngines/AndroidPlayer/UnityEditor.Android.Extensions.dll
+Register platform support module: C:/Program Files/Unity/Hub/Editor/2022.3.14f1c1/Editor/Data/PlaybackEngines/WindowsStandaloneSupport/UnityEditor.WindowsStandalone.Extensions.dll
+Registered in 0.016213 seconds.
+- Loaded All Assemblies, in  0.469 seconds
 Native extension for WindowsStandalone target not found
 Native extension for Android target not found
+Android Extension - Scanning For ADB Devices 740 ms
 Mono: successfully reloaded assembly
-- Finished resetting the current domain, in  0.402 seconds
-Domain Reload Profiling: 894ms
-	BeginReloadAssembly (156ms)
+- Finished resetting the current domain, in  1.155 seconds
+Domain Reload Profiling: 1619ms
+	BeginReloadAssembly (135ms)
 		ExecutionOrderSort (0ms)
 		DisableScriptedObjects (0ms)
 		BackupInstance (0ms)
 		ReleaseScriptingObjects (0ms)
 		CreateAndSetChildDomain (1ms)
-	RebuildCommonClasses (42ms)
-	RebuildNativeTypeToScriptingClass (16ms)
-	initialDomainReloadingComplete (94ms)
-	LoadAllAssembliesAndSetupDomain (183ms)
-		LoadAssemblies (151ms)
+	RebuildCommonClasses (51ms)
+	RebuildNativeTypeToScriptingClass (18ms)
+	initialDomainReloadingComplete (91ms)
+	LoadAllAssembliesAndSetupDomain (168ms)
+		LoadAssemblies (130ms)
 		RebuildTransferFunctionScriptingTraits (0ms)
-		AnalyzeDomain (179ms)
-			TypeCache.Refresh (178ms)
-				TypeCache.ScanAssembly (162ms)
-			ScanForSourceGeneratedMonoScriptInfo (0ms)
-			ResolveRequiredComponents (1ms)
-	FinalizeReload (403ms)
+		AnalyzeDomain (165ms)
+			TypeCache.Refresh (162ms)
+				TypeCache.ScanAssembly (146ms)
+			ScanForSourceGeneratedMonoScriptInfo (1ms)
+			ResolveRequiredComponents (0ms)
+	FinalizeReload (1156ms)
 		ReleaseScriptCaches (0ms)
 		RebuildScriptCaches (0ms)
-		SetupLoadedEditorAssemblies (325ms)
+		SetupLoadedEditorAssemblies (1080ms)
 			LogAssemblyErrors (0ms)
-			InitializePlatformSupportModulesInManaged (113ms)
-			SetLoadedEditorAssemblies (6ms)
+			InitializePlatformSupportModulesInManaged (881ms)
+			SetLoadedEditorAssemblies (5ms)
 			RefreshPlugins (0ms)
-			BeforeProcessingInitializeOnLoad (4ms)
-			ProcessInitializeOnLoadAttributes (130ms)
-			ProcessInitializeOnLoadMethodAttributes (73ms)
+			BeforeProcessingInitializeOnLoad (3ms)
+			ProcessInitializeOnLoadAttributes (137ms)
+			ProcessInitializeOnLoadMethodAttributes (52ms)
 			AfterProcessingInitializeOnLoad (0ms)
 			EditorAssembliesLoaded (0ms)
 		ExecutionOrderSort2 (0ms)
@@ -117,11 +118,11 @@ Domain Reload Profiling: 894ms
 ========================================================================
 Worker process is ready to serve import requests
 Begin MonoManager ReloadAssembly
-- Loaded All Assemblies, in  0.490 seconds
-Refreshing native plugins compatible for Editor in 8.71 ms, found 0 plugins.
+- Loaded All Assemblies, in  0.390 seconds
+Refreshing native plugins compatible for Editor in 6.65 ms, found 0 plugins.
 Native extension for WindowsStandalone target not found
 Native extension for Android target not found
-Checking For Updates... 06/05/2024 14:03:47
+Checking For Updates... 06/06/2024 09:31:38
 A* Pathfinding Project
 UnityEngine.StackTraceUtility:ExtractStackTrace ()
 UnityEngine.DebugLogHandler:LogFormat (UnityEngine.LogType,UnityEngine.Object,string,object[])
@@ -149,8 +150,8 @@ System.InvalidOperationException: Insecure connection not allowed
   at (wrapper managed-to-native) UnityEngine.Networking.UnityWebRequest.BeginWebRequest(UnityEngine.Networking.UnityWebRequest)
   at UnityEngine.Networking.UnityWebRequest.SendWebRequest () [0x00001] in <2d989207a9e14c159f459b95177ec6ea>:0 
   at UnityEngine.WWW..ctor (System.String url) [0x00014] in <7234621a0f72448689c67e103dcb6123>:0 
-  at AstarPathEditor.CheckForUpdates () [0x00253] in F:\HuangShengBo\FunWorldGit\FunWorld_War\参考\startcraft-unity3d-master\Assets\AstarPathfindingProject\Editor\AstarPathEditor.cs:642 
-  at AstarPathEditor+UpdateChecker..cctor () [0x00001] in F:\HuangShengBo\FunWorldGit\FunWorld_War\参考\startcraft-unity3d-master\Assets\AstarPathfindingProject\Editor\AstarPathEditor.cs:2415 
+  at AstarPathEditor.CheckForUpdates () [0x00253] in D:\UnityProject\FunWorld_War\参考\startcraft-unity3d-master\Assets\AstarPathfindingProject\Editor\AstarPathEditor.cs:642 
+  at AstarPathEditor+UpdateChecker..cctor () [0x00001] in D:\UnityProject\FunWorld_War\参考\startcraft-unity3d-master\Assets\AstarPathfindingProject\Editor\AstarPathEditor.cs:2415 
 UnityEngine.StackTraceUtility:ExtractStackTrace ()
 UnityEngine.DebugLogHandler:LogFormat (UnityEngine.LogType,UnityEngine.Object,string,object[])
 UnityEngine.Logger:Log (UnityEngine.LogType,object)
@@ -158,47 +159,47 @@ UnityEngine.Debug:LogError (object)
 UnityEditor.EditorAssemblies:ProcessInitializeOnLoadAttributes (System.Type[])
 
 Mono: successfully reloaded assembly
-- Finished resetting the current domain, in  0.513 seconds
-Domain Reload Profiling: 995ms
-	BeginReloadAssembly (194ms)
+- Finished resetting the current domain, in  0.422 seconds
+Domain Reload Profiling: 808ms
+	BeginReloadAssembly (155ms)
 		ExecutionOrderSort (0ms)
-		DisableScriptedObjects (7ms)
+		DisableScriptedObjects (6ms)
 		BackupInstance (0ms)
 		ReleaseScriptingObjects (0ms)
-		CreateAndSetChildDomain (27ms)
-	RebuildCommonClasses (48ms)
-	RebuildNativeTypeToScriptingClass (13ms)
-	initialDomainReloadingComplete (53ms)
-	LoadAllAssembliesAndSetupDomain (173ms)
-		LoadAssemblies (264ms)
+		CreateAndSetChildDomain (22ms)
+	RebuildCommonClasses (34ms)
+	RebuildNativeTypeToScriptingClass (11ms)
+	initialDomainReloadingComplete (49ms)
+	LoadAllAssembliesAndSetupDomain (137ms)
+		LoadAssemblies (201ms)
 		RebuildTransferFunctionScriptingTraits (0ms)
-		AnalyzeDomain (28ms)
-			TypeCache.Refresh (21ms)
-				TypeCache.ScanAssembly (14ms)
-			ScanForSourceGeneratedMonoScriptInfo (3ms)
+		AnalyzeDomain (24ms)
+			TypeCache.Refresh (19ms)
+				TypeCache.ScanAssembly (11ms)
+			ScanForSourceGeneratedMonoScriptInfo (2ms)
 			ResolveRequiredComponents (3ms)
-	FinalizeReload (514ms)
+	FinalizeReload (422ms)
 		ReleaseScriptCaches (0ms)
 		RebuildScriptCaches (0ms)
-		SetupLoadedEditorAssemblies (337ms)
+		SetupLoadedEditorAssemblies (280ms)
 			LogAssemblyErrors (0ms)
-			InitializePlatformSupportModulesInManaged (39ms)
-			SetLoadedEditorAssemblies (5ms)
+			InitializePlatformSupportModulesInManaged (30ms)
+			SetLoadedEditorAssemblies (4ms)
 			RefreshPlugins (0ms)
-			BeforeProcessingInitializeOnLoad (53ms)
-			ProcessInitializeOnLoadAttributes (193ms)
-			ProcessInitializeOnLoadMethodAttributes (26ms)
-			AfterProcessingInitializeOnLoad (20ms)
+			BeforeProcessingInitializeOnLoad (45ms)
+			ProcessInitializeOnLoadAttributes (168ms)
+			ProcessInitializeOnLoadMethodAttributes (21ms)
+			AfterProcessingInitializeOnLoad (11ms)
 			EditorAssembliesLoaded (0ms)
 		ExecutionOrderSort2 (0ms)
-		AwakeInstancesAfterBackupRestoration (9ms)
+		AwakeInstancesAfterBackupRestoration (7ms)
 Launched and connected shader compiler UnityShaderCompiler.exe after 0.06 seconds
-Refreshing native plugins compatible for Editor in 8.80 ms, found 0 plugins.
+Refreshing native plugins compatible for Editor in 7.31 ms, found 0 plugins.
 Preloading 0 native plugins for Editor in 0.00 ms.
 Unloading 371 Unused Serialized files (Serialized files now loaded: 0)
-Unloading 26 unused Assets / (60.8 KB). Loaded Objects now: 823.
-Memory consumption went from 66.6 MB to 66.6 MB.
-Total: 2.607400 ms (FindLiveObjects: 0.058900 ms CreateObjectMapping: 0.013600 ms MarkObjects: 2.417500 ms  DeleteObjects: 0.116600 ms)
+Unloading 26 unused Assets / (60.6 KB). Loaded Objects now: 838.
+Memory consumption went from 76.2 MB to 76.1 MB.
+Total: 2.817700 ms (FindLiveObjects: 0.076900 ms CreateObjectMapping: 0.013800 ms MarkObjects: 2.608700 ms  DeleteObjects: 0.117000 ms)
 
 AssetImportParameters requested are different than current active one (requested -> active):
   custom:video-encoder-webm-vp8: eb34c28f22e8b96e1ab97ce403110664 -> 
@@ -213,12 +214,12 @@ AssetImportParameters requested are different than current active one (requested
   custom:framework-win-MediaFoundation: 216162199b28c13a410421893ffa2e32 -> 
 ========================================================================
 Received Prepare
-Refreshing native plugins compatible for Editor in 11.60 ms, found 0 plugins.
+Refreshing native plugins compatible for Editor in 7.22 ms, found 0 plugins.
 Preloading 0 native plugins for Editor in 0.00 ms.
 Unloading 1 Unused Serialized files (Serialized files now loaded: 0)
-Unloading 1 unused Assets / (3.0 KB). Loaded Objects now: 823.
-Memory consumption went from 58.5 MB to 58.4 MB.
-Total: 4.256100 ms (FindLiveObjects: 0.096600 ms CreateObjectMapping: 0.019000 ms MarkObjects: 4.106500 ms  DeleteObjects: 0.032800 ms)
+Unloading 1 unused Assets / (3.0 KB). Loaded Objects now: 838.
+Memory consumption went from 68.0 MB to 68.0 MB.
+Total: 2.100200 ms (FindLiveObjects: 0.089900 ms CreateObjectMapping: 0.016000 ms MarkObjects: 1.975400 ms  DeleteObjects: 0.017600 ms)
 
 Prepare: number of updated asset objects reloaded= 0
 AssetImportParameters requested are different than current active one (requested -> active):
@@ -236,9 +237,9 @@ AssetImportParameters requested are different than current active one (requested
   custom:framework-win-MediaFoundation: 216162199b28c13a410421893ffa2e32 -> 
 ========================================================================
 Received Import Request.
-  Time since last request: 874736.787291 seconds.
-  path: Assets/Materials/spark2.mat
-  artifactKey: Guid(4f8d693b624d64ae6b4b3cd6177f3cb4) Importer(815301076,1909f56bfc062723c751e8b465ee728b)
-Start importing Assets/Materials/spark2.mat using Guid(4f8d693b624d64ae6b4b3cd6177f3cb4) Importer(815301076,1909f56bfc062723c751e8b465ee728b)  -> (artifact id: 'b4d880db50ac2539f35ff26ec2c51cfc') in 0.134216 seconds
+  Time since last request: 102053.229172 seconds.
+  path: Assets/prefabs/buildings/Barracks.prefab
+  artifactKey: Guid(2118af6e1fa434b4ca5fb3734ef76eb8) Importer(815301076,1909f56bfc062723c751e8b465ee728b)
+Start importing Assets/prefabs/buildings/Barracks.prefab using Guid(2118af6e1fa434b4ca5fb3734ef76eb8) Importer(815301076,1909f56bfc062723c751e8b465ee728b)  -> (artifact id: 'a1c02a1ead655a68c2ab84c144cc0f6f') in 0.114902 seconds
 Number of updated asset objects reloaded before import = 0
-Number of asset objects unloaded after import = 2
+Number of asset objects unloaded after import = 267

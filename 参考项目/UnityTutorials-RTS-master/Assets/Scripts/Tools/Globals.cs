@@ -50,7 +50,7 @@ public static class Globals
     public static UnitFormationType UNIT_FORMATION_TYPE = UnitFormationType.None;
 
     public static NavMeshSurface NAV_MESH_SURFACE;
-
+    
     public static void UpdateNavMeshSurface()
     {
         NAV_MESH_SURFACE.UpdateNavMesh(NAV_MESH_SURFACE.navMeshData);
