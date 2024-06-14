@@ -20,6 +20,7 @@ MonoBehaviour:
   armor: 150
   damage: {x: 0, y: 0}
   attackSpeed: 0
+  attackEventTime: 0.5
   projectile: {fileID: 0}
   engageDistance: 10
   guardDistance: 10

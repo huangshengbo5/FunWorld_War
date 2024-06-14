@@ -91,11 +91,11 @@ public class Unit : ClickableObject
 
     public void AddCommand(AICommand command, bool clear = false)
     {
-        if (!CheckCommandViability(command))
-        {
-            Debug.LogWarning(string.Concat("Command not accepted: ", command.commandType, " ", command.customAction), this);
-            return;
-        }
+        // if (!CheckCommandViability(command))
+        // {
+        //     Debug.LogWarning(string.Concat("Command not accepted: ", command.commandType, " ", command.customAction), this);
+        //     return;
+        // }
         if (clear || command.commandType == AICommand.CommandTypes.Stop)
         {
             commandList.Clear();
@@ -202,6 +202,10 @@ public class Unit : ClickableObject
                 break;
             case AICommand.CommandTypes.Die:
                 TransitIntoState(UnitStates.Dead);
+                break;
+            case AICommand.CommandTypes.AttackMoveTo:
+                targetOfMovement = command.destination;
+                TransitIntoState(UnitStates.MovingToSpot);
                 break;
             case AICommand.CommandTypes.CustomActionAtPos:
                 targetOfMovement = command.destination;
