@@ -6,6 +6,7 @@ using UnityEngine;
 using UnityEngine.AI;
 using Random = UnityEngine.Random;
 
+//todo 移动过程中的状态切换逻辑没有调试通！！！！
 public class Unit : ClickableObject
 {
     public enum UnitStates
