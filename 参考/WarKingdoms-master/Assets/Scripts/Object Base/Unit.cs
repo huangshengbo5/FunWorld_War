@@ -1,8 +1,10 @@
-﻿using System.Collections;
+﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
 using UnityEngine.AI;
+using Random = UnityEngine.Random;
 
 public class Unit : ClickableObject
 {
@@ -21,8 +23,10 @@ public class Unit : ClickableObject
     public Transform projectileFirePoint;
     public bool alignToGround;
 
+    public GameObject Obj_Ani;
     //references
-    protected new UnitAnimation animation;
+    
+    protected Animator animation;
     protected MovementNavigation navigation;
     protected ResourceCollector resourceCollector;
 
@@ -43,7 +47,8 @@ public class Unit : ClickableObject
     {
         base.Awake();
         navigation = GetComponent<MovementNavigation>();
-        animation = GetComponent<UnitAnimation>();
+        //animation = GetComponent<UnitAnimation>();
+        animation = Obj_Ani.GetComponent<Animator>(); 
         resourceCollector = GetComponent<ResourceCollector>();
     }
 
@@ -610,7 +615,7 @@ public class Unit : ClickableObject
         navigation.enabled = false;
 
         AttackAnim(false);
-        //animation.SetTrigger(UnitAnimation.StateNames.DoDeath);
+        animation.SetTrigger(UnitAnimation.StateNames.DoDeath);
 
         ///Remove itself from the selection Platoon
         GameManager.Instance.RemoveFromSelection(this);
@@ -628,7 +633,7 @@ public class Unit : ClickableObject
     private void SetWalkingSpeed()
     {
         float navMeshAgentSpeed = navigation.velocity.magnitude;
-        //animation?.SetFloat(UnitAnimation.StateNames.Speed, navMeshAgentSpeed * 0.05f);
+        animation?.SetFloat(UnitAnimation.StateNames.Speed, navMeshAgentSpeed * 0.05f);
     }
 
     private void FaceTarget()
@@ -732,7 +737,7 @@ public class Unit : ClickableObject
         }
         else if (lerpingAttackEvent != null)
         {
-            //animation?.SetBool(UnitAnimation.StateNames.DoAttack, false);
+            animation?.SetBool(UnitAnimation.StateNames.DoAttack, false);
             StopCoroutine(lerpingAttackEvent);
             lerpingAttackEvent = null;
         }
@@ -740,16 +745,16 @@ public class Unit : ClickableObject
 
     private IEnumerator LerpAttackEvent()
     {
-        //animation?.SetBool(UnitAnimation.StateNames.DoAttack, false);
+        animation?.SetBool(UnitAnimation.StateNames.DoAttack, false);
         yield return null;
         yield return null;
-        //animation?.SetBool(UnitAnimation.StateNames.DoAttack, true);
+        animation?.SetBool(UnitAnimation.StateNames.DoAttack, true);
 
         float lenght = float.NaN;
         if (animation != null)
         {
-            lenght = animation.GetCurrentAnimationLenght();
-            yield return Yielders.Get(lenght * template.attackEventTime);
+            // lenght = animation.GetCurrentAnimationLenght();
+            // yield return Yielders.Get(lenght * template.attackEventTime);
         }
 
         TriggerAttackAnimEvent(0);

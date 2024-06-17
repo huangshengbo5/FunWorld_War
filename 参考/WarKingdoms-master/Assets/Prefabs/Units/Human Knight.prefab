@@ -834,6 +834,12 @@ Transform:
     type: 3}
   m_PrefabInstance: {fileID: 5306546830411158816}
   m_PrefabAsset: {fileID: 0}
+--- !u!1 &3512139119878511020 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 8726071526014405772, guid: 5528e9ad7f60b9b4ba6ea4fd8274c7ef,
+    type: 3}
+  m_PrefabInstance: {fileID: 5306546830411158816}
+  m_PrefabAsset: {fileID: 0}
 --- !u!1001 &6143404326158177747
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -976,6 +982,11 @@ PrefabInstance:
       propertyPath: m_Controller
       value: 
       objectReference: {fileID: 0}
+    - target: {fileID: 114393224487344650, guid: 2928e101c1e5b6e4c915c5893e1a830e,
+        type: 3}
+      propertyPath: Obj_Ani
+      value: 
+      objectReference: {fileID: 3512139119878511020}
     - target: {fileID: 114393224487344650, guid: 2928e101c1e5b6e4c915c5893e1a830e,
         type: 3}
       propertyPath: template
