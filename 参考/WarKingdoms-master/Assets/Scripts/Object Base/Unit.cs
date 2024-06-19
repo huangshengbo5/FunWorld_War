@@ -12,12 +12,12 @@ public class Unit : ClickableObject
     public enum UnitStates
     {
         Idleing,
-        Attacking,
-        MovingToTarget,
+        Attacking,         //进攻
+        MovingToTarget,    //移动到目标
         MovingToSpot,
         Dead,
         CustomActionAtPos,
-        CustomActionAtObj,
+        CustomActionAtObj,  //采集资源
     }
 
     public UnitStates state = UnitStates.Idleing;
@@ -183,6 +183,8 @@ public class Unit : ClickableObject
         UpdateState(state);
     }
 
+    
+    //执行一次指令
     private void ExecuteCommand(AICommand command)
     {
         command.origin = transform.position;
@@ -240,7 +242,8 @@ public class Unit : ClickableObject
                 break;
         }
     }
-
+    
+    //切换状态
     private void TransitIntoState(UnitStates newState)
     {
         switch (newState)
