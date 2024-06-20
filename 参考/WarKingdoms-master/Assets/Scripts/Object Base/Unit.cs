@@ -27,6 +27,9 @@ public class Unit : ClickableObject
     public GameObject Obj_Ani;
     //references
     
+    
+    
+    
     protected Animator animation;
     protected MovementNavigation navigation;
     protected ResourceCollector resourceCollector;

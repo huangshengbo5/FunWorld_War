@@ -207,6 +207,11 @@ PrefabInstance:
       value: 
       objectReference: {fileID: 11400000, guid: 81403e2ada2afcf41a88ba1daf7ce1a9,
         type: 2}
+    - target: {fileID: 4542764337897909974, guid: 2928e101c1e5b6e4c915c5893e1a830e,
+        type: 3}
+      propertyPath: registers.Array.data[0].objectToAdd
+      value: 
+      objectReference: {fileID: 0}
     - target: {fileID: 5879129965785712193, guid: 2928e101c1e5b6e4c915c5893e1a830e,
         type: 3}
       propertyPath: m_IsActive
@@ -225,14 +230,106 @@ PrefabInstance:
     - {fileID: 33394123669650972, guid: 2928e101c1e5b6e4c915c5893e1a830e, type: 3}
     - {fileID: 23054023064138366, guid: 2928e101c1e5b6e4c915c5893e1a830e, type: 3}
     - {fileID: 33042359569260364, guid: 2928e101c1e5b6e4c915c5893e1a830e, type: 3}
+    - {fileID: 114393224487344650, guid: 2928e101c1e5b6e4c915c5893e1a830e, type: 3}
     m_RemovedGameObjects: []
     m_AddedGameObjects:
     - targetCorrespondingSourceObject: {fileID: 4842006218740840, guid: 2928e101c1e5b6e4c915c5893e1a830e,
         type: 3}
       insertIndex: -1
       addedObject: {fileID: 2291452384448624651}
-    m_AddedComponents: []
+    m_AddedComponents:
+    - targetCorrespondingSourceObject: {fileID: 1107782487055510, guid: 2928e101c1e5b6e4c915c5893e1a830e,
+        type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 3765268544316251502}
+    - targetCorrespondingSourceObject: {fileID: 1107782487055510, guid: 2928e101c1e5b6e4c915c5893e1a830e,
+        type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 2960793294132611192}
   m_SourcePrefab: {fileID: 100100000, guid: 2928e101c1e5b6e4c915c5893e1a830e, type: 3}
+--- !u!114 &6113161126101863393 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 114716483690880562, guid: 2928e101c1e5b6e4c915c5893e1a830e,
+    type: 3}
+  m_PrefabInstance: {fileID: 6143404326158177747}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 2833f0e61db00ff46bcf49f457099882, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+--- !u!1 &6143523602997217605 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 1107782487055510, guid: 2928e101c1e5b6e4c915c5893e1a830e,
+    type: 3}
+  m_PrefabInstance: {fileID: 6143404326158177747}
+  m_PrefabAsset: {fileID: 0}
+--- !u!114 &3765268544316251502
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6143523602997217605}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 8d7b55c7ecdb49a4a89fa5e6f9022861, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  startWhenEnabled: 1
+  asynchronousLoad: 0
+  pauseWhenDisabled: 0
+  restartWhenComplete: 0
+  logTaskChanges: 0
+  group: 0
+  resetValuesOnRestart: 0
+  externalBehavior: {fileID: 0}
+  mBehaviorSource:
+    behaviorName: Behavior_HumanArcher
+    behaviorDescription: 
+    mTaskData:
+      types: []
+      parentIndex: 
+      startIndex: 
+      variableStartIndex: 
+      JSONSerialization: '{}'
+      fieldSerializationData:
+        typeName: []
+        fieldNameHash: 
+        startIndex: 
+        dataPosition: 
+        unityObjects: []
+        byteData: 
+        byteDataArray: 
+      Version: 1.7.1
+  gizmoViewMode: 2
+  showBehaviorDesignerGizmo: 1
+--- !u!114 &2960793294132611192
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6143523602997217605}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: ddf42c29372a43a6ab97fa20546548ed, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  visible: 0
+  visionFadeTime: 1
+  drawViewDistance: 0
+  drawEngageDistance: 0
+  faction: {fileID: 0}
+  template: {fileID: 11400000, guid: a552fe0302bc5924ab5ec1ec8a7b67f7, type: 2}
+  fieldOfView: {fileID: 6113161126101863393}
+  TargetPosition: {fileID: 0}
+  state: 0
+  projectileFirePoint: {fileID: 2132411120834419907}
+  alignToGround: 0
+  Obj_Ani: {fileID: 2291452384449111147}
+  TargetPosition: {fileID: 0}
 --- !u!4 &6147680020135051707 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 4842006218740840, guid: 2928e101c1e5b6e4c915c5893e1a830e,
