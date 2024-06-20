@@ -5,29 +5,37 @@ using System.Linq;
 using UnityEngine;
 using UnityEngine.AI;
 using Random = UnityEngine.Random;
-
-//todo 移动过程中的状态切换逻辑没有调试通！！！！
 public class UnitTest : Unit
 {
     public GameObject TargetActor;            //目标对象
-    public Transform TargetPosition;      //目标位置
-    
-    private enum UnitState
+
+    public enum UnitState
     {
-        MoveToPos,   //移动到一个位置
-        MoveToTargetActor,  //移动到一个目标
+        Idleing,      
+        Moving,
+        Attack_City,
+        Attack_Enemy,
+        Dead,
     }
+    
+    public enum UnitTargetType 
+    {
+        City,
+        Enemy,
+    }
+
+    public UnitState curUnitState;   //当前的单位状态
+    
     
     public void MoveToTargetActor(GameObject targetObject)
     {
-        
+        var UnitTest = targetObject.GetComponent<UnitTest>();
+        if (UnitTest)
+        {
+            
+        }
     }
 
-    public void MoveToTargetPosition(Transform targetTrans)
-    {
-        
-    }
-    
     //references
 
     protected Animator animation;
