@@ -11,31 +11,61 @@ public class UnitTest : Unit
 
     public enum UnitState
     {
-        Idleing,      
-        Moving,
-        Attack_City,
-        Attack_Enemy,
-        Dead,
+        Idleing,      //休闲
+        Moving,       //移动
+        Attack_City,   //攻击城市
+        Attack_Enemy,  //攻击敌人
+        Dead,          //死亡
     }
     
+    //士兵目标类型
     public enum UnitTargetType 
     {
-        City,
-        Enemy,
+        City,   //城市
+        Enemy,  //敌人
     }
 
     public UnitState curUnitState;   //当前的单位状态
+
     
-    
-    public void MoveToTargetActor(GameObject targetObject)
+    protected override void Awake()
     {
-        var UnitTest = targetObject.GetComponent<UnitTest>();
-        if (UnitTest)
+        base.Awake();
+        navigation = GetComponent<MovementNavigation>();
+        animation = Obj_Ani.GetComponent<Animator>(); 
+        resourceCollector = GetComponent<ResourceCollector>();
+    }
+    
+    protected void MoveToEnemy_Internal(GameObject Enemy)
+    {
+        
+    }
+
+    protected void AttackAnim_Interanl(bool attack)
+    {
+        animation?.SetBool(UnitAnimation.StateNames.DoAttack, false);
+    }
+    
+    public void MoveToCity(GameObject city)
+    {
+        var cityObj = city.GetComponent<ClickableObject>();
+        if (cityObj)
         {
-            
+            curUnitState = UnitState.Moving;
+            navigation.stoppingDistance = template.engageDistance;
+            targetOfMovement = cityObj.transform.position;
+            navigation.SetDestination(targetOfMovement.Value);
+            navigation.isStopped = false;
+            AttackAnim_Interanl(false);
         }
     }
 
+    protected override void Update()
+    {
+        base.Update();
+        
+    }
+    
     //references
 
     protected Animator animation;
@@ -55,14 +85,14 @@ public class UnitTest : Unit
     private Coroutine lerpingCombatReady;
     private Coroutine lerpingAttackEvent;
 
-    protected override void Awake()
-    {
-        base.Awake();
-        navigation = GetComponent<MovementNavigation>();
-        //animation = GetComponent<UnitAnimation>();
-        animation = Obj_Ani.GetComponent<Animator>(); 
-        resourceCollector = GetComponent<ResourceCollector>();
-    }
+    // protected override void Awake()
+    // {
+    //     base.Awake();
+    //     navigation = GetComponent<MovementNavigation>();
+    //     //animation = GetComponent<UnitAnimation>();
+    //     animation = Obj_Ani.GetComponent<Animator>(); 
+    //     resourceCollector = GetComponent<ResourceCollector>();
+    // }
 
     protected override void Start()
     {
@@ -80,12 +110,7 @@ public class UnitTest : Unit
         base.Start();
     }
 
-    protected override void Update()
-    {
-        base.Update();
 
-   
-    }
 
 #if UNITY_EDITOR
     protected override void OnDrawGizmos()
@@ -187,49 +212,7 @@ public class UnitTest : Unit
         return true;
     }
 
-    private bool SeekNewResourceSource(ResourceSource.ResourceType resourceType, bool closeby)
-    {
-        IEnumerable<ResourceSource> resources;
-        if (closeby)
-        {
-            /// search surroundings for colliders of resource sources
-            Collider[] colliders = Physics.OverlapSphere(transform.position, template.guardDistance, InputManager.Instance.unitsLayerMask, QueryTriggerInteraction.Collide);
-            resources = colliders.Select(collider => collider.GetComponent<ResourceSource>()).Where(source => source != null && source.resourceType == resourceType);
-        }
-        else
-        {
-            resources = resourceCollector.resourceSourcesRegister.GetEnumerable().Select(behavior => behavior as ResourceSource).Where(source => source.resourceType == resourceType);
-        }
-
-        ResourceSource closest = null;
-        float distanceToClosestSqr = float.PositiveInfinity;
-        foreach (var resource in resources)
-        {
-            float distanceSqr = (resource.transform.position - targetOfMovement.Value).sqrMagnitude;
-            if (distanceSqr < distanceToClosestSqr)
-            {
-                distanceToClosestSqr = distanceSqr;
-                closest = resource;
-            }
-        }
-
-        if (closest == null)
-        {
-            if (resourceCollector.isNotEmpty)
-            {
-                Building dropoffBuilding = faction.GetClosestBuildingWithResourceDropoff(transform.position, targetOfAttack.GetComponent<ResourceSource>().resourceType);
-                AICommand dropResourcesCommand = new AICommand(AICommand.CommandTypes.CustomActionAtObj, dropoffBuilding, AICommand.CustomActions.dropoffResources);
-                AddCommand(dropResourcesCommand);
-            }
-            commandExecuted = true;
-            return false;
-        }
-
-        targetOfAttack = closest.GetComponent<InteractableObject>();
-        targetOfMovement = targetOfAttack.transform.position;
-        return true;
-    }
-
+  
     private void ShootProjectileAtTarget(int damage)
     {
         if (template.projectile == null || template.projectile.GetComponent<Projectile>() == null)
