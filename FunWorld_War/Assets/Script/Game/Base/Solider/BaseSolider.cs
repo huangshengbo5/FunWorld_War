@@ -6,6 +6,8 @@ using UnityEngine;
 public class BaseSolider : MonoBehaviour,SoliderInterface
 {
 
+    
+    public int ViewRedius;   //视野半径
     protected Transform target;
     public void SetTarget(Transform target)
     {
@@ -25,5 +27,10 @@ public class BaseSolider : MonoBehaviour,SoliderInterface
     public void SufferInjure(float injure)
     {
         throw new System.NotImplementedException();
+    }
+
+    void Update()
+    {
+        
     }
 }
