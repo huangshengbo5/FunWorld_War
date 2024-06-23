@@ -1,7 +1,3 @@
-using System;
-using System.Collections.Generic;
-using BehaviorDesigner.Runtime.Tasks.Unity.UnityGameObject;
-using BehaviorDesigner.Runtime.Tasks.Unity.UnityPhysics;
 using Script.Game;
 using Script.Game.Base;
 using UnityEngine;
@@ -32,8 +28,8 @@ public class Town_City : BaseTown
         {
             Soliders.Add(CreateSolider(i));
             if (TargetActor)
-            {
-                Soliders[i].MoveToTarget(TargetActor.position);
+            { 
+                StartCoroutine(Soliders[i].MoveToTarget(TargetActor.position));
             }
         }
     }
@@ -47,7 +43,8 @@ public class Town_City : BaseTown
         soliderTans.position = GetSoliderPosition();
         soliderTans.localScale = Vector3.one;
         soliderTans.rotation = Quaternion.identity;
-        var soliderCom = solider.GetComponent<SoliderPlayer>();
+        var soliderCom = solider.GetComponent<BaseSolider>();
+        soliderCom.OwnerType = OwnerType;
         return soliderCom;
     }
 
@@ -56,9 +53,9 @@ public class Town_City : BaseTown
     {
         var selfPosition = this.gameObject.transform.position;
         var random = new Random();
-        var posx = random.Next((int)selfPosition.x,(int)selfPosition.x+5);
+        var posx = random.Next((int)selfPosition.x+3,(int)selfPosition.x+4);
         //var posy = random.Next((int)selfPosition.y,(int)selfPosition.y+10);
-        var posz = random.Next((int)selfPosition.z,(int)selfPosition.z+5);
+        var posz = random.Next((int)selfPosition.z+3,(int)selfPosition.z+4);
         return new Vector3(posx,0,posz);
     }
 
