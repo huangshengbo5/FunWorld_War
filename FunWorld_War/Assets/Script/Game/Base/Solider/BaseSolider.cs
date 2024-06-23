@@ -67,23 +67,17 @@ public class BaseSolider : MonoBehaviour
         if (Solider_Enemy != null )
         { 
             navMeshAgent.SetDestination(Solider_Enemy.transform.position);
-            // navMeshAgent.stoppingDistance = ViewAttackRedius;
-            // if (navMeshAgent.isStopped)
-            // {
-                if (Vector3.Distance(this.transform.position,Solider_Enemy.transform.position) <= ViewAttackRedius)
-                {
-                    ChangeState(State.Attack_Enemy);
-                    UpdateAttack();
-                }
-                else
-                {
-                    ChangeState(State.Idleing);
-                    Solider_Enemy = null;
-                }
-            //}
+            if (Vector3.Distance(this.transform.position,Solider_Enemy.transform.position) <= ViewAttackRedius)
+            {
+                ChangeState(State.Attack_Enemy);
+                UpdateAttack();
+            }
+            else
+            {
+                ChangeState(State.Idleing);
+                Solider_Enemy = null;
+            }
         }
-        
-        
     }
 
     void UpdateAttack()
@@ -174,7 +168,7 @@ public class BaseSolider : MonoBehaviour
     protected IEnumerator DeadSuccess()
     {
         yield return new WaitForSeconds(1);
-        Destroy(this);
+        DestroyImmediate(this.gameObject);
     }
 
     private void OnDrawGizmos()
@@ -217,6 +211,6 @@ public class BaseSolider : MonoBehaviour
         navMeshAgent = this.GetComponent<NavMeshAgent>();
         navMeshAgent.SetDestination(targetPoint);
         navMeshAgent.stoppingDistance = 2;
-        yield return  new WaitUntil(()=> navMeshAgent.isStopped);
+        yield return null;
     }
 }
