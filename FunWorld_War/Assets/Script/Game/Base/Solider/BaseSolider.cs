@@ -1,4 +1,5 @@
 using System.Collections;
+using DG.Tweening;
 using Script.Game;
 using UnityEngine;
 using UnityEngine.AI;
@@ -11,14 +12,6 @@ public class BaseSolider : MonoBehaviour
         Moving,       //移动
         Attack_Enemy,  //攻击敌人
         Dead,          //死亡
-    }
-
-    public enum AniState
-    {
-        Move,
-        Attack,
-        Die,
-        Idle,
     }
 
     public TownOwnerType OwnerType; 
@@ -39,6 +32,10 @@ public class BaseSolider : MonoBehaviour
     public int Hp;
     //伤害
     public int Damage;
+    
+    //造成伤害时间间隔信息
+    private float AttackTimeStamp;
+    private float AttackInterval = 1;
     public void SetTarget(Transform target)
     {
         this.target = target;
@@ -54,33 +51,40 @@ public class BaseSolider : MonoBehaviour
         Hp -= injure;
     }
     
-    private float AttackTimeStamp;
-    private float AttackInterval = 1;
+
     void Update()
     {
         if (Solider_Enemy == null)
         {
             CheckEnemy();
         }
-
-        bool IsCanAttck = false;
-        if (Solider_Enemy != null )
-        { 
+        if (Solider_Enemy != null && curState != State.Attack_Enemy)
+        {
             navMeshAgent.SetDestination(Solider_Enemy.transform.position);
             if (Vector3.Distance(this.transform.position,Solider_Enemy.transform.position) <= ViewAttackRedius)
             {
+                DoRotateToTarget(Solider_Enemy.transform);
                 ChangeState(State.Attack_Enemy);
-                UpdateAttack();
+                DoAttack();
             }
             else
             {
-                ChangeState(State.Idleing);
-                Solider_Enemy = null;
+                if (curState != State.Idleing)
+                {
+                    ChangeState(State.Idleing);
+                    Solider_Enemy = null;
+                }
             }
         }
     }
 
-    void UpdateAttack()
+    void DoRotateToTarget(Transform targetTrans)
+    {
+        var dir = targetTrans.position - transform.position;
+        transform.DOLookAt( dir, 0.5f);
+    }
+    
+    void DoAttack()
     {
         AttackTimeStamp += Time.deltaTime;
         if (AttackTimeStamp >= AttackInterval)
@@ -119,35 +123,6 @@ public class BaseSolider : MonoBehaviour
         return false;
     }
 
-    //攻击敌人
-    protected IEnumerator Attack()
-    {
-        if (Solider_Enemy != null && Solider_Enemy.IsDead() == false)
-        {
-            ChangeState(State.Moving);
-            navMeshAgent.SetDestination(Solider_Enemy.transform.position);
-            navMeshAgent.stoppingDistance = ViewAttackRedius;
-            yield return  new WaitUntil(()=> navMeshAgent.isStopped);
-            ChangeState(State.Attack_Enemy);
-            Solider_Enemy.BeAttack(this,Damage);
-            yield return new WaitUntil(() => Solider_Enemy.IsDead());
-            ChangeState(State.Idleing);
-        }
-        else
-        {
-            yield return null;
-        }
-    }
-
-    protected void AttackSucces()
-    {
-        if (Solider_Enemy != null && Solider_Enemy.IsDead() == false)
-        {
-            Solider_Enemy.BeAttack(this,Damage);
-        }
-    }
-    
-    
     //被攻击
     protected void BeAttack(BaseSolider attacker, int damageNum)
     {
@@ -196,6 +171,7 @@ public class BaseSolider : MonoBehaviour
                 Animator.SetBool("Attack",true);
                 break;
         }
+        curState = state;
     }
 
     protected void ResetAniState()
