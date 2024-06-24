@@ -80,8 +80,9 @@ public class BaseSolider : MonoBehaviour
 
     void DoRotateToTarget(Transform targetTrans)
     {
-        var dir = targetTrans.position - transform.position;
-        transform.DOLookAt( dir, 0.5f);
+        // var dir = targetTrans.position - transform.position;
+        // transform.DOLookAt( dir, 0.5f);
+        transform.LookAt(targetTrans.position);
     }
     
     void DoAttack()
