@@ -50,44 +50,44 @@
      <Compile Include="Assets\Editor\DataExporter\Type\IntType.cs" />
      <Compile Include="Assets\Editor\DataExporter\Generater\ExcelJsonDataGenerater.cs" />
      <Compile Include="Assets\Editor\DataExporter\Generater\ExcelJsonClassGenerater.cs" />
-     <Compile Include="Assets\Editor\DataExporter\Data\ExcelData.cs" />
-     <Compile Include="Assets\Editor\DataExporter\Type\DictionaryIntStringType.cs" />
      <Compile Include="Assets\Editor\DataExporter\Data\Excel.cs" />
-     <Compile Include="Assets\Editor\DataExporter\Type\DesType.cs" />
      <Compile Include="Assets\UnityPackages\BehaviorTree\Behavior Designer\Editor\ExternalBehaviorTreeInspector.cs" />
-     <Compile Include="Assets\Editor\DataExporter\Type\ListFloatType.cs" />
-     <Compile Include="Assets\Editor\DataExporter\ExcelWriter\EppWriter.cs" />
      <Compile Include="Assets\UnityPackages\BehaviorTree\Behavior Designer\Editor\Object Drawers\FloatSliderDrawer.cs" />
      <Compile Include="Assets\Editor\DataExporter\Type\DictionaryIntIntType.cs" />
      <Compile Include="Assets\Editor\DataExporter\Type\IType.cs" />
      <Compile Include="Assets\Editor\DataExporter\Type\Vector2Type.cs" />
      <Compile Include="Assets\Editor\DataExporter\Type\StringType.cs" />
      <Compile Include="Assets\Editor\DataExporter\Type\FloatType.cs" />
-     <Compile Include="Assets\Editor\DataExporter\Generater\ExcelBinaryDataGenerater.cs" />
-     <Compile Include="Assets\Editor\DataExporter\Util\SupportTypeUtil.cs" />
      <Compile Include="Assets\UnityPackages\BehaviorTree\Behavior Designer\Editor\Object Drawers\IntSliderDrawer.cs" />
-     <Compile Include="Assets\UnityPackages\BehaviorTree\Behavior Designer\Editor\FixGUIStyle.cs" />
-     <Compile Include="Assets\Editor\DataExporter\Type\ListListStringType.cs" />
      <Compile Include="Assets\Editor\DataExporter\DataExporterWindow.cs" />
      <Compile Include="Assets\Editor\DataExporter\Generater\ExcelTextClassGenerater.cs" />
-     <Compile Include="Assets\Editor\DataExporter\Generater\ExcelScriptableObjectClassGenerater.cs" />
-     <Compile Include="Assets\Editor\DataExporter\Util\EditorWindowUtil.cs" />
      <Compile Include="Assets\Editor\DataExporter\Generater\ExcelScriptableObjectDataGenerater.cs" />
      <Compile Include="Assets\UnityPackages\BehaviorTree\Behavior Designer\Editor\Object Drawers\StackedConditionalDrawer.cs" />
+     <Compile Include="Assets\Editor\DataExporter\interface\IExcelClassGenerater.cs" />
+     <Compile Include="Assets\Editor\DataExporter\ExcelWriter\NPOIWriter.cs" />
+     <Compile Include="Assets\Editor\DataExporter\Type\ListIntType.cs" />
+     <Compile Include="Assets\Editor\DataExporter\Generater\ExcelTextDataGenerater.cs" />
+     <Compile Include="Assets\Editor\DataExporter\interface\IExcelWriter.cs" />
+     <Compile Include="Assets\Editor\DataExporter\Generater\ExcelBinaryClassGenerater.cs" />
+     <Compile Include="Assets\Editor\DataExporter\Data\ExcelData.cs" />
+     <Compile Include="Assets\Editor\DataExporter\Type\DictionaryIntStringType.cs" />
+     <Compile Include="Assets\Editor\DataExporter\Type\DesType.cs" />
+     <Compile Include="Assets\Editor\DataExporter\Type\ListFloatType.cs" />
+     <Compile Include="Assets\Editor\DataExporter\ExcelWriter\EppWriter.cs" />
+     <Compile Include="Assets\Editor\DataExporter\Generater\ExcelBinaryDataGenerater.cs" />
+     <Compile Include="Assets\Editor\DataExporter\Util\SupportTypeUtil.cs" />
+     <Compile Include="Assets\UnityPackages\BehaviorTree\Behavior Designer\Editor\FixGUIStyle.cs" />
+     <Compile Include="Assets\Editor\DataExporter\Type\ListListStringType.cs" />
+     <Compile Include="Assets\Editor\DataExporter\Generater\ExcelScriptableObjectClassGenerater.cs" />
+     <Compile Include="Assets\Editor\DataExporter\Util\EditorWindowUtil.cs" />
      <Compile Include="Assets\Editor\DataExporter\interface\IExcelLoader.cs" />
      <Compile Include="Assets\Editor\DataExporter\Util\ExcelExporterUtil.cs" />
-     <Compile Include="Assets\Editor\DataExporter\interface\IExcelClassGenerater.cs" />
      <Compile Include="Assets\UnityPackages\BehaviorTree\Behavior Designer\Editor\Object Drawers\StackedActionDrawer.cs" />
-     <Compile Include="Assets\Editor\DataExporter\ExcelWriter\NPOIWriter.cs" />
      <Compile Include="Assets\Editor\DataExporter\ExcelEditorWindow.cs" />
      <Compile Include="Assets\Editor\DataExporter\Type\Vector3Type.cs" />
      <Compile Include="Assets\Editor\DataExporter\Util\Factorys.cs" />
      <Compile Include="Assets\Editor\DataExporter\interface\IExcelDataGenerater.cs" />
-     <Compile Include="Assets\Editor\DataExporter\Type\ListIntType.cs" />
-     <Compile Include="Assets\Editor\DataExporter\Generater\ExcelTextDataGenerater.cs" />
-     <Compile Include="Assets\Editor\DataExporter\interface\IExcelWriter.cs" />
      <Compile Include="Assets\Editor\DataExporter\ExcelLoader\NPOILoader.cs" />
-     <Compile Include="Assets\Editor\DataExporter\Generater\ExcelBinaryClassGenerater.cs" />
      <Compile Include="Assets\UnityPackages\BehaviorTree\Behavior Designer\Editor\BehaviorTreeInspector.cs" />
      <Folder Include="Assets\Editor" />
      <Folder Include="Assets\Editor\DataExporter\interface" />
@@ -433,6 +433,9 @@
      </Reference>
      <Reference Include="BehaviorDesigner.Editor">
      <HintPath>F:\HuangShengBo\FunWorldGit\FunWorld_War\FunWorld_War\Assets\UnityPackages\BehaviorTree\Behavior Designer\Editor\BehaviorDesigner.Editor.dll</HintPath>
+     </Reference>
+     <Reference Include="GameFramework">
+     <HintPath>F:\HuangShengBo\FunWorldGit\FunWorld_War\FunWorld_War\Assets\GameFramework\Libraries\GameFramework.dll</HintPath>
      </Reference>
      <Reference Include="nunit.framework">
      <HintPath>F:\HuangShengBo\FunWorldGit\FunWorld_War\FunWorld_War\Library\PackageCache\com.unity.ext.nunit@1.0.6\net35\unity-custom\nunit.framework.dll</HintPath>
@@ -971,6 +974,14 @@
     <ProjectReference Include="Assembly-CSharp.csproj">
       <Project>{b9e84515-c456-0e12-df15-0e7eba1508d3}</Project>
       <Name>Assembly-CSharp</Name>
+    </ProjectReference>
+    <ProjectReference Include="UnityGameFramework.Editor.csproj">
+      <Project>{af59f9f9-dc0c-e466-bc8b-8de7e7ecacf2}</Project>
+      <Name>UnityGameFramework.Editor</Name>
+    </ProjectReference>
+    <ProjectReference Include="UnityGameFramework.Runtime.csproj">
+      <Project>{ac351b36-374d-a3a9-1d49-1c1c752d0ab9}</Project>
+      <Name>UnityGameFramework.Runtime</Name>
     </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

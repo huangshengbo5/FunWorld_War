@@ -1,9 +1,13 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 11.00
 # Visual Studio 2010
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "UnityGameFramework.Runtime", "UnityGameFramework.Runtime.csproj", "{ac351b36-374d-a3a9-1d49-1c1c752d0ab9}"
+EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Assembly-CSharp", "Assembly-CSharp.csproj", "{b9e84515-c456-0e12-df15-0e7eba1508d3}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Assembly-CSharp-Editor", "Assembly-CSharp-Editor.csproj", "{f801f500-cb62-2999-8728-70a0e44e209d}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "UnityGameFramework.Editor", "UnityGameFramework.Editor.csproj", "{af59f9f9-dc0c-e466-bc8b-8de7e7ecacf2}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Assembly-CSharp-firstpass", "Assembly-CSharp-firstpass.csproj", "{f9d95a97-4937-c054-77d7-251ce7899f15}"
 EndProject
@@ -14,10 +18,14 @@ Global
 		Debug|Any CPU = Debug|Any CPU
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{ac351b36-374d-a3a9-1d49-1c1c752d0ab9}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{ac351b36-374d-a3a9-1d49-1c1c752d0ab9}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{b9e84515-c456-0e12-df15-0e7eba1508d3}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{b9e84515-c456-0e12-df15-0e7eba1508d3}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{f801f500-cb62-2999-8728-70a0e44e209d}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{f801f500-cb62-2999-8728-70a0e44e209d}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{af59f9f9-dc0c-e466-bc8b-8de7e7ecacf2}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{af59f9f9-dc0c-e466-bc8b-8de7e7ecacf2}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{f9d95a97-4937-c054-77d7-251ce7899f15}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{f9d95a97-4937-c054-77d7-251ce7899f15}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{b7757537-9d30-6a9f-8035-d16b3876e22f}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
