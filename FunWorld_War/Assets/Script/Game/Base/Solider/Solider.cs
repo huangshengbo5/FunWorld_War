@@ -1,13 +1,32 @@
 using System.Collections;
 using DG.Tweening;
 using Script.Game;
+using Script.Game.Base;
 using UnityEngine;
 using UnityEngine.AI;
+using UnityGameFramework.Runtime;
 
-public class BaseSolider : MonoBehaviour
+public class Solider : MonoBehaviour,SoliderInterface
 {
+
+    public void Init()
+    {
+        InitFSM();
+    }
+    
+    //初始化状态机
+    protected void InitFSM()
+    {
+        var fsm = GameEntry.Fsm.CreateFsm<Solider>(this, 
+            new FSMSoliderIdle(),
+            new FSMSoliderDead(),
+            new FSMSoliderIdle(),
+            new FSMSoliderMoveToTarget());
+        fsm.Start<FSMSoliderIdle>();
+    }
+    
     public enum State
-  {
+    {
         Idleing,      //休闲
         Moving,       //移动
         Attack_Enemy,  //攻击敌人
@@ -25,7 +44,7 @@ public class BaseSolider : MonoBehaviour
     protected Transform target;
 
     //敌人
-    protected BaseSolider Solider_Enemy;
+    protected Solider Solider_Enemy;
     public NavMeshAgent navMeshAgent;
 
     //血量
@@ -44,6 +63,11 @@ public class BaseSolider : MonoBehaviour
     public Transform GetTarget()
     {
         return this.target;
+    }
+
+    public void SufferInjure(float injure)
+    {
+        throw new System.NotImplementedException();
     }
 
     public void SufferInjure(int injure)
@@ -109,10 +133,10 @@ public class BaseSolider : MonoBehaviour
         {
             for (int i = 0; i < hits.Length; i++)
             {
-                var tempSolider = hits[i].GetComponent<BaseSolider>(); 
+                var tempSolider = hits[i].GetComponent<Solider>(); 
                 if (tempSolider && tempSolider.OwnerType != this.OwnerType)
                 {
-                    Solider_Enemy = hits[i].GetComponent<BaseSolider>();
+                    Solider_Enemy = hits[i].GetComponent<Solider>();
                 }
             }
         }
@@ -125,7 +149,7 @@ public class BaseSolider : MonoBehaviour
     }
 
     //被攻击
-    protected void BeAttack(BaseSolider attacker, int damageNum)
+    protected void BeAttack(Solider attacker, int damageNum)
     {
         SufferInjure(damageNum);
         if (Hp <= damageNum)
@@ -182,12 +206,20 @@ public class BaseSolider : MonoBehaviour
         Animator.SetBool("Attack",false);
     }
     
-    public  IEnumerator MoveToTarget(Vector3 targetPoint)
+    // public  IEnumerator MoveToTarget(Vector3 targetPoint)
+    // {
+    //     ChangeState(State.Moving);
+    //     navMeshAgent = this.GetComponent<NavMeshAgent>();
+    //     navMeshAgent.SetDestination(targetPoint);
+    //     navMeshAgent.stoppingDistance = 2;
+    //     yield return null;
+    // }
+    
+    public void MoveToTarget(Vector3 targetPoint)
     {
         ChangeState(State.Moving);
         navMeshAgent = this.GetComponent<NavMeshAgent>();
         navMeshAgent.SetDestination(targetPoint);
         navMeshAgent.stoppingDistance = 2;
-        yield return null;
     }
 }

@@ -192,6 +192,7 @@
      <Compile Include="Assets\UnityPackages\BehaviorTree\Behavior Designer\Runtime\Tasks\Unity\NavMeshAgent\GetDestination.cs" />
      <Compile Include="Assets\UnityPackages\BehaviorTree\Behavior Designer\Runtime\Tasks\Unity\Transform\GetChild.cs" />
      <Compile Include="Assets\UnityPackages\BehaviorTree\Behavior Designer\Runtime\Tasks\Unity\Animator\IsInTransition.cs" />
+     <Compile Include="Assets\Script\Game\Fsm\Solider\FSMSoliderAttack.cs" />
      <Compile Include="Assets\UnityPackages\BehaviorTree\Behavior Designer\Runtime\Tasks\Unity\AudioSource\PlayOneShot.cs" />
      <Compile Include="Assets\UnityPackages\BehaviorTree\Behavior Designer\Runtime\Tasks\Unity\Math\IntAbs.cs" />
      <Compile Include="Assets\UnityPackages\BehaviorTree\Behavior Designer\Runtime\Tasks\Unity\Rigidbody\AddExplosionForce.cs" />
@@ -205,6 +206,7 @@
      <Compile Include="Assets\UnityPackages\BehaviorTree\Behavior Designer\Runtime\ExternalBehaviorTree.cs" />
      <Compile Include="Assets\Script\Game\Base\PlayerInput.cs" />
      <Compile Include="Assets\UnityPackages\BehaviorTree\Behavior Designer\Runtime\Tasks\Unity\Animator\CrossFade.cs" />
+     <Compile Include="Assets\Script\Game\Fsm\Solider\FSMSoliderIdle.cs" />
      <Compile Include="Assets\UnityPackages\BehaviorTree\Behavior Designer\Runtime\Tasks\Unity\ParticleSystem\GetPlaybackSpeed.cs" />
      <Compile Include="Assets\UnityPackages\BehaviorTree\Behavior Designer\Runtime\Tasks\Unity\AudioSource\SetMaxDistance.cs" />
      <Compile Include="Assets\UnityPackages\BehaviorTree\Behavior Designer\Runtime\Tasks\Actions\Reflection\SetFieldValue.cs" />
@@ -317,6 +319,7 @@
      <Compile Include="Assets\UnityPackages\BehaviorTree\Behavior Designer\Runtime\Tasks\Unity\ParticleSystem\IsPaused.cs" />
      <Compile Include="Assets\Script\Data\Base\ConfigBinaryManager.cs" />
      <Compile Include="Assets\Script\Data\CfgConst.cs" />
+     <Compile Include="Assets\Script\Game\GameFramework\GameEntry.cs" />
      <Compile Include="Assets\UnityPackages\BehaviorTree\Behavior Designer\Runtime\Tasks\Unity\AudioSource\SetTime.cs" />
      <Compile Include="Assets\UnityPackages\BehaviorTree\Behavior Designer\Runtime\Tasks\Unity\Animator\GetSpeed.cs" />
      <Compile Include="Assets\UnityPackages\BehaviorTree\Behavior Designer\Runtime\Tasks\Unity\Vector2\Normalize.cs" />
@@ -344,6 +347,7 @@
      <Compile Include="Assets\UnityPackages\BehaviorTree\Behavior Designer\Runtime\Tasks\Unity\String\CompareTo.cs" />
      <Compile Include="Assets\UnityPackages\BehaviorTree\Behavior Designer\Runtime\Tasks\Unity\Debug\DrawLine.cs" />
      <Compile Include="Assets\UnityPackages\BehaviorTree\Behavior Designer\Runtime\Tasks\Unity\CharacterController\SetRadius.cs" />
+     <Compile Include="Assets\Script\Game\Base\Solider\Solider.cs" />
      <Compile Include="Assets\Script\Data\Base\ConfigJsonContainer.cs" />
      <Compile Include="Assets\UnityPackages\BehaviorTree\Behavior Designer\Runtime\Tasks\Unity\Input\IsMouseUp.cs" />
      <Compile Include="Assets\UnityPackages\BehaviorTree\Behavior Designer\Runtime\Tasks\Actions\SendEvent.cs" />
@@ -365,6 +369,7 @@
      <Compile Include="Assets\UnityPackages\BehaviorTree\Behavior Designer\Runtime\Tasks\Unity\Transform\GetRightVector.cs" />
      <Compile Include="Assets\UnityPackages\BehaviorTree\Behavior Designer\Runtime\Variables\SharedLayerMask.cs" />
      <Compile Include="Assets\UnityPackages\BehaviorTree\Behavior Designer\Runtime\Tasks\Unity\Quaternion\Lerp.cs" />
+     <Compile Include="Assets\Script\Game\GameFramework\GameEntry.Custom.cs" />
      <Compile Include="Assets\UnityPackages\BehaviorTree\Behavior Designer\Runtime\Tasks\Unity\Animator\MatchTarget.cs" />
      <Compile Include="Assets\UnityPackages\BehaviorTree\Behavior Designer\Runtime\Object Drawers\IntSliderAttribute.cs" />
      <Compile Include="Assets\UnityPackages\BehaviorTree\Behavior Designer\Runtime\Tasks\Unity\Debug\LogValue.cs" />
@@ -470,13 +475,13 @@
      <Compile Include="Assets\UnityPackages\BehaviorTree\Behavior Designer\Runtime\Tasks\Unity\String\GetRandomString.cs" />
      <Compile Include="Assets\UnityPackages\BehaviorTree\Behavior Designer\Runtime\Tasks\Unity\Animator\SetIntegerParameter.cs" />
      <Compile Include="Assets\UnityPackages\BehaviorTree\Behavior Designer\Runtime\Tasks\Unity\Quaternion\AngleAxis.cs" />
+     <Compile Include="Assets\Script\Game\GameFramework\GameEntry.Builtin.cs" />
      <Compile Include="Assets\UnityPackages\BehaviorTree\Behavior Designer\Runtime\Tasks\Unity\CharacterController\SetStepOffset.cs" />
      <Compile Include="Assets\UnityPackages\BehaviorTree\Behavior Designer\Runtime\Tasks\Unity\AudioSource\GetMinDistance.cs" />
      <Compile Include="Assets\Script\Data\Base\ConfigBinaryBase.cs" />
      <Compile Include="Assets\UnityPackages\BehaviorTree\Behavior Designer\Runtime\Tasks\Unity\PlayerPrefs\SetFloat.cs" />
      <Compile Include="Assets\Script\Data\Base\IConfigManager.cs" />
      <Compile Include="Assets\UnityPackages\BehaviorTree\Behavior Designer\Runtime\Tasks\Unity\AudioSource\SetPitch.cs" />
-     <Compile Include="Assets\Script\Game\Base\Solider\BaseSolider.cs" />
      <Compile Include="Assets\UnityPackages\BehaviorTree\Behavior Designer\Runtime\Tasks\Unity\AudioSource\SetMinDistance.cs" />
      <Compile Include="Assets\UnityPackages\BehaviorTree\Behavior Designer\Runtime\Tasks\Composites\Sequence.cs" />
      <Compile Include="Assets\UnityPackages\BehaviorTree\Behavior Designer\Runtime\Tasks\Unity\Renderer\IsVisible.cs" />
@@ -552,6 +557,7 @@
      <Compile Include="Assets\UnityPackages\BehaviorTree\Behavior Designer\Runtime\Tasks\Unity\Vector3\GetRightVector.cs" />
      <Compile Include="Assets\UnityPackages\BehaviorTree\Behavior Designer\Runtime\Tasks\Unity\GameObject\FindGameObjectsWithTag.cs" />
      <Compile Include="Assets\UnityPackages\BehaviorTree\Behavior Designer\Runtime\Tasks\Unity\Animator\SetBoolParameter.cs" />
+     <Compile Include="Assets\Script\Game\Fsm\Solider\FSMSoliderDead.cs" />
      <Compile Include="Assets\UnityPackages\BehaviorTree\Behavior Designer\Runtime\Tasks\Unity\Transform\SetRotation.cs" />
      <Compile Include="Assets\UnityPackages\BehaviorTree\Behavior Designer\Runtime\Tasks\Unity\AudioSource\SetPriority.cs" />
      <Compile Include="Assets\UnityPackages\BehaviorTree\Behavior Designer\Runtime\Tasks\Unity\CharacterController\SetCenter.cs" />
@@ -592,6 +598,7 @@
      <Compile Include="Assets\UnityPackages\BehaviorTree\Behavior Designer\Runtime\Tasks\Unity\AudioSource\GetTime.cs" />
      <Compile Include="Assets\UnityPackages\BehaviorTree\Behavior Designer\Runtime\Tasks\Unity\Timeline\Pause.cs" />
      <Compile Include="Assets\UnityPackages\BehaviorTree\Behavior Designer\Runtime\Tasks\Unity\AudioSource\GetPriority.cs" />
+     <Compile Include="Assets\Script\Game\Fsm\Solider\FSMSoliderMoveToTarget.cs" />
      <Compile Include="Assets\UnityPackages\BehaviorTree\Behavior Designer\Runtime\Object Drawers\FloatSliderAttribute.cs" />
      <Compile Include="Assets\UnityPackages\BehaviorTree\Behavior Designer\Runtime\Tasks\EntryTask.cs" />
      <Compile Include="Assets\UnityPackages\BehaviorTree\Behavior Designer\Runtime\Tasks\Unity\Rigidbody2D\GetPosition.cs" />
@@ -738,13 +745,14 @@
      <Folder Include="Assets\UnityPackages\BehaviorTree\Behavior Designer\Runtime\Tasks\Unity\Time" />
      <Folder Include="Assets\Resources\Avatar" />
      <None Include="Assets\UnityPackages\TextMesh Pro\Resources\LineBreaking Leading Characters.txt" />
+     <Folder Include="Assets\Script\Game\GameFramework" />
      <Folder Include="Assets\Res\Model" />
      <Folder Include="Assets\UnityPackages\BehaviorTree\Behavior Designer\Runtime\Object Drawers" />
      <Folder Include="Assets\UnityPackages\Toon_RTS\WesternKingdoms\models\Materials" />
      <Folder Include="Assets\UnityPackages\BehaviorTree\Behavior Designer\Runtime\Tasks\Unity\ParticleSystem" />
      <Folder Include="Assets\Res\Model\xiao_bing_dao" />
      <None Include="Assets\UnityPackages\TextMesh Pro\Shaders\TMPro_Properties.cginc" />
-     <Folder Include="Assets\Script\Game\Base\Solider\Fsm" />
+     <Folder Include="Assets\Script\Game\Fsm" />
      <Folder Include="Assets\Res\Model\bu_xiaozu\Materials" />
      <None Include="Assets\Fonts\a charming font\a_charming_font.fnt" />
      <Folder Include="Assets\GameFramework" />
@@ -777,6 +785,7 @@
      <None Include="Assets\UnityPackages\Hovl Studio\Resources\Shaders\AddTrail.shader" />
      <Folder Include="Assets\UnityPackages\Hovl Studio\Toon projectiles\Prefabs" />
      <Folder Include="Assets\UnityPackages\BehaviorTree\Behavior Designer\Runtime\Tasks\Unity\CharacterController" />
+     <Folder Include="Assets\Script\Game\Fsm\Solider" />
      <Folder Include="Assets\UnityPackages\Hovl Studio\Resources" />
      <None Include="Assets\Fonts\chevice\CevicheOneFnt.fnt" />
      <Folder Include="Assets\Script\Game\Define" />

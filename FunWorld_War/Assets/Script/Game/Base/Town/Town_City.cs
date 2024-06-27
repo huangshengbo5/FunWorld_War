@@ -6,10 +6,8 @@ using Random = System.Random;
 public class Town_City : BaseTown
 {
     public GameObject ObjSolider;
-
-
     public Transform TargetActor;
-   
+    
     private void Start()
     {
         CurSoliderNum = DefaultMaxSoliderNum;
@@ -26,16 +24,14 @@ public class Town_City : BaseTown
     {
         for (int i = 0; i < DefaultMaxSoliderNum; i++)
         {
-            Soliders.Add(CreateSolider(i));
-            if (TargetActor)
-            { 
-                StartCoroutine(Soliders[i].MoveToTarget(TargetActor.position));
-            }
+            var createSolider = CreateSolider(i); 
+            Soliders.Add(createSolider);
+            createSolider.Init();
         }
     }
     
     //创建士兵
-    protected BaseSolider CreateSolider(int index)
+    protected Solider CreateSolider(int index)
     {
         var solider = (GameObject)Instantiate(ObjSolider);
         solider.name = string.Format("Solider_{0}_{1}",OwnerType.ToString(),index) ;
@@ -43,7 +39,7 @@ public class Town_City : BaseTown
         soliderTans.position = GetSoliderPosition();
         soliderTans.localScale = Vector3.one;
         soliderTans.rotation = Quaternion.identity;
-        var soliderCom = solider.GetComponent<BaseSolider>();
+        var soliderCom = solider.GetComponent<Solider>();
         soliderCom.OwnerType = OwnerType;
         return soliderCom;
     }
@@ -64,41 +60,7 @@ public class Town_City : BaseTown
         switch (OwnerType)
         {
             case TownOwnerType.Player:
-                //Update_Controller_Player();
                 break;
         }
-      
-        // if (Input.GetMouseButtonDown(0))
-        // {
-        //     var solider = CreateSolider();
-        //     Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
-        //     RaycastHit hit;
-        //     if (Physics.Raycast(ray,out hit))
-        //     {
-        //         var terrian = hit.collider.gameObject.GetComponent<Terrain>();
-        //         if (terrian != null)
-        //         {
-        //             var postion = hit.point;
-        //             // Transform trans = new RectTransform();
-        //             // trans.transform.position = postion;
-        //             // solider.SetTarget(trans.transform);
-        //             solider.MoveToTarget(postion);
-        //         }
-        //     }
-        // }
     }
-
-    // void Update_Controller_Player()
-    // {
-    //     if (LastCreateTimeStamp >= CreateSoliderInterval)
-    //     {
-    //         CurSoliderNum += 1;
-    //         CurSoliderNum_Txt.SetText(CurSoliderNum.ToString());
-    //         LastCreateTimeStamp = 0;
-    //     }
-    //     else
-    //     {
-    //         LastCreateTimeStamp += Time.deltaTime;
-    //     }
-    // }
 }

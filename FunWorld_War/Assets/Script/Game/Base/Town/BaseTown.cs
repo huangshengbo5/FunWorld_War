@@ -21,14 +21,14 @@ namespace Script.Game.Base
         
         protected int CurSoliderNum;
 
-        protected List<BaseSolider> Soliders = new List<BaseSolider>();
+        protected List<Solider> Soliders = new List<Solider>();
         //生成士兵
-        protected BaseSolider CreateSolider()
+        protected Solider CreateSolider()
         {
             return null;
         }
 
-        public List<BaseSolider> GetAllSoliders()
+        public List<Solider> GetAllSoliders()
         {
             return Soliders;
         }
