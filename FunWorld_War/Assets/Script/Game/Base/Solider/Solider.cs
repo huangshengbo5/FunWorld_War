@@ -8,19 +8,18 @@ using UnityGameFramework.Runtime;
 
 public class Solider : MonoBehaviour,SoliderInterface
 {
-
     public void Init()
     {
-        InitFSM();
+        InitFsm();
     }
-    
-    //初始化状态机
-    protected void InitFSM()
+
+    public void InitFsm()
     {
-        var fsm = GameEntry.Fsm.CreateFsm<Solider>(this, 
+        var fsmName = "FSM_" + this.gameObject.name;
+        var fsm = GameEntry.Fsm.CreateFsm<Solider>(fsmName,this, 
             new FSMSoliderIdle(),
             new FSMSoliderDead(),
-            new FSMSoliderIdle(),
+            new FSMSoliderAttack(),
             new FSMSoliderMoveToTarget());
         fsm.Start<FSMSoliderIdle>();
     }

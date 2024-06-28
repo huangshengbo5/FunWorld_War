@@ -14,5 +14,7 @@ public partial class GameEntry : MonoBehaviour
         InitBuiltinComponents();
         InitCustomComponents();
         InitCustomDebuggers();
+        Main.GameEnter();
+        DontDestroyOnLoad(this.gameObject);
     }
 }
