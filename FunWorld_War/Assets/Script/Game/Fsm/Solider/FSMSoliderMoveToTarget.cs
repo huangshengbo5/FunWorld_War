@@ -5,6 +5,7 @@ using UnityEngine;
 
 public class FSMSoliderMoveToTarget : FsmState<Solider>
 {
+    private Solider Solider_Enemy;
     private Transform targetTrans;
     protected override void OnInit(IFsm<Solider> fsm)
     {
@@ -14,18 +15,28 @@ public class FSMSoliderMoveToTarget : FsmState<Solider>
     protected override void OnEnter(IFsm<Solider> fsm)
     {
         base.OnEnter(fsm);
-        targetTrans = fsm.Owner.GetTarget();
+        targetTrans = fsm.Owner.TargetTown.transform;
+        fsm.Owner.ChangeState(Solider.State.Moving);
         fsm.Owner.MoveToTarget(targetTrans.position);
     }
 
     protected override void OnLeave(IFsm<Solider> fsm, bool isShutdown)
     {
         base.OnLeave(fsm, isShutdown);
+        targetTrans = null;
     }
 
     protected override void OnUpdate(IFsm<Solider> fsm, float elapseSeconds, float realElapseSeconds)
     {
         base.OnUpdate(fsm, elapseSeconds, realElapseSeconds);
+        if (fsm.Owner)
+        {
+            if (fsm.Owner.IsCanAttackEnemy())
+            {
+                fsm.Owner.transform.LookAt(fsm.Owner.TargetSolider.transform.position);
+                ChangeState<FSMSoliderAttack>(fsm);
+            }
+        }
     }
 
     protected override void OnDestroy(IFsm<Solider> fsm)

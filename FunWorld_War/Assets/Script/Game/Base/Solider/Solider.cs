@@ -40,10 +40,35 @@ public class Solider : MonoBehaviour,SoliderInterface
     
     public Animator Animator;
     
-    protected Transform target;
+    protected BaseTown targetTown;
 
     //敌人
-    protected Solider Solider_Enemy;
+    protected Solider targetSolider;
+
+    public Solider TargetSolider
+    {
+        get
+        {
+            return this.targetSolider;
+        }
+        set
+        {
+            this.targetSolider = value;
+        }
+    }
+
+    public BaseTown TargetTown
+    {
+        get
+        {
+            return this.targetTown;
+        }
+        set
+        {
+            this.targetTown = value;
+        }
+    }
+    
     public NavMeshAgent navMeshAgent;
 
     //血量
@@ -54,14 +79,14 @@ public class Solider : MonoBehaviour,SoliderInterface
     //造成伤害时间间隔信息
     private float AttackTimeStamp;
     private float AttackInterval = 1;
-    public void SetTarget(Transform target)
+    public void SetTargetTown(BaseTown targetTown)
     {
-        this.target = target;
+        this.targetTown = targetTown;
     }
 
-    public Transform GetTarget()
+    public BaseTown GetTargetTown()
     {
-        return this.target;
+        return this.targetTown;
     }
 
     public void SufferInjure(float injure)
@@ -77,51 +102,44 @@ public class Solider : MonoBehaviour,SoliderInterface
 
     void Update()
     {
-        if (Solider_Enemy == null)
-        {
-            CheckEnemy();
-        }
-        if (Solider_Enemy != null && curState != State.Attack_Enemy)
-        {
-            navMeshAgent.SetDestination(Solider_Enemy.transform.position);
-            if (Vector3.Distance(this.transform.position,Solider_Enemy.transform.position) <= ViewAttackRedius)
-            {
-                DoRotateToTarget(Solider_Enemy.transform);
-                ChangeState(State.Attack_Enemy);
-                DoAttack();
-            }
-            else
-            {
-                if (curState != State.Idleing)
-                {
-                    ChangeState(State.Idleing);
-                    Solider_Enemy = null;
-                }
-            }
-        }
-    }
-
-    void DoRotateToTarget(Transform targetTrans)
-    {
-        // var dir = targetTrans.position - transform.position;
-        // transform.DOLookAt( dir, 0.5f);
-        transform.LookAt(targetTrans.position);
+        // if (targetSolider == null)
+        // {
+        //     CheckEnemy();
+        // }
+        // if (targetSolider != null && curState != State.Attack_Enemy)
+        // {
+        //     navMeshAgent.SetDestination(targetSolider.transform.position);
+        //     if (Vector3.Distance(this.transform.position,targetSolider.transform.position) <= ViewAttackRedius)
+        //     {
+        //         DoRotateToTarget(targetSolider.transform);
+        //         ChangeState(State.Attack_Enemy);
+        //         DoAttack();
+        //     }
+        //     else
+        //     {
+        //         if (curState != State.Idleing)
+        //         {
+        //             ChangeState(State.Idleing);
+        //             targetSolider = null;
+        //         }
+        //     }
+        // }
     }
     
-    void DoAttack()
+    public void DoAttack()
     {
         AttackTimeStamp += Time.deltaTime;
         if (AttackTimeStamp >= AttackInterval)
         {
             AttackTimeStamp = 0;
-            Solider_Enemy.BeAttack(this,Damage);
+            targetSolider.BeAttack(this,Damage);
         }
     }
 
     //判断周围是否有敌人
-    protected bool CheckEnemy()
+    public bool CheckEnemy()
     {
-        if (Solider_Enemy != null && Solider_Enemy.IsDead() == false)
+        if (targetSolider != null && targetSolider.IsDead() == false)
         {
             return true;
         }
@@ -135,13 +153,27 @@ public class Solider : MonoBehaviour,SoliderInterface
                 var tempSolider = hits[i].GetComponent<Solider>(); 
                 if (tempSolider && tempSolider.OwnerType != this.OwnerType)
                 {
-                    Solider_Enemy = hits[i].GetComponent<Solider>();
+                    targetSolider = hits[i].GetComponent<Solider>();
                 }
             }
         }
-        return Solider_Enemy != null;
+        return targetSolider != null;
     }
 
+    public bool IsCanAttackEnemy()
+    {
+        CheckEnemy();
+        if (targetSolider != null)
+        {
+            navMeshAgent.SetDestination(targetSolider.transform.position);
+            if (Vector3.Distance(this.transform.position,targetSolider.transform.position) <= ViewAttackRedius)
+            {
+                navMeshAgent.isStopped = true;
+                return true;
+            }
+        }
+        return false;
+    }
     public bool IsDead()
     {
         return false;
@@ -157,9 +189,9 @@ public class Solider : MonoBehaviour,SoliderInterface
             StartCoroutine(DeadSuccess());
         }
 
-        if (Solider_Enemy != null && Solider_Enemy != attacker)
+        if (targetSolider != null && targetSolider != attacker)
         {
-            Solider_Enemy = attacker;
+            targetSolider = attacker;
             ChangeState(State.Attack_Enemy);
         }
     }
@@ -177,7 +209,7 @@ public class Solider : MonoBehaviour,SoliderInterface
     }
 
     //改变装填
-    protected void ChangeState(State state)
+    public void ChangeState(State state)
     {
         ResetAniState();
         switch (state)
@@ -204,15 +236,6 @@ public class Solider : MonoBehaviour,SoliderInterface
         Animator.SetBool("Idle",false);
         Animator.SetBool("Attack",false);
     }
-    
-    // public  IEnumerator MoveToTarget(Vector3 targetPoint)
-    // {
-    //     ChangeState(State.Moving);
-    //     navMeshAgent = this.GetComponent<NavMeshAgent>();
-    //     navMeshAgent.SetDestination(targetPoint);
-    //     navMeshAgent.stoppingDistance = 2;
-    //     yield return null;
-    // }
     
     public void MoveToTarget(Vector3 targetPoint)
     {

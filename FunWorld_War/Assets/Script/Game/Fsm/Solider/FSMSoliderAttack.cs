@@ -13,6 +13,7 @@ public class FSMSoliderAttack : FsmState<Solider>
     protected override void OnEnter(IFsm<Solider> fsm)
     {
         base.OnEnter(fsm);
+        fsm.Owner.ChangeState(Solider.State.Attack_Enemy);
     }
 
     protected override void OnLeave(IFsm<Solider> fsm, bool isShutdown)
@@ -23,6 +24,10 @@ public class FSMSoliderAttack : FsmState<Solider>
     protected override void OnUpdate(IFsm<Solider> fsm, float elapseSeconds, float realElapseSeconds)
     {
         base.OnUpdate(fsm, elapseSeconds, realElapseSeconds);
+        if (fsm.Owner.TargetSolider && fsm.Owner.TargetSolider.IsDead() == false) 
+        {
+            fsm.Owner.DoAttack();    
+        }
     }
 
     protected override void OnDestroy(IFsm<Solider> fsm)

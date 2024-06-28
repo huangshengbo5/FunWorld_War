@@ -1,23 +1,19 @@
 using Script.Game;
 using Script.Game.Base;
 using UnityEngine;
+using UnityEngine.Serialization;
 using Random = System.Random;
 
 public class Town_City : BaseTown
 {
     public GameObject ObjSolider;
-    public Transform TargetActor;
+    [FormerlySerializedAs("TargetActor")] public BaseTown TargetTown;
     
     private void Start()
     {
         CurSoliderNum = DefaultMaxSoliderNum;
         CurSoliderNum_Txt.SetText(CurSoliderNum.ToString());
         CreateSoliders();
-    }
-
-    public void InitTown()
-    {
-        
     }
 
     protected void CreateSoliders()
@@ -27,6 +23,7 @@ public class Town_City : BaseTown
             var createSolider = CreateSolider(i); 
             Soliders.Add(createSolider);
             createSolider.Init();
+            createSolider.TargetTown = TargetTown;
         }
     }
     
@@ -54,13 +51,5 @@ public class Town_City : BaseTown
         var posz = random.Next((int)selfPosition.z+3,(int)selfPosition.z+4);
         return new Vector3(posx,0,posz);
     }
-
-    private void Update()
-    {
-        switch (OwnerType)
-        {
-            case TownOwnerType.Player:
-                break;
-        }
-    }
+    
 }
