@@ -15,9 +15,12 @@ public class FSMSoliderMoveToTarget : FsmState<Solider>
     protected override void OnEnter(IFsm<Solider> fsm)
     {
         base.OnEnter(fsm);
-        targetTrans = fsm.Owner.TargetTown.transform;
-        fsm.Owner.ChangeState(Solider.State.Moving);
-        fsm.Owner.MoveToTarget(targetTrans.position);
+        if (fsm.Owner.TargetTown)
+        {
+            targetTrans = fsm.Owner.TargetTown.transform;
+            fsm.Owner.ChangeState(Solider.State.Moving);
+            fsm.Owner.MoveToTarget(targetTrans.position);
+        }
     }
 
     protected override void OnLeave(IFsm<Solider> fsm, bool isShutdown)
@@ -33,7 +36,7 @@ public class FSMSoliderMoveToTarget : FsmState<Solider>
         {
             if (fsm.Owner.IsCanAttackEnemy())
             {
-                fsm.Owner.transform.LookAt(fsm.Owner.TargetSolider.transform.position);
+                
                 ChangeState<FSMSoliderAttack>(fsm);
             }
         }

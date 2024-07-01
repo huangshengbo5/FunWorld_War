@@ -99,33 +99,6 @@ public class Solider : MonoBehaviour,SoliderInterface
         Hp -= injure;
     }
     
-
-    void Update()
-    {
-        // if (targetSolider == null)
-        // {
-        //     CheckEnemy();
-        // }
-        // if (targetSolider != null && curState != State.Attack_Enemy)
-        // {
-        //     navMeshAgent.SetDestination(targetSolider.transform.position);
-        //     if (Vector3.Distance(this.transform.position,targetSolider.transform.position) <= ViewAttackRedius)
-        //     {
-        //         DoRotateToTarget(targetSolider.transform);
-        //         ChangeState(State.Attack_Enemy);
-        //         DoAttack();
-        //     }
-        //     else
-        //     {
-        //         if (curState != State.Idleing)
-        //         {
-        //             ChangeState(State.Idleing);
-        //             targetSolider = null;
-        //         }
-        //     }
-        // }
-    }
-    
     public void DoAttack()
     {
         AttackTimeStamp += Time.deltaTime;
@@ -174,6 +147,7 @@ public class Solider : MonoBehaviour,SoliderInterface
         }
         return false;
     }
+    
     public bool IsDead()
     {
         return false;
@@ -185,14 +159,14 @@ public class Solider : MonoBehaviour,SoliderInterface
         SufferInjure(damageNum);
         if (Hp <= damageNum)
         {
-            ChangeState(State.Dead);
-            StartCoroutine(DeadSuccess());
+            if (ChangeState(State.Dead))
+            {
+                StartCoroutine(DeadSuccess());
+            }
         }
-
-        if (targetSolider != null && targetSolider != attacker)
+        if (targetSolider == null || targetSolider != attacker)
         {
             targetSolider = attacker;
-            ChangeState(State.Attack_Enemy);
         }
     }
 
@@ -209,8 +183,12 @@ public class Solider : MonoBehaviour,SoliderInterface
     }
 
     //改变装填
-    public void ChangeState(State state)
+    public bool ChangeState(State state)
     {
+        if (curState == state)
+        {
+            return false;
+        }
         ResetAniState();
         switch (state)
         {
@@ -228,6 +206,7 @@ public class Solider : MonoBehaviour,SoliderInterface
                 break;
         }
         curState = state;
+        return true;
     }
 
     protected void ResetAniState()

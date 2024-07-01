@@ -13,6 +13,7 @@ public class FSMSoliderAttack : FsmState<Solider>
     protected override void OnEnter(IFsm<Solider> fsm)
     {
         base.OnEnter(fsm);
+        fsm.Owner.transform.LookAt(fsm.Owner.TargetSolider.transform.position);
         fsm.Owner.ChangeState(Solider.State.Attack_Enemy);
     }
 
