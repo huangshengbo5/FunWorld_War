@@ -22,6 +22,8 @@ namespace Script.Game.Base
         protected int CurSoliderNum;
 
         protected List<Solider> Soliders = new List<Solider>();
+
+        public int ViewRedius;  //视野范围
         //生成士兵
         protected Solider CreateSolider()
         {
@@ -37,6 +39,12 @@ namespace Script.Game.Base
         {
             return OwnerType;
         }
+
+        private void ChangeTownType(TownOwnerType type)
+        {
+            OwnerType = type;
+        }
+        
         
     }
 }

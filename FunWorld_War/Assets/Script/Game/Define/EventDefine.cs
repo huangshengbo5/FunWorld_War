@@ -1,7 +1,4 @@
-namespace Script.Game
+public enum EventDefine
 {
-    public enum EventDefine
-    {
-        EventMax= 99999,       
-    }
+    EventMax= 99999,
 }

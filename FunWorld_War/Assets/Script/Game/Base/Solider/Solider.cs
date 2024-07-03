@@ -8,6 +8,7 @@ using UnityGameFramework.Runtime;
 
 public class Solider : MonoBehaviour,SoliderInterface
 {
+
     public void Init()
     {
         InitFsm();
@@ -45,6 +46,8 @@ public class Solider : MonoBehaviour,SoliderInterface
     //敌人
     protected Solider targetSolider;
 
+    //士兵归属的城镇
+    protected BaseTown ownerTown;
     public Solider TargetSolider
     {
         get
@@ -66,6 +69,18 @@ public class Solider : MonoBehaviour,SoliderInterface
         set
         {
             this.targetTown = value;
+        }
+    }
+
+    public BaseTown OwnerTown
+    {
+        get
+        {
+            return this.ownerTown;
+        }
+        set
+        {
+            this.ownerTown = value;
         }
     }
     

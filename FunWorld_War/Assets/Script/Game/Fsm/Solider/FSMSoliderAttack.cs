@@ -27,7 +27,7 @@ public class FSMSoliderAttack : FsmState<Solider>
         base.OnUpdate(fsm, elapseSeconds, realElapseSeconds);
         if (fsm.Owner.TargetSolider && fsm.Owner.TargetSolider.IsDead() == false) 
         {
-            fsm.Owner.DoAttack();    
+            fsm.Owner.DoAttack();
         }
     }
 

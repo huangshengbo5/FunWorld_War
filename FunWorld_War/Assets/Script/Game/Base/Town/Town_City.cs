@@ -1,3 +1,4 @@
+using System;
 using Script.Game;
 using Script.Game.Base;
 using UnityEngine;
@@ -6,15 +7,22 @@ using Random = System.Random;
 
 public class Town_City : BaseTown
 {
+    
     public GameObject ObjSolider;
-    [FormerlySerializedAs("TargetActor")] public BaseTown TargetTown;
+    //目标城镇
+    public BaseTown TargetTown;
     
     private void Start()
     {
         CurSoliderNum = DefaultMaxSoliderNum;
         CurSoliderNum_Txt.SetText(CurSoliderNum.ToString());
-        CreateSoliders();
+        if (OwnerType == TownOwnerType.Player)
+        {
+            CreateSoliders();   
+        }
     }
+    
+    
 
     protected void CreateSoliders()
     {
@@ -37,7 +45,7 @@ public class Town_City : BaseTown
         soliderTans.localScale = Vector3.one;
         soliderTans.rotation = Quaternion.identity;
         var soliderCom = solider.GetComponent<Solider>();
-        soliderCom.OwnerType = OwnerType;
+        soliderCom.OwnerTown = this;
         return soliderCom;
     }
 
@@ -51,5 +59,26 @@ public class Town_City : BaseTown
         var posz = random.Next((int)selfPosition.z+3,(int)selfPosition.z+4);
         return new Vector3(posx,0,posz);
     }
-    
+
+    private void Update()
+    {
+        //todo  城池的戒备状态如何控制？
+        RaycastHit hit = new RaycastHit();
+        Collider[] hits = new Collider[]{};
+        hits = Physics.OverlapSphere(this.transform.position, ViewRedius);
+        if (hits.Length > 0)
+        {
+            for (int i = 0; i < hits.Length; i++)
+            {
+                var tempSolider = hits[i].GetComponent<Solider>(); 
+                if (tempSolider && tempSolider.OwnerType != this.OwnerType)
+                {
+                    if (tempSolider.TargetTown == this)
+                    {
+                        
+                    }
+                }
+            }
+        }
+    }
 }
