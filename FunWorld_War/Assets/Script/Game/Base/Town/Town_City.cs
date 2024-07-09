@@ -1,4 +1,5 @@
 using System;
+using GameFramework.Event;
 using Script.Game;
 using Script.Game.Base;
 using UnityEngine;
@@ -14,6 +15,8 @@ public class Town_City : BaseTown
     
     private void Start()
     {
+        Init();
+        RegisterEvent();
         CurSoliderNum = DefaultMaxSoliderNum;
         CurSoliderNum_Txt.SetText(CurSoliderNum.ToString());
         if (OwnerType == TownOwnerType.Player)
@@ -21,9 +24,25 @@ public class Town_City : BaseTown
             CreateSoliders();   
         }
     }
-    
-    
 
+    private void Init()
+    {
+        BattleNode = new BattleNode();
+        BattleNode.Init();
+    }
+
+    private void RegisterEvent()
+    {
+        GameEntry.Event.Subscribe(BattleSingleTownResultEventArgs.EventId,OnSingleTownResult); 
+    }
+    
+    void OnSingleTownResult(object sender, GameEventArgs e)
+    {
+        var eventData = e as BattleSingleTownResultEventArgs;
+        var type = eventData.OwnerType;
+        Debug.Log(string.Format("胜利{0}",type));
+    }
+    
     protected void CreateSoliders()
     {
         for (int i = 0; i < DefaultMaxSoliderNum; i++)
@@ -33,6 +52,7 @@ public class Town_City : BaseTown
             createSolider.Init();
             createSolider.TargetTown = TargetTown;
         }
+        BattleNode.JoinBattle(Soliders);
     }
     
     //创建士兵
@@ -62,23 +82,24 @@ public class Town_City : BaseTown
 
     private void Update()
     {
-        //todo  城池的戒备状态如何控制？
-        RaycastHit hit = new RaycastHit();
-        Collider[] hits = new Collider[]{};
-        hits = Physics.OverlapSphere(this.transform.position, ViewRedius);
-        if (hits.Length > 0)
-        {
-            for (int i = 0; i < hits.Length; i++)
-            {
-                var tempSolider = hits[i].GetComponent<Solider>(); 
-                if (tempSolider && tempSolider.OwnerType != this.OwnerType)
-                {
-                    if (tempSolider.TargetTown == this)
-                    {
-                        
-                    }
-                }
-            }
-        }
+        BattleNode.CheckBattleResult();
+        // //todo  城池的戒备状态如何控制？
+        // RaycastHit hit = new RaycastHit();
+        // Collider[] hits = new Collider[]{};
+        // hits = Physics.OverlapSphere(this.transform.position, ViewRedius);
+        // if (hits.Length > 0)
+        // {
+        //     for (int i = 0; i < hits.Length; i++)
+        //     {
+        //         var tempSolider = hits[i].GetComponent<Solider>(); 
+        //         if (tempSolider && tempSolider.OwnerType != this.OwnerType)
+        //         {
+        //             if (tempSolider.TargetTown == this)
+        //             {
+        //                 
+        //             }
+        //         }
+        //     }
+        // }
     }
 }

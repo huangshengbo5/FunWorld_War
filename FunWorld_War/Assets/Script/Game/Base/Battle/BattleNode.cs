@@ -1,23 +1,22 @@
 using System;
-using System.Collections;
 using System.Collections.Generic;
-using UnityEngine;
 
 //记录一个城池的战斗信息
 //每个城市都会有自己的战斗数据
 public class BattleNode
 {
     private Dictionary<TownOwnerType, List<Solider>> EnemyDictionary;
-    private Dictionary<TownOwnerType, int> BattleLeftInfo = new Dictionary<TownOwnerType, int>();
+    private Dictionary<TownOwnerType, int> BattleLeftInfo;
 
     private int OwnerTownId;
     public void Init()
     {
         EnemyDictionary = new Dictionary<TownOwnerType, List<Solider>>();
+        BattleLeftInfo = new Dictionary<TownOwnerType, int>();
     }
 
-    //一队敌军参与战斗
-    public void Join(List<Solider> enemy)
+    //一只敌军参加战斗
+    public void JoinBattle(List<Solider> enemy)
     {
         var townOwnerType = enemy[0].OwnerType;
         if (!EnemyDictionary.ContainsKey(townOwnerType))
@@ -27,6 +26,7 @@ public class BattleNode
         EnemyDictionary[townOwnerType].AddRange(enemy);
     }
 
+    //检查战斗结果
     public Tuple<bool, TownOwnerType> CheckBattleResult()
     {
         var result = new Tuple<bool, TownOwnerType>(false,TownOwnerType.None);
