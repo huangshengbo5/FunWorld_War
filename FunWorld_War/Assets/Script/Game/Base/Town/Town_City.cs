@@ -7,7 +7,7 @@ using Random = System.Random;
 
 public class Town_City : BaseTown
 {
-    
+    private BattleNode BattleNode;
     public GameObject ObjSolider;
     //目标城镇
     public BaseTown TargetTown;

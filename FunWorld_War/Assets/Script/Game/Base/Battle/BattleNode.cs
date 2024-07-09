@@ -9,6 +9,8 @@ public class BattleNode
 {
     private Dictionary<TownOwnerType, List<Solider>> EnemyDictionary;
     private Dictionary<TownOwnerType, int> BattleLeftInfo = new Dictionary<TownOwnerType, int>();
+
+    private int OwnerTownId;
     public void Init()
     {
         EnemyDictionary = new Dictionary<TownOwnerType, List<Solider>>();
@@ -33,26 +35,24 @@ public class BattleNode
         var leftTroopNum = 0;
         foreach (var enemyItem in EnemyDictionary)
         {
-            if (enemyItem.Value.Count == 0)
-            {
-                if (enemyItem.Key == TownOwnerType.Neutral)
-                {
-                    
-                }
-            }
-            else
+            if (enemyItem.Value.Count > 0)
             {
                 BattleLeftInfo[enemyItem.Key] = enemyItem.Value.Count;
                 leftTroopNum += 1;
             }
         }
-
         if (leftTroopNum == 1)  //只有一方胜出时才需要处理
         {
-            GameEntry.Event.Fire(EventDefine.EventMax);
+            TownOwnerType winType = TownOwnerType.None;
+            foreach (var leftInfoItem in BattleLeftInfo)
+            {
+                if (winType == TownOwnerType.None)
+                {
+                    winType = leftInfoItem.Key;
+                }
+            }
+            GameEntry.Event.Fire(this,BattleSingleTownResultEventArgs.Create(OwnerTownId,winType));
         }
-        
         return result;
     }
-    
 }
