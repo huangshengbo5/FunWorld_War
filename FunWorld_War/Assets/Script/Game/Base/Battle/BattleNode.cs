@@ -9,12 +9,21 @@ public class BattleNode
     private Dictionary<TownOwnerType, int> BattleLeftInfo;
 
     private int OwnerTownId;
-    public void Init()
+    private TownOwnerType ownerTownType;
+    
+    Tuple<bool, TownOwnerType> battleResult = new Tuple<bool, TownOwnerType>(false,TownOwnerType.None);
+    public void Init(TownOwnerType ownerType)
     {
+        ownerTownType = ownerType;
         EnemyDictionary = new Dictionary<TownOwnerType, List<Solider>>();
         BattleLeftInfo = new Dictionary<TownOwnerType, int>();
     }
 
+    private void ResetBattleResult()
+    {
+        battleResult = new Tuple<bool, TownOwnerType>(false,TownOwnerType.None);
+    }
+    
     //一只敌军参加战斗
     public void JoinBattle(List<Solider> enemy)
     {
@@ -29,7 +38,6 @@ public class BattleNode
     //检查战斗结果
     public Tuple<bool, TownOwnerType> CheckBattleResult()
     {
-        var result = new Tuple<bool, TownOwnerType>(false,TownOwnerType.None);
         var isEnd = false;
         BattleLeftInfo.Clear();
         var leftTroopNum = 0;
@@ -51,8 +59,8 @@ public class BattleNode
                     winType = leftInfoItem.Key;
                 }
             }
-            GameEntry.Event.Fire(this,BattleSingleTownResultEventArgs.Create(OwnerTownId,winType));
+            //GameEntry.Event.Fire(this,BattleSingleTownResultEventArgs.Create(OwnerTownId,winType));
         }
-        return result;
+        return battleResult;
     }
 }

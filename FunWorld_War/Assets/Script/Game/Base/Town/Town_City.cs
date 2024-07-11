@@ -28,7 +28,7 @@ public class Town_City : BaseTown
     private void Init()
     {
         BattleNode = new BattleNode();
-        BattleNode.Init();
+        BattleNode.Init(this.OwnerType);
     }
 
     private void RegisterEvent()
