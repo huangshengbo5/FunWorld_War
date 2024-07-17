@@ -29,6 +29,12 @@ public class Town_City : BaseTown
     {
         BattleNode = new BattleNode();
         BattleNode.Init(this.OwnerType);
+        var fsmName = "FSM_" + this.gameObject.name;
+        var fsm = GameEntry.Fsm.CreateFsm<BaseTown>(fsmName, this,
+            new FSMTownIdle(),
+            new FSMTownBattle(),
+            new FSMTownBattleEnd());
+        fsm.Start<FSMTownIdle>();
     }
 
     private void RegisterEvent()
@@ -83,23 +89,5 @@ public class Town_City : BaseTown
     private void Update()
     {
         BattleNode.CheckBattleResult();
-        // //todo  城池的戒备状态如何控制？
-        // RaycastHit hit = new RaycastHit();
-        // Collider[] hits = new Collider[]{};
-        // hits = Physics.OverlapSphere(this.transform.position, ViewRedius);
-        // if (hits.Length > 0)
-        // {
-        //     for (int i = 0; i < hits.Length; i++)
-        //     {
-        //         var tempSolider = hits[i].GetComponent<Solider>(); 
-        //         if (tempSolider && tempSolider.OwnerType != this.OwnerType)
-        //         {
-        //             if (tempSolider.TargetTown == this)
-        //             {
-        //                 
-        //             }
-        //         }
-        //     }
-        // }
     }
 }
