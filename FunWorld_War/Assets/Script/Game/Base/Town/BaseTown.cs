@@ -5,7 +5,7 @@ using UnityEngine.Serialization;
 
 namespace Script.Game.Base
 {
-    public class BaseTown :MonoBehaviour
+    public class BaseTown :BaseObject
     {
         public TextMeshProUGUI CurSoliderNum_Txt;
         
@@ -44,7 +44,5 @@ namespace Script.Game.Base
         {
             OwnerType = type;
         }
-        
-        
     }
 }

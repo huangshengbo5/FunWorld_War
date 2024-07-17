@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using GameFramework.Event;
 using Script.Game;
 using Script.Game.Base;
@@ -27,6 +28,7 @@ public class Town_City : BaseTown
 
     private void Init()
     {
+        
         BattleNode = new BattleNode();
         BattleNode.Init(this.OwnerType);
         var fsmName = "FSM_" + this.gameObject.name;
@@ -89,5 +91,11 @@ public class Town_City : BaseTown
     private void Update()
     {
         BattleNode.CheckBattleResult();
+    }
+
+    //加入一只敌方部队
+    public void JoinBattle(List<Solider> enemy)
+    {
+        BattleNode.JoinBattle(enemy);
     }
 }

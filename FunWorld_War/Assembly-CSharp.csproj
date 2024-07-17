@@ -308,6 +308,7 @@
      <Compile Include="Assets\UnityPackages\BehaviorTree\Behavior Designer\Runtime\Tasks\Unity\Animation\Rewind.cs" />
      <Compile Include="Assets\UnityPackages\BehaviorTree\Behavior Designer\Runtime\Tasks\Unity\Animator\WaitForState.cs" />
      <Compile Include="Assets\UnityPackages\BehaviorTree\Behavior Designer\Runtime\Tasks\Decorators\Inverter.cs" />
+     <Compile Include="Assets\Script\Game\Base\BaseObject\BaseObject.cs" />
      <Compile Include="Assets\Script\Game\Base\Solider\SoliderInterface.cs" />
      <Compile Include="Assets\UnityPackages\BehaviorTree\Behavior Designer\Runtime\Tasks\Unity\CharacterController\GetSlopeLimit.cs" />
      <Compile Include="Assets\UnityPackages\BehaviorTree\Behavior Designer\Runtime\Tasks\Unity\Transform\SetParent.cs" />
@@ -844,6 +845,7 @@
      <Folder Include="Assets\UnityPackages\BehaviorTree\Behavior Designer\Runtime\Tasks\Unity\Animator" />
      <Folder Include="Assets\Res\Scenes\Material\Particles" />
      <None Include="Assets\UnityPackages\Hovl Studio\Resources\Shaders\AddTrail.shader" />
+     <Folder Include="Assets\Script\Game\Base\BaseObject" />
      <Folder Include="Assets\UnityPackages\Hovl Studio\Toon projectiles\Prefabs" />
      <Folder Include="Assets\UnityPackages\BehaviorTree\Behavior Designer\Runtime\Tasks\Unity\CharacterController" />
      <Folder Include="Assets\Script\Game\Fsm\Solider" />

@@ -6,9 +6,8 @@ using UnityEngine;
 using UnityEngine.AI;
 using UnityGameFramework.Runtime;
 
-public class Solider : MonoBehaviour,SoliderInterface
+public class Solider : BaseObject,SoliderInterface
 {
-
     public void Init()
     {
         InitFsm();
