@@ -1,10 +1,7 @@
 using System.Collections;
-using DG.Tweening;
-using Script.Game;
 using Script.Game.Base;
 using UnityEngine;
 using UnityEngine.AI;
-using UnityGameFramework.Runtime;
 
 public class Solider : BaseObject,SoliderInterface
 {

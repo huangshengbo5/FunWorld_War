@@ -17,6 +17,11 @@ public class FSMTownBattle : FsmState<BaseTown>
     protected override void OnUpdate(IFsm<BaseTown> fsm, float elapseSeconds, float realElapseSeconds)
     {
         base.OnUpdate(fsm, elapseSeconds, realElapseSeconds);
+        var result = fsm.Owner.CheckBattleResult();
+        if (result.Item1)
+        {
+            ChangeState<FSMTownBattleEnd>(fsm);
+        }
     }
 
     protected override void OnLeave(IFsm<BaseTown> fsm, bool isShutdown)

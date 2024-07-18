@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using TMPro;
 using UnityEngine;
@@ -43,6 +44,16 @@ namespace Script.Game.Base
         private void ChangeTownType(TownOwnerType type)
         {
             OwnerType = type;
+        }
+
+        public virtual Tuple<bool, TownOwnerType> CheckBattleResult()
+        {
+            return new Tuple<bool, TownOwnerType>(false,TownOwnerType.None);
+        }
+
+        public virtual bool IsInBattle()
+        {
+            return false;
         }
     }
 }

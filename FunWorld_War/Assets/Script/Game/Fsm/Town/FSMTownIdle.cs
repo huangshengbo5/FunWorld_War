@@ -17,6 +17,10 @@ public class FSMTownIdle : FsmState<BaseTown>
     protected override void OnUpdate(IFsm<BaseTown> fsm, float elapseSeconds, float realElapseSeconds)
     {
         base.OnUpdate(fsm, elapseSeconds, realElapseSeconds);
+        if (fsm.Owner)
+        {
+            
+        }
     }
 
     protected override void OnLeave(IFsm<BaseTown> fsm, bool isShutdown)

@@ -1,10 +1,8 @@
 using System;
 using System.Collections.Generic;
 using GameFramework.Event;
-using Script.Game;
 using Script.Game.Base;
 using UnityEngine;
-using UnityEngine.Serialization;
 using Random = System.Random;
 
 public class Town_City : BaseTown
@@ -28,7 +26,6 @@ public class Town_City : BaseTown
 
     private void Init()
     {
-        
         BattleNode = new BattleNode();
         BattleNode.Init(this.OwnerType);
         var fsmName = "FSM_" + this.gameObject.name;
@@ -88,9 +85,16 @@ public class Town_City : BaseTown
         return new Vector3(posx,0,posz);
     }
 
-    private void Update()
+    //检查战斗结果
+    public override Tuple<bool, TownOwnerType> CheckBattleResult()
     {
-        BattleNode.CheckBattleResult();
+        return BattleNode.CheckBattleResult();
+    }
+
+    //是否正在发生战斗
+    public override bool IsInBattle()
+    {
+        return BattleNode.IsInBattle();
     }
 
     //加入一只敌方部队
