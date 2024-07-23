@@ -57,7 +57,16 @@ public class Town_City : BaseTown
             createSolider.Init();
             createSolider.TargetTown = TargetTown;
         }
-        BattleNode.JoinBattle(Soliders);
+        //BattleNode.JoinBattle(Soliders);
+        AttackTargetTown();
+    }
+
+    public void AttackTargetTown()
+    {
+        if (OwnerType == TownOwnerType.Player && TargetTown != null)
+        {
+            JoinBattle(TargetTown, GetAllSoliders());
+        }
     }
     
     //创建士兵
@@ -98,8 +107,13 @@ public class Town_City : BaseTown
     }
 
     //加入一只敌方部队
-    public void JoinBattle(List<Solider> enemy)
+    public override void JoinBattle(List<Solider> enemy)
     {
         BattleNode.JoinBattle(enemy);
+    }
+
+    public void JoinBattle(BaseTown targetTown, List<Solider> enemy)
+    {
+        targetTown.JoinBattle(enemy);
     }
 }

@@ -40,15 +40,18 @@ public class BattleNode
     //是否在战斗中
     public bool IsInBattle()
     {
-        var leftTroopNum = 0;
+        var enemyTownType = TownOwnerType.None;
         foreach (var enemyItem in Dic_BattleTroop)
         {
             if (enemyItem.Value.Count > 0)
             {
-                leftTroopNum += 1;
+                if (enemyItem.Key != ownerTownType)
+                {
+                    return true;
+                }
             }
         }
-        return leftTroopNum > 1;
+        return false;
     }
 
     //检查战斗结果

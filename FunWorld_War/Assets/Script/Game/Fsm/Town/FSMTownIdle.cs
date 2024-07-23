@@ -17,9 +17,9 @@ public class FSMTownIdle : FsmState<BaseTown>
     protected override void OnUpdate(IFsm<BaseTown> fsm, float elapseSeconds, float realElapseSeconds)
     {
         base.OnUpdate(fsm, elapseSeconds, realElapseSeconds);
-        if (fsm.Owner)
+        if (fsm.Owner.IsInBattle())
         {
-            
+            ChangeState<FSMTownBattle>(fsm);
         }
     }
 

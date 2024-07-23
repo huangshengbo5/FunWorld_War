@@ -41,7 +41,7 @@ namespace Script.Game.Base
             return OwnerType;
         }
 
-        private void ChangeTownType(TownOwnerType type)
+        public void ChangeTownType(TownOwnerType type)
         {
             OwnerType = type;
         }
@@ -54,6 +54,11 @@ namespace Script.Game.Base
         public virtual bool IsInBattle()
         {
             return false;
+        }
+
+        public virtual void JoinBattle(List<Solider> enemy)
+        {
+            
         }
     }
 }
