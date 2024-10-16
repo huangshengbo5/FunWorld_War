@@ -18,6 +18,8 @@ public class Town_City : BaseTown
         RegisterEvent();
         CurSoliderNum = DefaultMaxSoliderNum;
         CurSoliderNum_Txt.SetText(CurSoliderNum.ToString());
+        
+        //Todo 创建士兵时机不对，敌方城市尚未初始化
         if (OwnerType == TownOwnerType.Player)
         {
             CreateSoliders();   

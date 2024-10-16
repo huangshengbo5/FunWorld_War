@@ -5,7 +5,7 @@ using UnityEngine;
 using UnityGameFramework.Runtime;
 
 /// <summary>
-/// ÓÎÏ·Èë¿Ú¡£
+/// ???????
 /// </summary>
 public partial class GameEntry : MonoBehaviour
 {
