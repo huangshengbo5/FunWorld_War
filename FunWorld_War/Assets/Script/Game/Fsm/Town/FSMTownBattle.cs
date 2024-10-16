@@ -12,7 +12,7 @@ public class FSMTownBattle : FsmState<BaseTown>
     protected override void OnEnter(IFsm<BaseTown> fsm)
     {
         base.OnEnter(fsm);
-        fsm.Owner.JoinBattle(fsm.Owner.GetAllSoliders());   //自己参与战斗
+        fsm.Owner.JoinBattle(fsm.Owner.GetAllSoliders());   //??????????
     }
 
     protected override void OnUpdate(IFsm<BaseTown> fsm, float elapseSeconds, float realElapseSeconds)

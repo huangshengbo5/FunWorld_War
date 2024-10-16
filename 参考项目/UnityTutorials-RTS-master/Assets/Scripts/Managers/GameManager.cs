@@ -40,14 +40,20 @@ public class GameManager : MonoBehaviour
     private void Awake()
     {
         canvasScaleFactor = canvas.scaleFactor;
+
         DataHandler.LoadGameData();
         GetComponent<DayAndNightCycler>().enabled = gameGlobalParameters.enableDayAndNightCycle;
+
         Globals.InitializeGameResources(gamePlayersParameters.players.Length);
+
         Globals.NAV_MESH_SURFACE = GameObject.Find("Terrain").GetComponent<NavMeshSurface>();
-        //Globals.UpdateNavMeshSurface();
+        Globals.UpdateNavMeshSurface();
+
         // enable/disable FOV depending on game parameters
         fov.SetActive(gameGlobalParameters.enableFOV);
+
         _SetupMinimap();
+
         gameIsPaused = false;
     }
 

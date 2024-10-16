@@ -1,4 +1,3 @@
-using System;
 using System.Collections.Generic;
 #if UNITY_EDITOR
 using UnityEditor;
@@ -90,11 +89,6 @@ namespace UnityEngine.AI
         public static List<NavMeshSurface> activeSurfaces
         {
             get { return s_NavMeshSurfaces; }
-        }
-
-        private void Awake()
-        { 
-            UpdateNavMesh(navMeshData);
         }
 
         void OnEnable()

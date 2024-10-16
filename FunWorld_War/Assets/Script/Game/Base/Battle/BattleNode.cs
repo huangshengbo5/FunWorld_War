@@ -2,12 +2,12 @@ using System;
 using System.Collections.Generic;
 using UnityEditor.Experimental.GraphView;
 
-//记录一个城池的战斗信息
-//每个城市都会有自己的战斗数据
+//????????????????
+//??????ж?????????????????
 public class BattleNode
 {
-    private Dictionary<TownOwnerType, List<Solider>> Dic_BattleTroop;   //参战部队表
-    private Dictionary<TownOwnerType, int> Dic_BattleLeftInfo;          //剩余参战部队表
+    private Dictionary<TownOwnerType, List<Solider>> Dic_BattleTroop;   //????????
+    private Dictionary<TownOwnerType, int> Dic_BattleLeftInfo;          //??????????
 
     private int OwnerTownId;
     private TownOwnerType ownerTownType;
@@ -26,7 +26,7 @@ public class BattleNode
         battleResult = new Tuple<bool, TownOwnerType>(false,TownOwnerType.None);
     }
     
-    //一只部队参加战斗
+    //??????μ????
     public void JoinBattle(List<Solider> enemy)
     {
         var townOwnerType = enemy[0].OwnerType;
@@ -37,7 +37,7 @@ public class BattleNode
         Dic_BattleTroop[townOwnerType].AddRange(enemy);
     }
 
-    //是否在战斗中
+    //??????????
     public bool IsInBattle()
     {
         var enemyTownType = TownOwnerType.None;
@@ -54,7 +54,7 @@ public class BattleNode
         return false;
     }
 
-    //检查战斗结果
+    //?????????
     public Tuple<bool, TownOwnerType> CheckBattleResult()
     {
         Dic_BattleLeftInfo.Clear();
@@ -67,7 +67,7 @@ public class BattleNode
                 leftTroopNum += 1;
             }
         }
-        if (leftTroopNum == 1)  //只有一方胜出时才需要处理
+        if (leftTroopNum == 1)  //???????????????????
         {
             foreach (var leftInfoItem in Dic_BattleLeftInfo)
             {

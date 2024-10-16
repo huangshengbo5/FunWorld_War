@@ -635,6 +635,7 @@
      <Folder Include="Assets" />
      <Folder Include="Assets\Scenes\Level\map_1v1_1" />
      <None Include="Assets\Fonts\neuropol X free\Neuropol.fnt" />
+     <Folder Include="Assets\Res\Model\gong_nubing\Materials" />
      <Folder Include="Assets\UnityPackages\Hovl Studio\Resources\Materials" />
      <None Include="Assets\UnityPackages\TextMesh Pro\Shaders\TMPro.cginc" />
      <Folder Include="Assets\Res\UI\Texture\Background" />
@@ -692,6 +693,7 @@
      <Folder Include="Assets\UnityPackages\BehaviorTree" />
      <Folder Include="Assets\Res\UI\Sprite" />
      <Folder Include="Assets\Res\Model\gong_touqiang\Materials" />
+     <Folder Include="Assets\Res\Model\gong_nubing" />
      <Folder Include="Assets\UnityPackages\Toon_RTS\WesternKingdoms\animation\Mage" />
      <Folder Include="Assets\UnityPackages\BehaviorTree\Behavior Designer\Runtime\Tasks\Unity\Transform" />
      <Folder Include="Assets\Res\Model\xiahoudun\Animation" />
@@ -868,6 +870,7 @@
      <None Include="Assets\Res\Scenes\Material\Shaders\MK4ToonTrees.shader" />
      <None Include="Assets\UnityPackages\Hovl Studio\Toon projectiles\Demo scene\Readme.txt" />
      <Folder Include="Assets\Res\Scenes\Material\Shaders\Materials" />
+     <Folder Include="Assets\Res\Model\gong_nubing\Animation" />
      <None Include="Assets\UnityPackages\Hovl Studio\Toon projectiles\Demo scene\HDRP and URP(LWRP).txt" />
      <Folder Include="Assets\Res\Model\xiao_bing_dao\Animation" />
      <Folder Include="Assets\Fonts\minster" />
@@ -882,7 +885,9 @@
      <Folder Include="Assets\Res\Model\Horseman\Animation" />
      <Folder Include="Assets\Res\Model\gong_touqiang" />
      <Folder Include="Assets\Res\Model\xiao_bing_dao\Texture" />
+     <Folder Include="Assets\Materials" />
      <Folder Include="Assets\Resources\ConfigData" />
+     <Folder Include="Assets\Res\Model\gong_nubing\Texture" />
      <Folder Include="Assets\Res\Scenes\Material\Mobile Assets\Tiles" />
      <Folder Include="Assets\Res\Model\bu_dunbing" />
      <None Include="Assets\Res\Scenes\Material\Shaders\MK4Toon Skybox.shader" />
@@ -901,6 +906,7 @@
      <None Include="Assets\UnityPackages\TextMesh Pro\Shaders\TMP_Bitmap-Mobile.shader" />
      <Folder Include="Assets\Res\Model\bu_changfubing\Texture" />
      <Folder Include="Assets\UnityPackages\Hovl Studio\Toon projectiles" />
+     <Folder Include="Assets\Res\Model\gong_duangong\Materials\Materials" />
      <None Include="Assets\UnityPackages\TextMesh Pro\Fonts\LiberationSans - OFL.txt" />
      <Folder Include="Assets\Res\Model\xiahoudun\Materials" />
      <Folder Include="Assets\UnityPackages\BehaviorTree\Behavior Designer\Runtime\Tasks\Unity\NavMeshAgent" />

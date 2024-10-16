@@ -169,7 +169,7 @@ public class Building : Unit
         _isAlive = true;
         _bt.enabled = true;
         ComputeProduction();
-        //Globals.UpdateNavMeshSurface();
+        Globals.UpdateNavMeshSurface();
 
         // when finishing construction, remove smoke VFX
         foreach (Transform vfx in _smokeVfx)

@@ -10,6 +10,6 @@ public class BaseObject : MonoBehaviour
 
     public BaseObject()
     {
-        Id = gameObject.GetHashCode();
+        //Id = gameObject.GetHashCode();
     }
 }
