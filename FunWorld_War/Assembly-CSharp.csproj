@@ -190,6 +190,7 @@
      <Compile Include="Assets\UnityPackages\BehaviorTree\Behavior Designer\Runtime\Tasks\Unity\Rigidbody\GetPosition.cs" />
      <Compile Include="Assets\UnityPackages\BehaviorTree\Behavior Designer\Runtime\Tasks\Unity\Light\GetIntensity.cs" />
      <Compile Include="Assets\UnityPackages\BehaviorTree\Behavior Designer\Runtime\Tasks\Unity\ParticleSystem\GetEmissionRate.cs" />
+     <Compile Include="Assets\Script\Game\BehaviorTree\Action\InitProperty.cs" />
      <Compile Include="Assets\UnityPackages\BehaviorTree\Behavior Designer\Runtime\Tasks\Unity\NavMeshAgent\GetDestination.cs" />
      <Compile Include="Assets\UnityPackages\BehaviorTree\Behavior Designer\Runtime\Tasks\Unity\Transform\GetChild.cs" />
      <Compile Include="Assets\UnityPackages\BehaviorTree\Behavior Designer\Runtime\Tasks\Unity\Animator\IsInTransition.cs" />
@@ -295,6 +296,7 @@
      <Compile Include="Assets\UnityPackages\BehaviorTree\Behavior Designer\Runtime\Tasks\Unity\Rigidbody\SetRotation.cs" />
      <Compile Include="Assets\UnityPackages\BehaviorTree\Behavior Designer\Runtime\Tasks\Unity\Rigidbody\IsKinematic.cs" />
      <Compile Include="Assets\UnityPackages\BehaviorTree\Behavior Designer\Runtime\Variables\SharedRect.cs" />
+     <Compile Include="Assets\Script\Game\BehaviorTree\Action\MoveToTarget.cs" />
      <Compile Include="Assets\UnityPackages\BehaviorTree\Behavior Designer\Runtime\Tasks\Unity\ParticleSystem\Stop.cs" />
      <Compile Include="Assets\UnityPackages\BehaviorTree\Behavior Designer\Runtime\Tasks\Unity\Debug\LogFormat.cs" />
      <Compile Include="Assets\UnityPackages\BehaviorTree\Behavior Designer\Runtime\Tasks\Unity\Animator\SetLookAtPosition.cs" />
@@ -688,6 +690,7 @@
      <Folder Include="Assets\Res\UI\Texture\head" />
      <Folder Include="Assets\Script\Util\JsonConverter" />
      <None Include="Assets\Res\Scenes\Material\Shaders\MK4Toon Tiles.shader" />
+     <Folder Include="Assets\Script\Game\BehaviorTree\Action" />
      <Folder Include="Assets\Res\Scenes\Material\Demo" />
      <Folder Include="Assets\UnityPackages\Toon_RTS\WesternKingdoms" />
      <Folder Include="Assets\UnityPackages\BehaviorTree" />
@@ -710,6 +713,7 @@
      <Folder Include="Assets\UnityPackages\BehaviorTree\Gizmos" />
      <Folder Include="Assets\Res\Scenes\Material\Tiles_Groups" />
      <Folder Include="Assets\Scenes\Level" />
+     <Folder Include="Assets\Script\Game\BehaviorTree" />
      <Folder Include="Assets\Res\Scenes\Material\Props" />
      <None Include="Assets\UnityPackages\TextMesh Pro\Shaders\TMPro_Mobile.cginc" />
      <Folder Include="Assets\UnityPackages\BehaviorTree\Behavior Designer\Runtime\Tasks\Decorators" />
