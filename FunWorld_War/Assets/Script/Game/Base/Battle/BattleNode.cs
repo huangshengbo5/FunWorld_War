@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using UnityEditor.Experimental.GraphView;
+using UnityEngine;
 
 //????????????????
 //?????????????????????????
@@ -29,12 +30,19 @@ public class BattleNode
     //????????????
     public void JoinBattle(List<Solider> enemy)
     {
-        var townOwnerType = enemy[0].OwnerType;
-        if (!Dic_BattleTroop.ContainsKey(townOwnerType))
+        if (enemy.Count > 0 )
         {
-            Dic_BattleTroop[townOwnerType] = new List<Solider>();
+            var townOwnerType = enemy[0].OwnerType;
+            if (!Dic_BattleTroop.ContainsKey(townOwnerType))
+            {
+                Dic_BattleTroop[townOwnerType] = new List<Solider>();
+            }
+            Dic_BattleTroop[townOwnerType].AddRange(enemy);
         }
-        Dic_BattleTroop[townOwnerType].AddRange(enemy);
+        // else
+        // {
+        //     Debug.LogError("enemy count is zero");
+        // }
     }
 
     //??????????

@@ -1,4 +1,5 @@
 using System;
+using System.Collections;
 using System.Collections.Generic;
 using GameFramework.Event;
 using Script.Game.Base;
@@ -11,19 +12,24 @@ public class Town_City : BaseTown
     public GameObject ObjSolider;
     //目标城镇
     public BaseTown TargetTown;
-    
+
     private void Start()
     {
         Init();
         RegisterEvent();
         CurSoliderNum = DefaultMaxSoliderNum;
         CurSoliderNum_Txt.SetText(CurSoliderNum.ToString());
-        
-        //Todo 创建士兵时机不对，敌方城市尚未初始化
+        StartCoroutine(DelayGenerateSolider());
+    }
+
+    IEnumerator DelayGenerateSolider()
+    {
+        yield return new WaitForSeconds(1f);
         if (OwnerType == TownOwnerType.Player)
         {
             CreateSoliders();   
         }
+        yield return null;
     }
 
     private void Init()

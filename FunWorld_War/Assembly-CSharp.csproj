@@ -885,7 +885,6 @@
      <Folder Include="Assets\Res\Model\Horseman\Animation" />
      <Folder Include="Assets\Res\Model\gong_touqiang" />
      <Folder Include="Assets\Res\Model\xiao_bing_dao\Texture" />
-     <Folder Include="Assets\Materials" />
      <Folder Include="Assets\Resources\ConfigData" />
      <Folder Include="Assets\Res\Model\gong_nubing\Texture" />
      <Folder Include="Assets\Res\Scenes\Material\Mobile Assets\Tiles" />
