@@ -9,6 +9,7 @@ namespace BehaviorDesigner.Runtime.Tasks
 
         public override void OnBehaviorRestart()
         {
+            //TestBranch
             base.OnBehaviorRestart();
             //this.Owner. selfTrans.SetValue(this.GameObject.transform);
         }
