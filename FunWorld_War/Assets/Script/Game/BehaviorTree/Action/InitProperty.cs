@@ -10,14 +10,12 @@ namespace BehaviorDesigner.Runtime.Tasks
         public override void OnBehaviorRestart()
         {
             base.OnBehaviorRestart();
-            var 
-            this.Owner. selfTrans.SetValue(this.GameObject.transform);
+            
         }
 
         public override void OnFixedUpdate()
         {
             base.OnFixedUpdate();
-            
         }
     }
 }

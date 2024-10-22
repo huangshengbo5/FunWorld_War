@@ -44,6 +44,15 @@ public class Solider : BaseObject,SoliderInterface
 
     //士兵归属的城镇
     protected BaseTown ownerTown;
+
+    private bool retreat;  //撤退
+
+    public bool Retreat
+    {
+        get => retreat;
+        set => retreat = value;
+    }
+
     public Solider TargetSolider
     {
         get
@@ -90,6 +99,12 @@ public class Solider : BaseObject,SoliderInterface
     //造成伤害时间间隔信息
     private float AttackTimeStamp;
     private float AttackInterval = 1;
+
+    public Solider(bool retreat)
+    {
+        Retreat = retreat;
+    }
+
     public void SetTargetTown(BaseTown targetTown)
     {
         this.targetTown = targetTown;
@@ -234,4 +249,5 @@ public class Solider : BaseObject,SoliderInterface
         navMeshAgent.SetDestination(targetPoint);
         navMeshAgent.stoppingDistance = 2;
     }
+    
 }

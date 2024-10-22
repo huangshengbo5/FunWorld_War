@@ -3,12 +3,13 @@ using System.Collections.Generic;
 using UnityEditor.Experimental.GraphView;
 using UnityEngine;
 
-//????????????????
-//?????????????????????????
+
 public class BattleNode
 {
-    private Dictionary<TownOwnerType, List<Solider>> Dic_BattleTroop;   //????????
-    private Dictionary<TownOwnerType, int> Dic_BattleLeftInfo;          //??????????
+    //参与的部队列表
+    private Dictionary<TownOwnerType, List<Solider>> Dic_BattleTroop;
+    //当前剩余的部队列表
+    private Dictionary<TownOwnerType, int> Dic_BattleLeftInfo;   
 
     private int OwnerTownId;
     private TownOwnerType ownerTownType;
@@ -27,7 +28,7 @@ public class BattleNode
         battleResult = new Tuple<bool, TownOwnerType>(false,TownOwnerType.None);
     }
     
-    //????????????
+    //加入一场战斗
     public void JoinBattle(List<Solider> enemy)
     {
         if (enemy.Count > 0 )
@@ -39,13 +40,9 @@ public class BattleNode
             }
             Dic_BattleTroop[townOwnerType].AddRange(enemy);
         }
-        // else
-        // {
-        //     Debug.LogError("enemy count is zero");
-        // }
     }
 
-    //??????????
+    //是否还在战斗中
     public bool IsInBattle()
     {
         var enemyTownType = TownOwnerType.None;
@@ -62,7 +59,7 @@ public class BattleNode
         return false;
     }
 
-    //?????????
+    //检查战斗结果
     public Tuple<bool, TownOwnerType> CheckBattleResult()
     {
         Dic_BattleLeftInfo.Clear();
