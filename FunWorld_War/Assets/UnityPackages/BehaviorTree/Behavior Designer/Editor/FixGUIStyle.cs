@@ -50,7 +50,6 @@ public class FixGUIStyle
 
         var preferencesPaneGUIStyle = t.GetField("preferencesPaneGUIStyle", BindingFlags.Static | BindingFlags.NonPublic);
         preferencesPaneGUIStyle.SetValue(null, guiStyle);
-        
-
+        Debug.Log("FixGUIStyle Finish!!!");
     }
 }

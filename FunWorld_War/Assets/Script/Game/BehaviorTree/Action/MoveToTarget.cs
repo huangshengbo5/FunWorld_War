@@ -21,7 +21,7 @@ namespace BehaviorDesigner.Runtime.Tasks
             base.OnReset();
             StartCoroutine(DelayMove());
         }
-
+    
         private IEnumerator DelayMove()
         {
             yield return new WaitForSeconds(delay);
@@ -30,19 +30,19 @@ namespace BehaviorDesigner.Runtime.Tasks
             nav.SetDestination(target.position);
             nav.stoppingDistance = stoppingDistance;
         }
-
+    
         public override void OnBehaviorComplete()
         {
             base.OnBehaviorComplete();
             nav.isStopped = true;
         }
-
+    
         public override void OnEnd()
         {
             base.OnEnd();
             nav.isStopped = true;
         }
-
+    
         public override void OnPause(bool paused)
         {
             base.OnPause(paused);

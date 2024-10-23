@@ -1,10 +1,4 @@
-﻿using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
-using UnityEditor;
-using UnityEngine.Profiling;
-using System;
-using Newtonsoft.Json;
+﻿using UnityEngine;
 using UnityEngine.SceneManagement;
 
 public class Main : MonoBehaviour

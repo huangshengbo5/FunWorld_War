@@ -11,13 +11,13 @@ public class BattleSingleTownResultEventArgs : GameEventArgs
         private set;
     }
 
-    public TownOwnerType OwnerType
+    public CampType OwnerType
     {
         get;
         private set;
     }
     
-    public static BattleSingleTownResultEventArgs Create(int townId,TownOwnerType ownerType)
+    public static BattleSingleTownResultEventArgs Create(int townId,CampType ownerType)
     {
         BattleSingleTownResultEventArgs battleSingleTownResultEventArgs = ReferencePool.Acquire<BattleSingleTownResultEventArgs>();
         battleSingleTownResultEventArgs.TownId = townId;

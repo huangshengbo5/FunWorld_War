@@ -25,7 +25,7 @@ public class Town_City : BaseTown
     IEnumerator DelayGenerateSolider()
     {
         yield return new WaitForSeconds(1f);
-        if (OwnerType == TownOwnerType.Player)
+        if (OwnerCamp == global::CampType.Player)
         {
             CreateSoliders();   
         }
@@ -35,7 +35,7 @@ public class Town_City : BaseTown
     private void Init()
     {
         BattleNode = new BattleNode();
-        BattleNode.Init(this.OwnerType);
+        BattleNode.Init(this.OwnerCamp);
         var fsmName = "FSM_" + this.gameObject.name;
         var fsm = GameEntry.Fsm.CreateFsm<BaseTown>(fsmName, this,
             new FSMTownIdle(),
@@ -71,7 +71,7 @@ public class Town_City : BaseTown
 
     public void AttackTargetTown()
     {
-        if (OwnerType == TownOwnerType.Player && TargetTown != null)
+        if (OwnerCamp == global::CampType.Player && TargetTown != null)
         {
             JoinBattle(TargetTown, GetAllSoliders());
         }
@@ -81,7 +81,7 @@ public class Town_City : BaseTown
     protected Solider CreateSolider(int index)
     {
         var solider = (GameObject)Instantiate(ObjSolider);
-        solider.name = string.Format("Solider_{0}_{1}",OwnerType.ToString(),index) ;
+        solider.name = string.Format("Solider_{0}_{1}",OwnerCamp.ToString(),index) ;
         var soliderTans = solider.GetComponent<Transform>();
         soliderTans.position = GetSoliderPosition();
         soliderTans.localScale = Vector3.one;
@@ -103,7 +103,7 @@ public class Town_City : BaseTown
     }
 
     //检查战斗结果
-    public override Tuple<bool, TownOwnerType> CheckBattleResult()
+    public override Tuple<bool, CampType> CheckBattleResult()
     {
         return BattleNode.CheckBattleResult();
     }

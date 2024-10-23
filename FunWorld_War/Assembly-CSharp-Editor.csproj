@@ -94,12 +94,14 @@
      <Folder Include="Assets\UnityPackages\BehaviorTree\Behavior Designer\Editor\Object Drawers" />
      <Folder Include="Assets\Editor\DataExporter\ExcelWriter" />
      <Folder Include="Assets\Editor\DataExporter\Type" />
+     <Folder Include="Assets\UnityPackages\Behavior Designer Movement\Editor\Icons" />
      <Folder Include="Assets\Editor\Lib" />
      <Folder Include="Assets\UnityPackages\BehaviorTree\Behavior Designer\Editor" />
      <Folder Include="Assets\Editor\DataExporter\Data" />
      <Folder Include="Assets\Editor\DataExporter\ExcelLoader" />
      <Folder Include="Assets\Editor\Lib\NPOI" />
      <Folder Include="Assets\Editor\DataExporter\Util" />
+     <Folder Include="Assets\UnityPackages\Behavior Designer Movement\Editor" />
      <Folder Include="Assets\Editor\Lib\EPP" />
      <Folder Include="Assets\Editor\DataExporter\Generater" />
      <None Include="Assets\UnityPackages\BehaviorTree\Behavior Designer\Editor\GridShader.shader" />

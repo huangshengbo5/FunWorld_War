@@ -33,7 +33,7 @@ public class InputManager : MonoBehaviour
                 {
                     var baseTown = hitObj.GetComponent<BaseTown>();
                     var soliders = baseTown.GetAllSoliders();
-                    if (baseTown.TownType() != TownOwnerType.Player)
+                    if (baseTown.Camp() != CampType.Player)
                     {
                         for (int i = 0; i < soliders.Count; i++)
                         {

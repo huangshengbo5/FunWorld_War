@@ -1,20 +1,17 @@
+using BehaviorDesigner.Runtime.Tasks.Unity.UnityGameObject;
 using UnityEngine;
 
 namespace BehaviorDesigner.Runtime.Tasks
 {
-    public class InitProperty : Action
+    public class InitSoliderProperty : Action
     {
-        public SharedGameObject targetObj;
-        //public shared
+        public SharedTransform targetTown;
 
-        public override void OnBehaviorRestart()
+        public override void OnAwake()
         {
-            base.OnBehaviorRestart();
-        }
-
-        public override void OnFixedUpdate()
-        {
-            base.OnFixedUpdate();
+            base.OnAwake();
+            var solider = Owner.GetComponent<Solider>();
+            targetTown.SetValue(solider.GetTargetTown().transform);
         }
     }
 }

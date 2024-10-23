@@ -18,7 +18,7 @@ namespace Script.Game.Base
         
         protected float LastCreateTimeStamp;
 
-        public TownOwnerType OwnerType = TownOwnerType.None;
+        [FormerlySerializedAs("OwnerType")] public CampType OwnerCamp = global::CampType.None;
         
         protected int CurSoliderNum;
 
@@ -36,19 +36,19 @@ namespace Script.Game.Base
             return Soliders;
         }
 
-        public TownOwnerType TownType()
+        public CampType Camp()
         {
-            return OwnerType;
+            return OwnerCamp;
         }
 
-        public void ChangeTownType(TownOwnerType type)
+        public void ChangeCamp(CampType type)
         {
-            OwnerType = type;
+            OwnerCamp = type;
         }
 
-        public virtual Tuple<bool, TownOwnerType> CheckBattleResult()
+        public virtual Tuple<bool, CampType> CheckBattleResult()
         {
-            return new Tuple<bool, TownOwnerType>(false,TownOwnerType.None);
+            return new Tuple<bool, CampType>(false,global::CampType.None);
         }
 
         public virtual bool IsInBattle()

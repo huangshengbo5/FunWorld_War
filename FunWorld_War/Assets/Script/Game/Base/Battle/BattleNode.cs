@@ -7,25 +7,25 @@ using UnityEngine;
 public class BattleNode
 {
     //参与的部队列表
-    private Dictionary<TownOwnerType, List<Solider>> Dic_BattleTroop;
+    private Dictionary<CampType, List<Solider>> Dic_BattleTroop;
     //当前剩余的部队列表
-    private Dictionary<TownOwnerType, int> Dic_BattleLeftInfo;   
+    private Dictionary<CampType, int> Dic_BattleLeftInfo;   
 
     private int OwnerTownId;
-    private TownOwnerType ownerTownType;
+    private CampType ownerTownType;
     
-    Tuple<bool, TownOwnerType> battleResult = new Tuple<bool, TownOwnerType>(false,TownOwnerType.None);
-    public void Init(TownOwnerType ownerType)
+    Tuple<bool, CampType> battleResult = new Tuple<bool, CampType>(false,CampType.None);
+    public void Init(CampType ownerType)
     {
         ownerTownType = ownerType;
-        Dic_BattleTroop = new Dictionary<TownOwnerType, List<Solider>>();
-        Dic_BattleLeftInfo = new Dictionary<TownOwnerType, int>();
+        Dic_BattleTroop = new Dictionary<CampType, List<Solider>>();
+        Dic_BattleLeftInfo = new Dictionary<CampType, int>();
         ResetBattleResult();
     }
 
     private void ResetBattleResult()
     {
-        battleResult = new Tuple<bool, TownOwnerType>(false,TownOwnerType.None);
+        battleResult = new Tuple<bool, CampType>(false,CampType.None);
     }
     
     //加入一场战斗
@@ -33,7 +33,7 @@ public class BattleNode
     {
         if (enemy.Count > 0 )
         {
-            var townOwnerType = enemy[0].OwnerType;
+            var townOwnerType = enemy[0].campType;
             if (!Dic_BattleTroop.ContainsKey(townOwnerType))
             {
                 Dic_BattleTroop[townOwnerType] = new List<Solider>();
@@ -45,7 +45,7 @@ public class BattleNode
     //是否还在战斗中
     public bool IsInBattle()
     {
-        var enemyTownType = TownOwnerType.None;
+        var enemyTownType = CampType.None;
         foreach (var enemyItem in Dic_BattleTroop)
         {
             if (enemyItem.Value.Count > 0)
@@ -60,7 +60,7 @@ public class BattleNode
     }
 
     //检查战斗结果
-    public Tuple<bool, TownOwnerType> CheckBattleResult()
+    public Tuple<bool, CampType> CheckBattleResult()
     {
         Dic_BattleLeftInfo.Clear();
         var leftTroopNum = 0;
@@ -82,7 +82,7 @@ public class BattleNode
                     break;
                 }
             }
-            battleResult = new Tuple<bool, TownOwnerType>(true, ownerTownType);
+            battleResult = new Tuple<bool, CampType>(true, ownerTownType);
             //GameEntry.Event.Fire(this,BattleSingleTownResultEventArgs.Create(OwnerTownId,winType));
         }
         else

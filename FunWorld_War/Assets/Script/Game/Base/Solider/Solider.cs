@@ -1,15 +1,25 @@
 using System.Collections;
+using BehaviorDesigner.Runtime;
 using Script.Game.Base;
 using UnityEngine;
 using UnityEngine.AI;
+using UnityEngine.Serialization;
 
 public class Solider : BaseObject,SoliderInterface
 {
+    private BehaviorTree behaviorTree;
     public void Init()
     {
-        InitFsm();
+        //InitFsm();
+        InitBehaviorTree();
     }
-
+    
+    public void InitBehaviorTree()
+    {
+        behaviorTree= this.gameObject.GetComponent<BehaviorTree>();
+        
+        
+    }
     public void InitFsm()
     {
         var fsmName = "FSM_" + this.gameObject.name;
@@ -29,7 +39,7 @@ public class Solider : BaseObject,SoliderInterface
         Dead,          //死亡
     }
 
-    public TownOwnerType OwnerType; 
+    public CampType campType; 
     public State curState;   //当前的单位状态
     
     public int ViewRedius;   //视野半径
@@ -108,6 +118,7 @@ public class Solider : BaseObject,SoliderInterface
     public void SetTargetTown(BaseTown targetTown)
     {
         this.targetTown = targetTown;
+        behaviorTree.SetVariableValue("TargetTrans",this.targetTown);
     }
 
     public BaseTown GetTargetTown()
@@ -127,12 +138,13 @@ public class Solider : BaseObject,SoliderInterface
     
     public void DoAttack()
     {
-        AttackTimeStamp += Time.deltaTime;
-        if (AttackTimeStamp >= AttackInterval)
-        {
-            AttackTimeStamp = 0;
-            targetSolider.BeAttack(this,Damage);
-        }
+        // AttackTimeStamp += Time.deltaTime;
+        // if (AttackTimeStamp >= AttackInterval)
+        // {
+        //     AttackTimeStamp = 0;
+        //     targetSolider.BeAttack(this,Damage);
+        // }
+        Debug.Log("Solider DoAttack");
     }
 
     //判断周围是否有敌人
@@ -150,7 +162,7 @@ public class Solider : BaseObject,SoliderInterface
             for (int i = 0; i < hits.Length; i++)
             {
                 var tempSolider = hits[i].GetComponent<Solider>(); 
-                if (tempSolider && tempSolider.OwnerType != this.OwnerType)
+                if (tempSolider && tempSolider.campType != this.campType)
                 {
                     targetSolider = hits[i].GetComponent<Solider>();
                 }
