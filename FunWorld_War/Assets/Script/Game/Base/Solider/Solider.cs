@@ -145,6 +145,10 @@ public partial class Solider : BaseObject, SoliderInterface
             {
                 targetSolider.BeAttack(this,this.Damage);
             }
+            else
+            {
+                ChangeTargetObject(null);
+            }
         }
     }
     
@@ -190,7 +194,7 @@ public partial class Solider : BaseObject, SoliderInterface
     
     public bool IsDead()
     {
-        return false;
+        return this.Hp <=0 ;
     }
 
     //被攻击
@@ -212,8 +216,11 @@ public partial class Solider : BaseObject, SoliderInterface
 
     protected IEnumerator DeadSuccess()
     {
+        behaviorTree.OnDestroy();
+        behaviorTree = null;
         yield return new WaitForSeconds(1);
-        DestroyImmediate(this.gameObject);
+        //DestroyImmediate(this.gameObject);
+        this.gameObject.SetActive(false);
     }
 
     private void OnDrawGizmos()

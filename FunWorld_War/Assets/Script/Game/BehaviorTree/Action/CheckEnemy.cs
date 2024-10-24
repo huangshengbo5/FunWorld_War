@@ -50,7 +50,16 @@ namespace BehaviorDesigner.Runtime.Tasks
                     if (tempSolider && tempSolider.campType != selfSolider.campType)
                     {
                         selfSolider.ChangeTargetObject(tempSolider);
-                        //InOut_TargetTrans.SetValue(tempSolider.transform);
+                        return TaskStatus.Success;
+                    }
+                }
+                for (int i = 0; i < hits.Length; i++)
+                {
+                    var tempTown = hits[i].GetComponent<Town_City>();
+                    if (tempTown && tempTown.Camp() != selfSolider.campType)
+                    {
+                        selfSolider.ChangeTargetObject(tempTown);
+                        return TaskStatus.Success;
                     }
                 }
             }

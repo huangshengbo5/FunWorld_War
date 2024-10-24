@@ -8,6 +8,7 @@ namespace BehaviorDesigner.Runtime.Tasks
 
         public override bool CanExecute()
         {
+            if (In_TargetTrans == null) return false;
             var town = In_TargetTrans.Value;
             if (town is null)
             {
