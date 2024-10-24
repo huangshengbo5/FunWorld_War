@@ -15,7 +15,7 @@ public class Town_City : BaseTown
 
     private void Start()
     {
-        Init();
+        //Init();
         RegisterEvent();
         CurSoliderNum = DefaultMaxSoliderNum;
         CurSoliderNum_Txt.SetText(CurSoliderNum.ToString());
@@ -63,7 +63,8 @@ public class Town_City : BaseTown
             var createSolider = CreateSolider(i); 
             Soliders.Add(createSolider);
             createSolider.Init();
-            createSolider.TargetTown = TargetTown;
+            createSolider.SetTargetTown(TargetTown);
+            createSolider.CampType = this.Camp();
         }
         //BattleNode.JoinBattle(Soliders);
         AttackTargetTown();

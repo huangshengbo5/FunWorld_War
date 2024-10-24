@@ -39,7 +39,14 @@ public class Solider : BaseObject,SoliderInterface
         Dead,          //死亡
     }
 
-    public CampType campType; 
+    public CampType campType;
+
+    public CampType CampType
+    {
+        get => campType;
+        set => campType = value;
+    }
+
     public State curState;   //当前的单位状态
     
     public int ViewRedius;   //视野半径
@@ -81,10 +88,6 @@ public class Solider : BaseObject,SoliderInterface
         {
             return this.targetTown;
         }
-        set
-        {
-            this.targetTown = value;
-        }
     }
 
     public BaseTown OwnerTown
@@ -118,7 +121,7 @@ public class Solider : BaseObject,SoliderInterface
     public void SetTargetTown(BaseTown targetTown)
     {
         this.targetTown = targetTown;
-        behaviorTree.SetVariableValue("TargetTrans",this.targetTown);
+        behaviorTree.SetVariableValue("TargetTrans",this.targetTown.transform);
     }
 
     public BaseTown GetTargetTown()

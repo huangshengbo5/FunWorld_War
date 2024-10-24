@@ -9,6 +9,10 @@ namespace BehaviorDesigner.Runtime.Tasks
         public override bool CanExecute()
         {
             var town = In_TargetTrans.Value;
+            if (town is null)
+            {
+                return false;
+            }
             var ownerTrans = Owner.GetComponent<Transform>();
             Solider solider;
             if (town.TryGetComponent<Solider>(out solider))
@@ -22,7 +26,8 @@ namespace BehaviorDesigner.Runtime.Tasks
             if (town.TryGetComponent<Town_City>(out city))
             {
                 var selfCamp = Owner.GetComponent<Solider>().campType;
-                if (city.Camp() == selfCamp)
+                var cityCamp = city.Camp();
+                if (cityCamp == selfCamp)
                 {
                     return false;
                 }

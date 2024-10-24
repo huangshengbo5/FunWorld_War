@@ -16,40 +16,31 @@ namespace BehaviorDesigner.Runtime.Tasks
         public float delay; 
         
         private NavMeshAgent nav;
-        public override void OnReset()
+
+        public override void OnAwake()
         {
-            base.OnReset();
+            base.OnAwake();
+            nav = Owner.GetComponent<NavMeshAgent>();
+        }
+
+        public override void OnStart()
+        {
+            base.OnStart();
             StartCoroutine(DelayMove());
         }
-    
+
         private IEnumerator DelayMove()
         {
             yield return new WaitForSeconds(delay);
-            nav = Owner.GetComponent<NavMeshAgent>();
-            var target = targetTrans.GetValue() as Transform;
-            nav.SetDestination(target.position);
-            nav.stoppingDistance = stoppingDistance;
+            nav.isStopped = false;
+            nav.SetDestination(targetTrans.Value.position);
+            nav.stoppingDistance = 0;
         }
-    
-        public override void OnBehaviorComplete()
-        {
-            base.OnBehaviorComplete();
-            nav.isStopped = true;
-        }
-    
-        public override void OnEnd()
-        {
-            base.OnEnd();
-            nav.isStopped = true;
-        }
-    
-        public override void OnPause(bool paused)
-        {
-            base.OnPause(paused);
-            if (paused)
-            {
-                nav.isStopped = true;
-            }
-        }
+        
+        // public override void OnEnd()
+        // {
+        //     base.OnEnd();
+        //     nav.isStopped = true;
+        // }
     }
 }

@@ -7,6 +7,12 @@ namespace BehaviorDesigner.Runtime.Tasks
         public override void OnAwake()
         {
             base.OnAwake();
+          
+        }
+
+        public override void OnStart()
+        {
+            base.OnStart();
             var solider = Owner.GetComponent<Solider>();
             solider.DoAttack();
         }
