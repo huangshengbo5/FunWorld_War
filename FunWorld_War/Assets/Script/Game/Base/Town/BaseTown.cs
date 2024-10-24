@@ -25,10 +25,16 @@ namespace Script.Game.Base
         protected List<Solider> Soliders = new List<Solider>();
 
         public int ViewRedius;  //视野范围
-        //生成士兵
-        protected Solider CreateSolider()
+
+        public override ObjectType ObjectType()
         {
-            return null;
+            return global::ObjectType.Town;
+        }
+
+        //生成士兵
+        protected virtual void CreateSolider()
+        {
+            
         }
 
         public List<Solider> GetAllSoliders()
@@ -59,6 +65,36 @@ namespace Script.Game.Base
         public virtual void JoinBattle(List<Solider> enemy)
         {
             
+        }
+
+        public void Update()
+        {
+            List<Solider> enemySoliders;
+            if (CheckHaveEnemyInView(out enemySoliders))
+            {
+                CreateSolider();
+            }
+        }
+
+        //附近是否有把自己当作目标的部队
+        private bool CheckHaveEnemyInView(out List<Solider> enemySoliders)
+        {
+            enemySoliders = new List<Solider>();
+            RaycastHit hit = new RaycastHit();
+            Collider[] hits = new Collider[]{};
+            hits = Physics.OverlapSphere(this.transform.position, ViewRedius);
+            if (hits.Length > 0)
+            {
+                for (int i = 0; i < hits.Length; i++)
+                {
+                    var tempSolider = hits[i].GetComponent<Solider>(); 
+                    if (tempSolider && tempSolider.campType != this.Camp() && tempSolider.GetTargetObject() == this)
+                    {
+                        enemySoliders.Add(tempSolider);
+                    }
+                }
+            }
+            return enemySoliders.Count > 0;
         }
     }
 }

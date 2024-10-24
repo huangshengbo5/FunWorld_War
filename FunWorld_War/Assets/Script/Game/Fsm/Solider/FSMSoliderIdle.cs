@@ -16,7 +16,7 @@ public class FSMSoliderIdle : FsmState<Solider>
     protected override void OnEnter(IFsm<Solider> fsm)
     {
         base.OnEnter(fsm);
-        fsm.Owner.ChangeState(Solider.State.Idleing);
+        fsm.Owner.ChangeAnimatorState(Solider.State.Idleing);
     }
 
     protected override void OnLeave(IFsm<Solider> fsm, bool isShutdown)
@@ -27,11 +27,11 @@ public class FSMSoliderIdle : FsmState<Solider>
     protected override void OnUpdate(IFsm<Solider> fsm, float elapseSeconds, float realElapseSeconds)
     {
         base.OnUpdate(fsm, elapseSeconds, realElapseSeconds);
-        if (fsm.Owner.TargetSolider != null)
+        if (fsm.Owner.TargetObject!= null)
         {
             ChangeState<FSMSoliderAttack>(fsm);
         }
-        if (fsm.Owner.GetTargetTown() != null)
+        if (fsm.Owner.GetTargetObject() != null)
         {
             ChangeState<FSMSoliderMoveToTarget>(fsm);
         }

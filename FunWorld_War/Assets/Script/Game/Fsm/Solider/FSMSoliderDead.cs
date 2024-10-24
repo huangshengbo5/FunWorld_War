@@ -13,7 +13,7 @@ public class FSMSoliderDead : FsmState<Solider>
     protected override void OnEnter(IFsm<Solider> fsm)
     {
         base.OnEnter(fsm);
-        fsm.Owner.ChangeState(Solider.State.Dead);
+        fsm.Owner.ChangeAnimatorState(Solider.State.Dead);
     }
 
     protected override void OnLeave(IFsm<Solider> fsm, bool isShutdown)

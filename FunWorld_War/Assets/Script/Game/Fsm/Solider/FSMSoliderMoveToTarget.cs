@@ -15,10 +15,10 @@ public class FSMSoliderMoveToTarget : FsmState<Solider>
     protected override void OnEnter(IFsm<Solider> fsm)
     {
         base.OnEnter(fsm);
-        if (fsm.Owner.TargetTown)
+        if (fsm.Owner.TargetObject)
         {
-            targetTrans = fsm.Owner.TargetTown.transform;
-            fsm.Owner.ChangeState(Solider.State.Moving);
+            targetTrans = fsm.Owner.TargetObject.transform;
+            fsm.Owner.ChangeAnimatorState(Solider.State.Moving);
             fsm.Owner.MoveToTarget(targetTrans.position);
         }
     }

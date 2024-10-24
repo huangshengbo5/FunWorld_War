@@ -12,4 +12,10 @@ public class BaseObject : MonoBehaviour
     {
         //Id = gameObject.GetHashCode();
     }
+
+    public virtual ObjectType ObjectType()
+    {
+        return global::ObjectType.None;
+    }
+    
 }

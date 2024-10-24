@@ -225,6 +225,7 @@
      <Compile Include="Assets\UnityPackages\BehaviorTree\Behavior Designer\Runtime\Tasks\Unity\ParticleSystem\SetEnableEmission.cs" />
      <Compile Include="Assets\UnityPackages\BehaviorTree\Behavior Designer\Runtime\Tasks\Unity\AudioSource\SetSpread.cs" />
      <Compile Include="Assets\UnityPackages\BehaviorTree\Behavior Designer\Runtime\Tasks\Unity\SharedVariables\SetSharedObjectList.cs" />
+     <Compile Include="Assets\Script\Game\Base\Solider\Solider_Animator.cs" />
      <Compile Include="Assets\UnityPackages\BehaviorTree\Behavior Designer\Runtime\Tasks\Unity\Transform\SetEulerAngles.cs" />
      <Compile Include="Assets\UnityPackages\BehaviorTree\Behavior Designer\Runtime\Tasks\Unity\Vector3\SetValue.cs" />
      <Compile Include="Assets\UnityPackages\BehaviorTree\Behavior Designer\Runtime\Tasks\Unity\SharedVariables\CompareSharedFloat.cs" />
@@ -346,6 +347,7 @@
      <Compile Include="Assets\UnityPackages\BehaviorTree\Behavior Designer\Runtime\Tasks\Decorators\UntilSuccess.cs" />
      <Compile Include="Assets\UnityPackages\BehaviorTree\Behavior Designer\Runtime\Tasks\Unity\Input\IsButtonUp.cs" />
      <Compile Include="Assets\UnityPackages\BehaviorTree\Behavior Designer\Runtime\Tasks\Unity\Collider\GetEnabled.cs" />
+     <Compile Include="Assets\Script\Game\Base\Animator\AnimationEvent_Solider.cs" />
      <Compile Include="Assets\UnityPackages\BehaviorTree\Behavior Designer\Runtime\Tasks\Unity\Rigidbody\GetDrag.cs" />
      <Compile Include="Assets\UnityPackages\BehaviorTree\Behavior Designer\Runtime\Tasks\Unity\CharacterController\SetHeight.cs" />
      <Compile Include="Assets\UnityPackages\BehaviorTree\Behavior Designer\Runtime\Tasks\Unity\AudioSource\SetAudioClip.cs" />
@@ -503,6 +505,7 @@
      <Compile Include="Assets\Script\Game\BehaviorTree\Decorators\SharedTransNotEmpty.cs" />
      <Compile Include="Assets\UnityPackages\BehaviorTree\Behavior Designer\Runtime\Tasks\Unity\Quaternion\AngleAxis.cs" />
      <Compile Include="Assets\Script\Game\GameFramework\GameEntry.Builtin.cs" />
+     <Compile Include="Assets\Script\Game\BehaviorTree\Action\CheckEnemy.cs" />
      <Compile Include="Assets\UnityPackages\BehaviorTree\Behavior Designer\Runtime\Tasks\Unity\CharacterController\SetStepOffset.cs" />
      <Compile Include="Assets\UnityPackages\BehaviorTree\Behavior Designer\Runtime\Tasks\Unity\AudioSource\GetMinDistance.cs" />
      <Compile Include="Assets\Script\Data\Base\ConfigBinaryBase.cs" />
@@ -968,6 +971,7 @@
      <Folder Include="Assets\UnityPackages\Toon_RTS\WesternKingdoms\models\Materials\textures" />
      <Folder Include="Assets\UnityPackages\BehaviorTree\Behavior Designer\Runtime\Tasks\Conditionals\Reflection" />
      <Folder Include="Assets\Script\Game\Base\Town" />
+     <Folder Include="Assets\Script\Game\Base\Animator" />
      <Folder Include="Assets\Res\Scenes\Groundtextures\Grass &amp; rocks" />
      <Folder Include="Assets\UnityPackages\Toon_RTS\WesternKingdoms\models\extra models" />
      <None Include="Assets\Res\Scenes\Material\Shaders\New Amplify Shader 2.shader" />

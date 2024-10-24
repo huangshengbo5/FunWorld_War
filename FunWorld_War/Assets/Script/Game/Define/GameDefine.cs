@@ -11,3 +11,10 @@ public enum CampType
     OtherPlayer ,   //其他玩家
     Neutral     ,   //中立
 }
+
+public enum ObjectType
+{
+    None   ,
+    Town   , //城池
+    Solider, //士兵
+}

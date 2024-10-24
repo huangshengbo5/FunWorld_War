@@ -3,33 +3,36 @@ using BehaviorDesigner.Runtime;
 using Script.Game.Base;
 using UnityEngine;
 using UnityEngine.AI;
-using UnityEngine.Serialization;
 
-public class Solider : BaseObject,SoliderInterface
+public partial class Solider : BaseObject, SoliderInterface
 {
     private BehaviorTree behaviorTree;
+
+    public override ObjectType ObjectType()
+    {
+        return global::ObjectType.Solider;
+    }
+
     public void Init()
     {
-        //InitFsm();
         InitBehaviorTree();
     }
     
     public void InitBehaviorTree()
     {
         behaviorTree= this.gameObject.GetComponent<BehaviorTree>();
-        
-        
     }
-    public void InitFsm()
-    {
-        var fsmName = "FSM_" + this.gameObject.name;
-        var fsm = GameEntry.Fsm.CreateFsm<Solider>(fsmName,this, 
-            new FSMSoliderIdle(),
-            new FSMSoliderDead(),
-            new FSMSoliderAttack(),
-            new FSMSoliderMoveToTarget());
-        fsm.Start<FSMSoliderIdle>();
-    }
+    
+    // public void InitFsm()
+    // {
+    //     var fsmName = "FSM_" + this.gameObject.name;
+    //     var fsm = GameEntry.Fsm.CreateFsm<Solider>(fsmName,this, 
+    //         new FSMSoliderIdle(),
+    //         new FSMSoliderDead(),
+    //         new FSMSoliderAttack(),
+    //         new FSMSoliderMoveToTarget());
+    //     fsm.Start<FSMSoliderIdle>();
+    // }
     
     public enum State
     {
@@ -54,10 +57,8 @@ public class Solider : BaseObject,SoliderInterface
     
     public Animator Animator;
     
-    protected BaseTown targetTown;
-
-    //敌人
-    protected Solider targetSolider;
+    protected BaseObject targetObject;
+    
 
     //士兵归属的城镇
     protected BaseTown ownerTown;
@@ -69,24 +70,13 @@ public class Solider : BaseObject,SoliderInterface
         get => retreat;
         set => retreat = value;
     }
+    
 
-    public Solider TargetSolider
+    public BaseObject TargetObject
     {
         get
         {
-            return this.targetSolider;
-        }
-        set
-        {
-            this.targetSolider = value;
-        }
-    }
-
-    public BaseTown TargetTown
-    {
-        get
-        {
-            return this.targetTown;
+            return this.targetObject;
         }
     }
 
@@ -106,7 +96,7 @@ public class Solider : BaseObject,SoliderInterface
 
     //血量
     public int Hp;
-    //伤害
+    //伤害数值
     public int Damage;
     
     //造成伤害时间间隔信息
@@ -118,15 +108,16 @@ public class Solider : BaseObject,SoliderInterface
         Retreat = retreat;
     }
 
-    public void SetTargetTown(BaseTown targetTown)
+    public void ChangeTargetObject(BaseObject targetTown)
     {
-        this.targetTown = targetTown;
-        behaviorTree.SetVariableValue("TargetTrans",this.targetTown.transform);
+        this.targetObject = targetTown;
+        behaviorTree.SetVariableValue("TargetTrans",this.targetObject.transform);
     }
 
-    public BaseTown GetTargetTown()
+    
+    public BaseObject GetTargetObject()
     {
-        return this.targetTown;
+        return this.targetObject;
     }
 
     public void SufferInjure(float injure)
@@ -141,51 +132,59 @@ public class Solider : BaseObject,SoliderInterface
     
     public void DoAttack()
     {
-        // AttackTimeStamp += Time.deltaTime;
-        // if (AttackTimeStamp >= AttackInterval)
-        // {
-        //     AttackTimeStamp = 0;
-        //     targetSolider.BeAttack(this,Damage);
-        // }
+        ChangeAnimatorState(State.Attack_Enemy);
         Debug.Log("Solider DoAttack");
     }
 
+    public void OnAttackHited()
+    {
+        if (targetObject is Solider)
+        {
+            var targetSolider = targetObject as Solider;
+            if (! targetSolider.IsDead())
+            {
+                targetSolider.BeAttack(this,this.Damage);
+            }
+        }
+    }
+    
     //判断周围是否有敌人
     public bool CheckEnemy()
     {
-        if (targetSolider != null && targetSolider.IsDead() == false)
-        {
-            return true;
-        }
-        RaycastHit hit = new RaycastHit();
-        Collider[] hits = new Collider[]{};
-        hits = Physics.OverlapSphere(this.transform.position, ViewRedius);
-        if (hits.Length > 0)
-        {
-            for (int i = 0; i < hits.Length; i++)
-            {
-                var tempSolider = hits[i].GetComponent<Solider>(); 
-                if (tempSolider && tempSolider.campType != this.campType)
-                {
-                    targetSolider = hits[i].GetComponent<Solider>();
-                }
-            }
-        }
-        return targetSolider != null;
+        // if (targetSolider != null && targetSolider.IsDead() == false)
+        // {
+        //     return true;
+        // }
+        // RaycastHit hit = new RaycastHit();
+        // Collider[] hits = new Collider[]{};
+        // hits = Physics.OverlapSphere(this.transform.position, ViewRedius);
+        // if (hits.Length > 0)
+        // {
+        //     for (int i = 0; i < hits.Length; i++)
+        //     {
+        //         var tempSolider = hits[i].GetComponent<Solider>(); 
+        //         if (tempSolider && tempSolider.campType != this.campType)
+        //         {
+        //             targetSolider = hits[i].GetComponent<Solider>();
+        //         }
+        //     }
+        // }
+        // return targetSolider != null;
+        return false;
     }
 
     public bool IsCanAttackEnemy()
     {
-        CheckEnemy();
-        if (targetSolider != null)
-        {
-            navMeshAgent.SetDestination(targetSolider.transform.position);
-            if (Vector3.Distance(this.transform.position,targetSolider.transform.position) <= ViewAttackRedius)
-            {
-                navMeshAgent.isStopped = true;
-                return true;
-            }
-        }
+        // CheckEnemy();
+        // if (targetSolider != null)
+        // {
+        //     navMeshAgent.SetDestination(targetSolider.transform.position);
+        //     if (Vector3.Distance(this.transform.position,targetSolider.transform.position) <= ViewAttackRedius)
+        //     {
+        //         navMeshAgent.isStopped = true;
+        //         return true;
+        //     }
+        // }
         return false;
     }
     
@@ -200,14 +199,14 @@ public class Solider : BaseObject,SoliderInterface
         SufferInjure(damageNum);
         if (Hp <= damageNum)
         {
-            if (ChangeState(State.Dead))
+            if (ChangeAnimatorState(State.Dead))
             {
                 StartCoroutine(DeadSuccess());
             }
         }
-        if (targetSolider == null || targetSolider != attacker)
+        if (targetObject == null || targetObject != attacker)
         {
-            targetSolider = attacker;
+            ChangeTargetObject(attacker);
         }
     }
 
@@ -224,7 +223,7 @@ public class Solider : BaseObject,SoliderInterface
     }
 
     //改变装填
-    public bool ChangeState(State state)
+    public bool ChangeAnimatorState(State state)
     {
         if (curState == state)
         {
@@ -259,7 +258,7 @@ public class Solider : BaseObject,SoliderInterface
     
     public void MoveToTarget(Vector3 targetPoint)
     {
-        ChangeState(State.Moving);
+        ChangeAnimatorState(State.Moving);
         navMeshAgent = this.GetComponent<NavMeshAgent>();
         navMeshAgent.SetDestination(targetPoint);
         navMeshAgent.stoppingDistance = 2;

@@ -15,7 +15,7 @@ public class Town_City : BaseTown
 
     private void Start()
     {
-        //Init();
+        Init();
         RegisterEvent();
         CurSoliderNum = DefaultMaxSoliderNum;
         CurSoliderNum_Txt.SetText(CurSoliderNum.ToString());
@@ -27,7 +27,8 @@ public class Town_City : BaseTown
         yield return new WaitForSeconds(1f);
         if (OwnerCamp == global::CampType.Player)
         {
-            CreateSoliders();   
+            CreateSolider();
+            AttackTargetTown();
         }
         yield return null;
     }
@@ -36,12 +37,12 @@ public class Town_City : BaseTown
     {
         BattleNode = new BattleNode();
         BattleNode.Init(this.OwnerCamp);
-        var fsmName = "FSM_" + this.gameObject.name;
-        var fsm = GameEntry.Fsm.CreateFsm<BaseTown>(fsmName, this,
-            new FSMTownIdle(),
-            new FSMTownBattle(),
-            new FSMTownBattleEnd());
-        fsm.Start<FSMTownIdle>();
+        // var fsmName = "FSM_" + this.gameObject.name;
+        // var fsm = GameEntry.Fsm.CreateFsm<BaseTown>(fsmName, this,
+        //     new FSMTownIdle(),
+        //     new FSMTownBattle(),
+        //     new FSMTownBattleEnd());
+        // fsm.Start<FSMTownIdle>();
     }
 
     private void RegisterEvent()
@@ -56,18 +57,21 @@ public class Town_City : BaseTown
         Debug.Log(string.Format("胜利{0}",type));
     }
     
-    protected void CreateSoliders()
+    protected override void CreateSolider()
     {
         for (int i = 0; i < DefaultMaxSoliderNum; i++)
         {
             var createSolider = CreateSolider(i); 
             Soliders.Add(createSolider);
             createSolider.Init();
-            createSolider.SetTargetTown(TargetTown);
+            if (TargetTown)
+            {
+                createSolider.ChangeTargetObject(TargetTown);    
+            }
             createSolider.CampType = this.Camp();
         }
+        DefaultMaxSoliderNum = 0;
         //BattleNode.JoinBattle(Soliders);
-        AttackTargetTown();
     }
 
     public void AttackTargetTown()

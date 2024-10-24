@@ -11,7 +11,7 @@ namespace BehaviorDesigner.Runtime.Tasks
         {
             base.OnAwake();
             var solider = Owner.GetComponent<Solider>();
-            targetTown.SetValue(solider.GetTargetTown().transform);
+            targetTown.SetValue(solider.GetTargetObject().transform);
         }
     }
 }

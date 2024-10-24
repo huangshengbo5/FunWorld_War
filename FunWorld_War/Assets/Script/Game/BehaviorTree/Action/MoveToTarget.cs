@@ -36,11 +36,11 @@ namespace BehaviorDesigner.Runtime.Tasks
             nav.SetDestination(targetTrans.Value.position);
             nav.stoppingDistance = 0;
         }
-        
-        // public override void OnEnd()
-        // {
-        //     base.OnEnd();
-        //     nav.isStopped = true;
-        // }
+
+        public override TaskStatus OnUpdate()
+        {
+            StartCoroutine(DelayMove());
+            return TaskStatus.Success;
+        }
     }
 }
