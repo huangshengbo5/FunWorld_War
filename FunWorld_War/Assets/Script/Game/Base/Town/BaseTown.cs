@@ -15,10 +15,8 @@ namespace Script.Game.Base
 
         //默认生成士兵数量
         public int DefaultMaxSoliderNum;
-        
-        protected float LastCreateTimeStamp;
 
-        [FormerlySerializedAs("OwnerType")] public CampType OwnerCamp = global::CampType.None;
+        public CampType OwnerCamp = global::CampType.None;
         
         protected int CurSoliderNum;
 

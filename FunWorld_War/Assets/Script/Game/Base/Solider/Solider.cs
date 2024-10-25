@@ -4,7 +4,7 @@ using Script.Game.Base;
 using UnityEngine;
 using UnityEngine.AI;
 
-public partial class Solider : BaseObject, SoliderInterface
+public partial class Solider : BaseObject
 {
     private BehaviorTree behaviorTree;
 
