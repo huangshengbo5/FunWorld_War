@@ -6,9 +6,10 @@ using Script.Game.Base;
 using UnityEngine;
 using Random = System.Random;
 
-public class Town_City : BaseTown
+public class Town : BaseTown
 {
-    private BattleNode BattleNode;
+    private Town_BattleJudge m_TownBattleJudge;
+    private List<SoliderCommander> SoliderCommanders;
     public GameObject ObjSolider;
     //目标城镇
     public BaseTown TargetTown;
@@ -19,24 +20,27 @@ public class Town_City : BaseTown
         RegisterEvent();
         CurSoliderNum = DefaultMaxSoliderNum;
         CurSoliderNum_Txt.SetText(CurSoliderNum.ToString());
-        StartCoroutine(DelayGenerateSolider());
+        
+        //test code
+        StartCoroutine(AttackTargetTown());
     }
-
-    IEnumerator DelayGenerateSolider()
+    
+    
+    IEnumerator AttackTargetTown()
     {
         yield return new WaitForSeconds(1f);
-        if (OwnerCamp == global::CampType.Player)
+        if (OwnerCamp == global::CampType.Player && TargetTown != null)
         {
             CreateSolider();
-            AttackTargetTown();
+            JoinBattle(TargetTown, GetAllSoliders());
         }
         yield return null;
     }
 
     private void Init()
     {
-        BattleNode = new BattleNode();
-        BattleNode.Init(this.OwnerCamp);
+        m_TownBattleJudge = new Town_BattleJudge();
+        m_TownBattleJudge.Init(this);
         // var fsmName = "FSM_" + this.gameObject.name;
         // var fsm = GameEntry.Fsm.CreateFsm<BaseTown>(fsmName, this,
         //     new FSMTownIdle(),
@@ -59,7 +63,8 @@ public class Town_City : BaseTown
     
     protected override void CreateSolider()
     {
-        for (int i = 0; i < DefaultMaxSoliderNum; i++)
+        List<Solider> Soliders = new List<Solider>();
+        for (int i = 0; i < CurSoliderNum; i++)
         {
             var createSolider = CreateSolider(i); 
             Soliders.Add(createSolider);
@@ -70,17 +75,13 @@ public class Town_City : BaseTown
             }
             createSolider.CampType = this.Camp();
         }
-        DefaultMaxSoliderNum = 0;
-        //BattleNode.JoinBattle(Soliders);
+
+        SoliderCommander soliderCommander = new SoliderCommander();
+        soliderCommander.AddSoliders(Soliders);
+        CurSoliderNum = 0;
     }
 
-    public void AttackTargetTown()
-    {
-        if (OwnerCamp == global::CampType.Player && TargetTown != null)
-        {
-            JoinBattle(TargetTown, GetAllSoliders());
-        }
-    }
+
     
     //创建士兵
     protected Solider CreateSolider(int index)
@@ -110,19 +111,19 @@ public class Town_City : BaseTown
     //检查战斗结果
     public override Tuple<bool, CampType> CheckBattleResult()
     {
-        return BattleNode.CheckBattleResult();
+        return m_TownBattleJudge.CheckBattleResult();
     }
 
     //是否正在发生战斗
     public override bool IsInBattle()
     {
-        return BattleNode.IsInBattle();
+        return m_TownBattleJudge.IsInBattle();
     }
 
     //加入一只敌方部队
     public override void JoinBattle(List<Solider> enemy)
     {
-        BattleNode.JoinBattle(enemy);
+        //m_TownBattleJudge.JoinBattle(enemy);
     }
 
     public void JoinBattle(BaseTown targetTown, List<Solider> enemy)

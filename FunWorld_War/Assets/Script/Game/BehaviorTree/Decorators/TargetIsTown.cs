@@ -9,8 +9,8 @@ namespace BehaviorDesigner.Runtime.Tasks
         public override bool CanExecute()
         {
             var town = In_TargetTrans.Value;
-            Town_City city;
-            if (town.TryGetComponent<Town_City>(out city))
+            Town city;
+            if (town.TryGetComponent<Town>(out city))
             {
                 return true;
             }

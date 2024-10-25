@@ -20,9 +20,8 @@ namespace Script.Game.Base
         
         protected int CurSoliderNum;
 
-        protected List<Solider> Soliders = new List<Solider>();
 
-        public int ViewRedius;  //视野范围
+        public int ViewRedius;  //视野范围sdfasddsadfsadfsdafasdfasdfsdafioldjsaflk;djs
 
         public override ObjectType ObjectType()
         {
@@ -33,11 +32,6 @@ namespace Script.Game.Base
         protected virtual void CreateSolider()
         {
             
-        }
-
-        public List<Solider> GetAllSoliders()
-        {
-            return Soliders;
         }
 
         public CampType Camp()

@@ -23,8 +23,8 @@ namespace BehaviorDesigner.Runtime.Tasks
                     return false;
                 }
             }
-            Town_City city;
-            if (town.TryGetComponent<Town_City>(out city))
+            Town city;
+            if (town.TryGetComponent<Town>(out city))
             {
                 var selfCamp = Owner.GetComponent<Solider>().campType;
                 var cityCamp = city.Camp();

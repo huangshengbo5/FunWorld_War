@@ -55,7 +55,7 @@ namespace BehaviorDesigner.Runtime.Tasks
                 }
                 for (int i = 0; i < hits.Length; i++)
                 {
-                    var tempTown = hits[i].GetComponent<Town_City>();
+                    var tempTown = hits[i].GetComponent<Town>();
                     if (tempTown && tempTown.Camp() != selfSolider.campType)
                     {
                         selfSolider.ChangeTargetObject(tempTown);
