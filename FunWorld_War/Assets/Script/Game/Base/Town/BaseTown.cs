@@ -19,9 +19,9 @@ namespace Script.Game.Base
         public CampType OwnerCamp = global::CampType.None;
         
         protected int CurSoliderNum;
-
-
-        public int ViewRedius;  //视野范围sdfasddsadfsadfsdafasdfasdfsdafioldjsaflk;djs
+        
+        public int ViewRedius;  //视野范围
+        public int HP;
 
         public override ObjectType ObjectType()
         {
@@ -29,9 +29,9 @@ namespace Script.Game.Base
         }
 
         //生成士兵
-        protected virtual void CreateSolider()
+        protected virtual SoliderCommander CreateSolider()
         {
-            
+            return null;
         }
 
         public CampType Camp()
@@ -54,11 +54,6 @@ namespace Script.Game.Base
             return false;
         }
 
-        public virtual void JoinBattle(List<Solider> enemy)
-        {
-            
-        }
-
         public void Update()
         {
             List<Solider> enemySoliders;
@@ -68,6 +63,10 @@ namespace Script.Game.Base
             }
         }
 
+        public virtual void JoinBattle(SoliderCommander enemySoliderCommander)
+        {
+            
+        }
         //附近是否有把自己当作目标的部队
         private bool CheckHaveEnemyInView(out List<Solider> enemySoliders)
         {

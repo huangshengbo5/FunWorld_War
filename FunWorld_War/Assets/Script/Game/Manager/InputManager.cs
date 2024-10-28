@@ -21,7 +21,6 @@ public class InputManager : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-       
         if (Input.GetMouseButton(0))
         {
             RaycastHit hit;
@@ -32,15 +31,15 @@ public class InputManager : MonoBehaviour
                 if (hitObj && hitObj.GetComponent<BaseTown>() != null)
                 {
                     var baseTown = hitObj.GetComponent<BaseTown>();
-                    var soliders = baseTown.GetAllSoliders();
-                    if (baseTown.Camp() != CampType.Player)
-                    {
-                        for (int i = 0; i < soliders.Count; i++)
-                        {
-
-                            //soliders[i].MoveToTarget();
-                        }
-                    }
+                    //var soliders = baseTown.GetAllSoliders();
+                    // if (baseTown.Camp() != CampType.Player)
+                    // {
+                    //     for (int i = 0; i < soliders.Count; i++)
+                    //     {
+                    //
+                    //         //soliders[i].MoveToTarget();
+                    //     }
+                    // }
                 }
             }
         }

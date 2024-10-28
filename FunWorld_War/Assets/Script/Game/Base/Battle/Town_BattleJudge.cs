@@ -27,7 +27,7 @@ public class Town_BattleJudge
         LeftSoliderCommanders[camp].Add(soliderCommander);
     }
     
-    //离开一场战斗，士兵部队的人全部被消灭
+    //士兵部队离开一场战斗，士兵部队的人全部被消灭
     public void LeaveBattle(SoliderCommander soliderCommander)
     {
         var camp = soliderCommander.Camp;

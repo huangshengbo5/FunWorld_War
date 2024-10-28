@@ -31,8 +31,8 @@ public class Town : BaseTown
         yield return new WaitForSeconds(1f);
         if (OwnerCamp == global::CampType.Player && TargetTown != null)
         {
-            CreateSolider();
-            JoinBattle(TargetTown, GetAllSoliders());
+            var soliderCommander = CreateSolider();
+            JoinBattle(TargetTown, soliderCommander);
         }
         yield return null;
     }
@@ -61,7 +61,7 @@ public class Town : BaseTown
         Debug.Log(string.Format("胜利{0}",type));
     }
     
-    protected override void CreateSolider()
+    protected override SoliderCommander CreateSolider()
     {
         List<Solider> Soliders = new List<Solider>();
         for (int i = 0; i < CurSoliderNum; i++)
@@ -79,6 +79,7 @@ public class Town : BaseTown
         SoliderCommander soliderCommander = new SoliderCommander();
         soliderCommander.AddSoliders(Soliders);
         CurSoliderNum = 0;
+        return soliderCommander;
     }
 
 
@@ -121,13 +122,13 @@ public class Town : BaseTown
     }
 
     //加入一只敌方部队
-    public override void JoinBattle(List<Solider> enemy)
+    public override void JoinBattle(SoliderCommander enemySoliderCommander)
     {
-        //m_TownBattleJudge.JoinBattle(enemy);
+        m_TownBattleJudge.JoinBattle(enemySoliderCommander);
     }
 
-    public void JoinBattle(BaseTown targetTown, List<Solider> enemy)
+    public void JoinBattle(BaseTown targetTown, SoliderCommander enemySoliderCommander)
     {
-        targetTown.JoinBattle(enemy);
+        targetTown.JoinBattle(enemySoliderCommander);
     }
 }
