@@ -55,7 +55,7 @@ public class ProcedurePreload : ProcedureBase
                 return;
 
         procedureOwner.SetData<VarInt32>("NextSceneId", GameEntry.Config.GetInt("Scene.Menu"));
-        //ChangeState<ProcedureChangeScene>(procedureOwner);
+        ChangeState<ProcedureChangeScene>(procedureOwner);
     }
 
     private void PreloadResources()
@@ -63,14 +63,14 @@ public class ProcedurePreload : ProcedureBase
         // Preload configs
         LoadConfig("DefaultConfig");
 
-        // Preload data tables
-        foreach (var dataTableName in DataTableNames) LoadDataTable(dataTableName);
-
-        // Preload dictionaries
-        LoadDictionary("Default");
-
-        // Preload fonts
-        LoadFont("MainFont");
+        // // Preload data tables
+        // foreach (var dataTableName in DataTableNames) LoadDataTable(dataTableName);
+        //
+        // // Preload dictionaries
+        // LoadDictionary("Default");
+        //
+        // // Preload fonts
+        // LoadFont("MainFont");
     }
 
     private void LoadConfig(string configName)
