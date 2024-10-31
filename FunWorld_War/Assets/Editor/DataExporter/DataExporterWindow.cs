@@ -230,6 +230,7 @@ public class DataExporterWindow : EditorWindow
         for (int i = 0; i < _selectFiles.Count; i++)
         {
             GenSingleClientData(_selectFiles[i]);
+            Debug.Log(string.Format("表格{0}数据生成成功！",_selectFiles[i]));
         }
 
         if(ExcelExporterUtil.exportType == ExcelDataExportType.Text)

@@ -112,7 +112,9 @@ public class ExcelExporterUtil
             case ExcelDataExportType.ScriptObject:
                 return excelName + ".asset";
             case ExcelDataExportType.Text:
-                return excelName + ".bytes";
+                return excelName + ".txt";
+            case ExcelDataExportType.Json:
+                return excelName + ".json";
         }
         return excelName + ".bytes";
     }

@@ -4,6 +4,9 @@ namespace Config.TextConfig
 	{
 		public static ConfigTextBase Get(string configName)
 		{
+			switch(configName)
+			{
+			}
 			return null;
 		}
 	}
