@@ -104,12 +104,13 @@ public class DataExporterWindow : EditorWindow
         CheckPaths();
 
         #region GUI
-        bool selectExcelPath = EditorWindowUtil.DrawSelectPathView("excel路径：", _excelPath);
-        bool selectAssetPath = EditorWindowUtil.DrawSelectPathView("Asset路径：", _assetPath);
-        bool selectClientScriptPath = EditorWindowUtil.DrawSelectPathView("客户端类输出路径：", _clientScriptOutputPath);
-        bool selectClientDataPath = EditorWindowUtil.DrawSelectPathView("客户端数据输出路径：", _clientDataOutputPath);
-
-        var type = (ExcelDataExportType)EditorGUILayout.EnumPopup("文件导出类型", _exportType);
+        //bool selectExcelPath = EditorWindowUtil.DrawSelectPathView("excel路径：", _excelPath);
+        //bool selectAssetPath = EditorWindowUtil.DrawSelectPathView("Asset路径：", _assetPath);
+        //bool selectClientScriptPath = EditorWindowUtil.DrawSelectPathView("客户端类输出路径：", _clientScriptOutputPath);
+        //bool selectClientDataPath = EditorWindowUtil.DrawSelectPathView("客户端数据输出路径：", _clientDataOutputPath);
+        //var type = (ExcelDataExportType)EditorGUILayout.EnumPopup("文件导出类型", _exportType);
+        
+        var type = ExcelDataExportType.Text;
         if(type != ExcelExporterUtil.exportType)
         {
             _exportType = type;
@@ -119,7 +120,7 @@ public class DataExporterWindow : EditorWindow
 
 
         Rect rect = EditorGUILayout.GetControlRect(true, GUILayout.Height(100));
-        GUI.Box(rect, "选择Excel文件");
+        GUI.Box(rect, "选择Excel文件,\n将选中的Excel文件放在拖到此处");
 
         bool genData = GUILayout.Button("生成配置配置文件");
         bool genClass = GUILayout.Button("生成客户端类文件");
@@ -153,34 +154,34 @@ public class DataExporterWindow : EditorWindow
             CleanClient();
         }
 
-        #region RefreshPaths
-        if (selectExcelPath)
-        {
-            _excelPath = EditorWindowUtil.SelectFolder(_excelPath, "选择excel路径", "");
-            ExcelExporterUtil.ExcelPath = _excelPath;
-            WriteStringField("_excelPath");
-        }
+        #region RefreshPaths        // if (selectExcelPath)
+                                    // {
+                                    //     _excelPath = EditorWindowUtil.SelectFolder(_excelPath, "选择excel路径", "");
+                                    //     ExcelExporterUtil.ExcelPath = _excelPath;
+                                    //     WriteStringField("_excelPath");
+                                    // }
 
-        if (selectAssetPath)
-        {
-            _assetPath = EditorWindowUtil.SelectFolder(_assetPath, "选择工程Assets路径", "");
-            ExcelExporterUtil.AssetPath = _assetPath;
-            WriteStringField("_assetPath");
-        }
 
-        if (selectClientDataPath)
-        {
-            _clientDataOutputPath = EditorWindowUtil.SelectFolder(_clientDataOutputPath, "选择客户端数据输出路径", "");
-            ExcelExporterUtil.ClientDataOutputPath = _clientDataOutputPath;
-            WriteStringField("_clientDataOutputPath");
-        }
+        // if (selectAssetPath)
+        // {
+        //     _assetPath = EditorWindowUtil.SelectFolder(_assetPath, "选择工程Assets路径", "");
+        //     ExcelExporterUtil.AssetPath = _assetPath;
+        //     WriteStringField("_assetPath");
+        // }
 
-        if (selectClientScriptPath)
-        {
-            _clientScriptOutputPath = EditorWindowUtil.SelectFolder(_clientScriptOutputPath, "选择客户端类输出路径", "");
-            ExcelExporterUtil.ClientScriptOutputPath = _clientScriptOutputPath;
-            WriteStringField("_clientScriptOutputPath");
-        }
+        // if (selectClientDataPath)
+        // {
+        //     _clientDataOutputPath = EditorWindowUtil.SelectFolder(_clientDataOutputPath, "选择客户端数据输出路径", "");
+        //     ExcelExporterUtil.ClientDataOutputPath = _clientDataOutputPath;
+        //     WriteStringField("_clientDataOutputPath");
+        // }
+
+        // if (selectClientScriptPath)
+        // {
+        //     _clientScriptOutputPath = EditorWindowUtil.SelectFolder(_clientScriptOutputPath, "选择客户端类输出路径", "");
+        //     ExcelExporterUtil.ClientScriptOutputPath = _clientScriptOutputPath;
+        //     WriteStringField("_clientScriptOutputPath");
+        // }
         #endregion
     }
 
