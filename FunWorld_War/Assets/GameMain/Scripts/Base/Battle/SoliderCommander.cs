@@ -33,6 +33,7 @@ public class SoliderCommander
     public void AddSolider(Solider solider)
     {
         Soliders.Add(solider);
+        solider.Init_SoliderCommander(this);
     }
 
     public void AddSoliders(List<Solider> soliders)
@@ -44,5 +45,9 @@ public class SoliderCommander
     public void OnBattleWin()
     {
         //执行士兵进城
+        for (int i = 0; i < Soliders.Count; i++)
+        {
+            Soliders[i].EnterTown();
+        }
     }
 }

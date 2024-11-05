@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using UnityEngine;
 
 public class Town_BattleJudge
 {
@@ -72,4 +73,26 @@ public class Town_BattleJudge
         battleResult = new Tuple<bool, CampType>(leftCamp != CampType.None, leftCamp);
         return battleResult;
     }
+
+    //占城成功
+    public void Town_OccupiedSuccess()
+    {
+        Tuple<bool, CampType> battleResult = CheckBattleResult();
+        if (battleResult.Item1 == false)
+        {
+            Debug.LogError("城池已被攻占，战斗却尚未结束！！！");
+            return;
+        }
+        var winner_camp = battleResult.Item2;
+        targetTown.ChangeCamp(winner_camp);
+        Debug.Log($"城池已被占领，胜利方阵营为：{winner_camp}");
+        LeftSoliderCommanders[winner_camp][0].OnBattleWin();
+    }
+
+    //守城成功
+    public void Town_ProtectSuccess()
+    {
+        
+    }
+    
 }

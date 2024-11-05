@@ -34,11 +34,11 @@ public class FSMSoliderMoveToTarget : FsmState<Solider>
         base.OnUpdate(fsm, elapseSeconds, realElapseSeconds);
         if (fsm.Owner)
         {
-            if (fsm.Owner.IsCanAttackEnemy())
-            {
-                
-                ChangeState<FSMSoliderAttack>(fsm);
-            }
+            // if (fsm.Owner.IsCanAttackEnemy())
+            // {
+            //     
+            //     ChangeState<FSMSoliderAttack>(fsm);
+            // }
         }
     }
 

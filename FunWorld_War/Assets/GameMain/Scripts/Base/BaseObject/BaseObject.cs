@@ -2,6 +2,8 @@ using UnityEngine;
 
 public class BaseObject : MonoBehaviour
 {
+    //血量
+    public int Hp;
     private int Id;
     public int ID 
     {
@@ -18,4 +20,8 @@ public class BaseObject : MonoBehaviour
         return global::ObjectType.None;
     }
     
+    public virtual void BeAttack(BaseObject attacker, int damageNum)
+    {
+           
+    }
 }

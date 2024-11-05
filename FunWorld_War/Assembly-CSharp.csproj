@@ -107,7 +107,6 @@
      <Compile Include="Assets\UnityPackages\BehaviorTree\Behavior Designer\Runtime\Tasks\Unity\Vector2\Multiply.cs" />
      <Compile Include="Assets\UnityPackages\BehaviorTree\Behavior Designer\Runtime\Variables\SharedGameObject.cs" />
      <Compile Include="Assets\UnityPackages\BehaviorTree\Behavior Designer\Runtime\Tasks\Unity\ParticleSystem\SetMaxParticles.cs" />
-     <Compile Include="Assets\CombineMesh.cs" />
      <Compile Include="Assets\UnityPackages\BehaviorTree\Behavior Designer\Runtime\Tasks\Conditionals\Physics\HasEnteredTrigger.cs" />
      <Compile Include="Assets\UnityPackages\BehaviorTree\Behavior Designer\Runtime\Tasks\Decorators\Interrupt.cs" />
      <Compile Include="Assets\UnityPackages\BehaviorTree\Behavior Designer\Runtime\Tasks\Unity\Transform\SetRightVector.cs" />
@@ -445,6 +444,7 @@
      <Compile Include="Assets\UnityPackages\BehaviorTree\Behavior Designer\Runtime\Tasks\Unity\Vector3\MoveTowards.cs" />
      <Compile Include="Assets\UnityPackages\BehaviorTree\Behavior Designer\Runtime\Tasks\Unity\Vector2\ClampMagnitude.cs" />
      <Compile Include="Assets\UnityPackages\BehaviorTree\Behavior Designer\Runtime\Tasks\Unity\Light\GetCookieSize.cs" />
+     <Compile Include="Assets\GameMain\Scripts\CombineMesh.cs" />
      <Compile Include="Assets\UnityPackages\BehaviorTree\Behavior Designer\Runtime\Tasks\Unity\PlayerPrefs\GetString.cs" />
      <Compile Include="Assets\UnityPackages\BehaviorTree\Behavior Designer\Runtime\Tasks\Unity\Vector2\SetXY.cs" />
      <Compile Include="Assets\GameMain\Scripts\Base\Battle\Town_BattleJudge.cs" />
@@ -458,6 +458,7 @@
      <Compile Include="Assets\UnityPackages\BehaviorTree\Behavior Designer\Runtime\Tasks\Unity\NavMeshAgent\Resume.cs" />
      <Compile Include="Assets\UnityPackages\BehaviorTree\Behavior Designer\Runtime\Tasks\Unity\Quaternion\Slerp.cs" />
      <Compile Include="Assets\GameMain\Scripts\Base\Animator\AnimationEvent_Solider.cs" />
+     <Compile Include="Assets\GameMain\Example\ProcedureExample.cs" />
      <Compile Include="Assets\UnityPackages\BehaviorTree\Behavior Designer\Runtime\Tasks\Unity\BoxCollider2D\GetSize.cs" />
      <Compile Include="Assets\UnityPackages\BehaviorTree\Behavior Designer\Runtime\Tasks\Unity\SharedVariables\CompareSharedTransform.cs" />
      <Compile Include="Assets\GameMain\Scripts\Base\GameFramework\GameEntry.Custom.cs" />
@@ -540,7 +541,6 @@
      <Compile Include="Assets\UnityPackages\BehaviorTree\Behavior Designer\Runtime\Tasks\Unity\SharedVariables\SetSharedFloat.cs" />
      <Compile Include="Assets\UnityPackages\BehaviorTree\Behavior Designer\Runtime\Tasks\Unity\Input\GetAxisRaw.cs" />
      <Compile Include="Assets\UnityPackages\BehaviorTree\Behavior Designer\Runtime\Tasks\Unity\Light\GetShadowBias.cs" />
-     <Compile Include="Assets\Example\ProcedureExample.cs" />
      <Compile Include="Assets\UnityPackages\BehaviorTree\Behavior Designer\Runtime\Tasks\Unity\Input\IsKeyUp.cs" />
      <Compile Include="Assets\GameMain\Scripts\DataTable\DRMultilingual.cs" />
      <Compile Include="Assets\UnityPackages\BehaviorTree\Behavior Designer\Runtime\Tasks\Conditionals\StackedConditional.cs" />
@@ -719,7 +719,6 @@
      <Folder Include="Assets\UnityPackages\TextMesh Pro\Sprites" />
      <Folder Include="Assets\Resources\Prefab\Model" />
      <Folder Include="Assets\UnityPackages\BehaviorTree\Behavior Designer\Runtime\Tasks\Unity\Physics" />
-     <None Include="Assets\SpriteLightKit Installation.txt" />
      <Folder Include="Assets\Res\Model\bu_changfubing\Materials" />
      <Folder Include="Assets\Res\Model\gong_changgong" />
      <Folder Include="Assets\Resources\Fonts\chevice" />
@@ -829,7 +828,7 @@
      <Folder Include="Assets\UnityPackages\BehaviorTree\Behavior Designer\Runtime\Tasks\Conditionals\Physics" />
      <Folder Include="Assets\Res\Scenes\Material\Mobile Assets\Textures" />
      <Folder Include="Assets\UnityPackages\orc_guard_tower\_source" />
-     <Folder Include="Assets\Example" />
+     <Folder Include="Assets\GameMain\Example" />
      <Folder Include="Assets\UnityPackages\BehaviorTree\Behavior Designer\Runtime\Tasks\Unity\Rigidbody" />
      <Folder Include="Assets\UnityPackages\Toon_RTS\WesternKingdoms\animation\Catapult" />
      <Folder Include="Assets\UnityPackages\JsonNetSample" />
@@ -849,7 +848,6 @@
      <Folder Include="Assets\Res\Model\bu_changfubing\Animation" />
      <Folder Include="Assets\UnityPackages\Hovl Studio\Toon projectiles\Demo scene" />
      <None Include="Assets\GameMain\Configs\BuildInfo.txt" />
-     <Folder Include="Assets\Excel" />
      <None Include="Assets\UnityPackages\Hovl Studio\Resources\Shaders\Blend_CenterGlow.shader" />
      <Folder Include="Assets\Res\Model\Horseman\Base mesh\Materials" />
      <Folder Include="Assets\Scenes" />
@@ -903,7 +901,6 @@
      <Folder Include="Assets\Resources" />
      <None Include="Assets\Resources\Configs\BuildSettings.xml" />
      <Folder Include="Assets\UnityPackages\BehaviorTree\Behavior Designer\Runtime\Tasks\Unity\SphereCollider" />
-     <None Include="Assets\Icon_Pack_Blue_Installation.txt" />
      <Folder Include="Assets\UnityPackages\Hovl Studio\Resources\Models" />
      <Folder Include="Assets\GameMain\Scripts\Manager" />
      <Folder Include="Assets\Res\Model\Horseman\Prefab" />

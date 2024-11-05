@@ -8,6 +8,16 @@ public partial class Solider : BaseObject
 {
     private BehaviorTree behaviorTree;
 
+    private bool isKill;
+    //归属的部队
+    private SoliderCommander ownerSoliderCommander;
+
+    public SoliderCommander OwnerSoliderCommander
+    {
+        get => ownerSoliderCommander;
+        set => ownerSoliderCommander = value;
+    }
+
     public override ObjectType ObjectType()
     {
         return global::ObjectType.Solider;
@@ -16,23 +26,25 @@ public partial class Solider : BaseObject
     public void Init()
     {
         InitBehaviorTree();
+        isKill = false;
+    }
+
+    public void Init_SoliderCommander(SoliderCommander soliderCommander)
+    {
+        if (OwnerSoliderCommander != soliderCommander)
+        {
+            OwnerSoliderCommander = soliderCommander;    
+        }
+        else
+        {
+            Debug.LogError("OwnerSoliderCommander == soliderCommander!");
+        }
     }
     
     public void InitBehaviorTree()
     {
         behaviorTree= this.gameObject.GetComponent<BehaviorTree>();
     }
-    
-    // public void InitFsm()
-    // {
-    //     var fsmName = "FSM_" + this.gameObject.name;
-    //     var fsm = GameEntry.Fsm.CreateFsm<Solider>(fsmName,this, 
-    //         new FSMSoliderIdle(),
-    //         new FSMSoliderDead(),
-    //         new FSMSoliderAttack(),
-    //         new FSMSoliderMoveToTarget());
-    //     fsm.Start<FSMSoliderIdle>();
-    // }
     
     public enum State
     {
@@ -93,9 +105,7 @@ public partial class Solider : BaseObject
     }
     
     public NavMeshAgent navMeshAgent;
-
-    //血量
-    public int Hp;
+    
     //伤害数值
     public int Damage;
     
@@ -110,10 +120,9 @@ public partial class Solider : BaseObject
 
     public void ChangeTargetObject(BaseObject targetTown)
     {
-        this.targetObject = targetTown;
-        behaviorTree.SetVariableValue("TargetTrans",this.targetObject.transform);
+        targetObject = targetTown;
+        behaviorTree.SetVariableValue("TargetTrans",targetObject ? targetObject.transform : null);
     }
-
     
     public BaseObject GetTargetObject()
     {
@@ -141,7 +150,7 @@ public partial class Solider : BaseObject
         if (targetObject is Solider)
         {
             var targetSolider = targetObject as Solider;
-            if (! targetSolider.IsDead())
+            if (!targetSolider.IsDead())
             {
                 targetSolider.BeAttack(this,this.Damage);
             }
@@ -150,65 +159,38 @@ public partial class Solider : BaseObject
                 ChangeTargetObject(null);
             }
         }
-    }
-    
-    //判断周围是否有敌人
-    public bool CheckEnemy()
-    {
-        // if (targetSolider != null && targetSolider.IsDead() == false)
-        // {
-        //     return true;
-        // }
-        // RaycastHit hit = new RaycastHit();
-        // Collider[] hits = new Collider[]{};
-        // hits = Physics.OverlapSphere(this.transform.position, ViewRedius);
-        // if (hits.Length > 0)
-        // {
-        //     for (int i = 0; i < hits.Length; i++)
-        //     {
-        //         var tempSolider = hits[i].GetComponent<Solider>(); 
-        //         if (tempSolider && tempSolider.campType != this.campType)
-        //         {
-        //             targetSolider = hits[i].GetComponent<Solider>();
-        //         }
-        //     }
-        // }
-        // return targetSolider != null;
-        return false;
-    }
-
-    public bool IsCanAttackEnemy()
-    {
-        // CheckEnemy();
-        // if (targetSolider != null)
-        // {
-        //     navMeshAgent.SetDestination(targetSolider.transform.position);
-        //     if (Vector3.Distance(this.transform.position,targetSolider.transform.position) <= ViewAttackRedius)
-        //     {
-        //         navMeshAgent.isStopped = true;
-        //         return true;
-        //     }
-        // }
-        return false;
+        else if (targetObject is Town)
+        {
+            var targetTown = targetObject as Town;
+            if (targetTown.IsOccupied == false)
+            {
+                targetTown.BeAttack(this,this.Damage);
+            }
+        }
     }
     
     public bool IsDead()
     {
-        return this.Hp <=0 ;
+        return curState == State.Dead;
     }
 
     //被攻击
-    protected void BeAttack(Solider attacker, int damageNum)
+    public override void BeAttack(BaseObject attacker, int damageNum)
     {
+        if (isKill)
+        {
+            return;
+        }
         SufferInjure(damageNum);
         if (Hp <= damageNum)
         {
             if (ChangeAnimatorState(State.Dead))
             {
+                isKill = true;
                 StartCoroutine(DeadSuccess());
             }
         }
-        if (targetObject == null || targetObject != attacker)
+        else if (targetObject == null || targetObject != attacker)
         {
             ChangeTargetObject(attacker);
         }
@@ -270,5 +252,14 @@ public partial class Solider : BaseObject
         navMeshAgent.SetDestination(targetPoint);
         navMeshAgent.stoppingDistance = 2;
     }
-    
+
+    //进城，攻城成功或者守城成功
+    public void EnterTown()
+    {
+        ChangeAnimatorState(State.Moving);
+        Debug.Log("士兵进城！！！");
+        behaviorTree.OnDestroy();
+        behaviorTree = null;
+        this.gameObject.SetActive(false);
+    }
 }

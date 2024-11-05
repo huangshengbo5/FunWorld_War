@@ -21,7 +21,14 @@ namespace Script.Game.Base
         protected int CurSoliderNum;
         
         public int ViewRedius;  //视野范围
-        public int HP;
+        private bool isOccupied;
+
+        public bool IsOccupied
+        {
+            get => isOccupied;
+            set => isOccupied = value;
+        }
+
 
         public override ObjectType ObjectType()
         {

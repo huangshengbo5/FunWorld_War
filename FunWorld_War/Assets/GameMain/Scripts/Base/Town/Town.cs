@@ -41,12 +41,6 @@ public class Town : BaseTown
     {
         m_TownBattleJudge = new Town_BattleJudge();
         m_TownBattleJudge.Init(this);
-        // var fsmName = "FSM_" + this.gameObject.name;
-        // var fsm = GameEntry.Fsm.CreateFsm<BaseTown>(fsmName, this,
-        //     new FSMTownIdle(),
-        //     new FSMTownBattle(),
-        //     new FSMTownBattleEnd());
-        // fsm.Start<FSMTownIdle>();
     }
 
     private void RegisterEvent()
@@ -80,7 +74,7 @@ public class Town : BaseTown
         soliderCommander.Init(this);
         soliderCommander.AddSoliders(Soliders);
         CurSoliderNum = 0;
-        return soliderCommander; 
+        return soliderCommander;
     }
 
 
@@ -131,5 +125,25 @@ public class Town : BaseTown
     public void JoinBattle(BaseTown targetTown, SoliderCommander enemySoliderCommander)
     {
         targetTown.JoinBattle(enemySoliderCommander);
+    }
+    
+    //被攻击
+    public override void BeAttack(BaseObject attacker, int damageNum)
+    {
+        if (IsOccupied == false)
+        {
+            SufferInjure(damageNum);
+            if (Hp <= damageNum)
+            {
+                IsOccupied = true;
+                //通知裁判，城池被占领
+                m_TownBattleJudge.Town_OccupiedSuccess();
+            }            
+        }
+    }
+    
+    public void SufferInjure(int injure)
+    {
+        Hp -= injure;
     }
 }
