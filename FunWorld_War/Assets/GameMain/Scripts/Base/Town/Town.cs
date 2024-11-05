@@ -77,9 +77,10 @@ public class Town : BaseTown
         }
 
         SoliderCommander soliderCommander = new SoliderCommander();
+        soliderCommander.Init(this);
         soliderCommander.AddSoliders(Soliders);
         CurSoliderNum = 0;
-        return soliderCommander;
+        return soliderCommander; 
     }
 
 

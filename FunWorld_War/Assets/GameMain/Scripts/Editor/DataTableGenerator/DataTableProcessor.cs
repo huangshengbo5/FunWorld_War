@@ -66,7 +66,7 @@ namespace StarForce.Editor.DataTableTools
                 }
 
                 if (i == 0)
-                {
+                { 
                     rawColumnCount = rawValue.Length;
                 }
                 else if (rawValue.Length != rawColumnCount)

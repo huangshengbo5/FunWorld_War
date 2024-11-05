@@ -11,8 +11,8 @@ public static class AssetUtility
 
     public static string GetDataTableAsset(string assetName, bool fromBytes)
     {
-        //return Utility.Text.Format("Assets/GameMain/DataTables/{0}.{1}", assetName, fromBytes ? "bytes" : "txt");
-        return Utility.Text.Format("Assets/GameMain/DataTables/Raw/{0}.{1}", assetName, fromBytes ? "bytes" : "txt");
+        return Utility.Text.Format("Assets/GameMain/DataTables/{0}.{1}", assetName, fromBytes ? "bytes" : "txt");
+        //return Utility.Text.Format("Assets/GameMain/DataTables/Raw/{0}.{1}", assetName, fromBytes ? "bytes" : "txt");
     }
 
     public static string GetDictionaryAsset(string assetName, bool fromBytes)

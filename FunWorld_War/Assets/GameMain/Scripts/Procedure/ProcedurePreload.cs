@@ -10,6 +10,7 @@ using ProcedureOwner = GameFramework.Fsm.IFsm<GameFramework.Procedure.IProcedure
 
 public class ProcedurePreload : ProcedureBase
 {
+    //当前项目需要加载的配置
     public static readonly string[] DataTableNames = new string[]
     {
         "Avalue",
@@ -90,7 +91,7 @@ public class ProcedurePreload : ProcedureBase
 
     private void LoadDataTable(string dataTableName)
     {
-        var dataTableAssetName = AssetUtility.GetDataTableAsset(dataTableName, false);
+        var dataTableAssetName = AssetUtility.GetDataTableAsset(dataTableName, true);
         m_LoadedFlag.Add(dataTableAssetName, false);
         GameEntry.DataTable.LoadDataTable(dataTableName, dataTableAssetName, this);
     }
