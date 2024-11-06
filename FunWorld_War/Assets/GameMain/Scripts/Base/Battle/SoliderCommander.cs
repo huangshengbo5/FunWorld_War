@@ -50,4 +50,13 @@ public class SoliderCommander
             Soliders[i].EnterTown();
         }
     }
+
+    public void AttackTown(BaseObject targetTown)
+    {
+        //执行士兵进城
+        for (int i = 0; i < Soliders.Count; i++)
+        {
+            Soliders[i].ChangeTargetObject(targetTown);
+        }
+    }
 }

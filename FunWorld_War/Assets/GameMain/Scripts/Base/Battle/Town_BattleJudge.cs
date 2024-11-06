@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using Unity.VisualScripting;
 using UnityEngine;
 
 public class Town_BattleJudge
@@ -47,7 +48,20 @@ public class Town_BattleJudge
     
     public void DoUpdate()
     {
-        
+        var result = CheckBattleResult();
+        if (result.Item1 == false)  //战斗未结束
+        {
+            if (result.Item2 != CampType.None) //只剩余一只部队
+            {
+                foreach (var commander in LeftSoliderCommanders)
+                {
+                    foreach (var soliderCommander in commander.Value)
+                    {
+                        soliderCommander.AttackTown(targetTown);
+                    }
+                }
+            }
+        }
     }
     
     //是否还在战斗中
@@ -70,7 +84,8 @@ public class Town_BattleJudge
                 }
             }
         }
-        battleResult = new Tuple<bool, CampType>(leftCamp != CampType.None, leftCamp);
+        var battleEnd = targetTown.IsOccupied == true && leftCamp != CampType.None;
+        battleResult = new Tuple<bool, CampType>(battleEnd, leftCamp);
         return battleResult;
     }
 

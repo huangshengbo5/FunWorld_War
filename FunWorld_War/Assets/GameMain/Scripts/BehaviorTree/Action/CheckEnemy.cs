@@ -1,8 +1,4 @@
-using System.Collections;
-using System.Net.NetworkInformation;
-using GameFramework.ObjectPool;
 using UnityEngine;
-using UnityEngine.AI;
 
 namespace BehaviorDesigner.Runtime.Tasks
 {
@@ -53,17 +49,17 @@ namespace BehaviorDesigner.Runtime.Tasks
                         return TaskStatus.Success;
                     }
                 }
-                for (int i = 0; i < hits.Length; i++)
-                {
-                    var tempTown = hits[i].GetComponent<Town>();
-                    if (tempTown && tempTown.Camp() != selfSolider.campType)
-                    {
-                        selfSolider.ChangeTargetObject(tempTown);
-                        return TaskStatus.Success;
-                    }
-                }
+                // for (int i = 0; i < hits.Length; i++)
+                // {
+                //     var tempTown = hits[i].GetComponent<Town>();
+                //     if (tempTown && tempTown.Camp() != selfSolider.campType)
+                //     {
+                //         selfSolider.ChangeTargetObject(tempTown);
+                //         return TaskStatus.Success;
+                //     }
+                // }
             }
-            return TaskStatus.Success;
+            return TaskStatus.Failure;
         }
     }
 }

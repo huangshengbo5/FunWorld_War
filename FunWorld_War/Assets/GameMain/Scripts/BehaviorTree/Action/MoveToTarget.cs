@@ -1,4 +1,5 @@
 using System.Collections;
+using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.AI;
 
@@ -32,15 +33,35 @@ namespace BehaviorDesigner.Runtime.Tasks
         private IEnumerator DelayMove()
         {
             yield return new WaitForSeconds(delay);
-            nav.isStopped = false;
-            nav.SetDestination(targetTrans.Value.position);
-            nav.stoppingDistance = 0;
+            if (targetTrans != null && targetTrans.Value != null)
+            {
+                nav.isStopped = false;
+                nav.SetDestination(targetTrans.Value.position);
+            }
+            else
+            {
+                nav.isStopped = true;
+            }
+            nav.stoppingDistance = 4;
         }
 
         public override TaskStatus OnUpdate()
         {
-            StartCoroutine(DelayMove());
-            return TaskStatus.Success;
+            var isStop = CheckDestinationReached(nav);
+            Debug.Log("Solider MoveToTarget  is Stopped :"+isStop);
+            return isStop ? TaskStatus.Success : TaskStatus.Running;
+        }
+
+        public bool CheckDestinationReached(NavMeshAgent agent)
+        {
+            if (agent.hasPath)
+            {
+                if (agent.remainingDistance <= agent.stoppingDistance)
+                {
+                    return true;
+                }
+            }
+            return false;
         }
     }
 }
