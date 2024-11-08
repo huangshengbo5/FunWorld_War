@@ -110,4 +110,46 @@ public class Town_BattleJudge
         
     }
     
+    //士兵部队请求一个敌方士兵
+    public BaseObject SoliderCommanderFindTarget(Solider solider)
+    {
+        if (IsInBattle()==false)
+        {
+            return null;
+        }
+
+        SortedDictionary<float, Solider> fightingSoliders = new SortedDictionary<float, Solider>();
+        SortedDictionary<float, Solider> noFightingSoliders = new SortedDictionary<float, Solider>();
+        foreach (var soliderCommander in LeftSoliderCommanders)
+        {
+            if (soliderCommander.Key != solider.CampType)
+            {
+                for (int i = 0; i < soliderCommander.Value.Count; i++)
+                {
+                    var soliderCommanderItem = soliderCommander.Value[i];
+                    for (int j = 0; j < soliderCommanderItem.Soliders.Count; j++)
+                    {
+                        var soliderItem = soliderCommanderItem.Soliders[j];
+                        if (!soliderItem.IsDead())
+                        {
+                            continue;
+                        }
+                        var dis = Vector3.Distance(solider.transform.position, soliderItem.transform.position);
+                        if (soliderItem.TargetObject != null) fightingSoliders.Add(dis, soliderItem);
+                        else noFightingSoliders.Add(dis,soliderItem);
+                    }
+                }
+            }
+        }
+        
+        foreach (var noFightingSoliderItem in noFightingSoliders)
+        {
+            return noFightingSoliderItem.Value;
+        }
+        foreach (var fightingSoliderItem in fightingSoliders)
+        {
+            return fightingSoliderItem.Value;
+        }
+        return targetTown;
+    }
 }

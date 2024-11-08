@@ -86,7 +86,7 @@ namespace Script.Game.Base
                 for (int i = 0; i < hits.Length; i++)
                 {
                     var tempSolider = hits[i].GetComponent<Solider>(); 
-                    if (tempSolider && tempSolider.campType != this.Camp() && tempSolider.GetTargetObject() == this)
+                    if (tempSolider && tempSolider.CampType != this.Camp() && tempSolider.GetTargetObject() == this)
                     {
                         enemySoliders.Add(tempSolider);
                     }

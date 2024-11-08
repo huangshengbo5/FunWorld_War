@@ -4,10 +4,25 @@ using UnityEngine;
 
 public class SoliderCommander
 {
-    private List<Solider> Soliders;
-
-    //归属的城镇，可以为空
+    private List<Solider> soliders;
+    
+    //归属的城镇
     private Town ownerTown;
+
+    //目标城镇
+    private Town targetTown;
+    
+    public List<Solider> Soliders
+    {
+        get => soliders;
+        set => soliders = value;
+    }
+
+    public Town TargetTown
+    {
+        get => targetTown;
+        set => targetTown = value;
+    }
 
     //归属的阵营，不能为空
     private CampType camp;
@@ -24,39 +39,55 @@ public class SoliderCommander
         set => camp = value;
     }
 
-    public void Init(Town town)
+    public void Init(Town ownerTown,Town targetTown)
     {
-        OwnerTown = town;
-        Soliders = new List<Solider>();
+        OwnerTown = ownerTown;
+        TargetTown = targetTown;
+        soliders = new List<Solider>();
         Camp = OwnerTown.Camp();
     }
     public void AddSolider(Solider solider)
     {
-        Soliders.Add(solider);
+        soliders.Add(solider);
         solider.Init_SoliderCommander(this);
     }
 
     public void AddSoliders(List<Solider> soliders)
     {
-        Soliders.AddRange(soliders);
+        this.soliders.AddRange(soliders);
+        foreach (var solider in soliders)
+        {
+            solider.Init_SoliderCommander(this);
+        }
     }
 
     //战斗胜利
     public void OnBattleWin()
     {
         //执行士兵进城
-        for (int i = 0; i < Soliders.Count; i++)
+        for (int i = 0; i < soliders.Count; i++)
         {
-            Soliders[i].EnterTown();
+            soliders[i].EnterTown();
+        }
+    }
+    
+    //攻城
+    public void AttackTown(BaseObject targetTown)
+    {
+        //执行士兵攻城
+        for (int i = 0; i < soliders.Count; i++)
+        {
+            soliders[i].ChangeTargetObject(targetTown);
         }
     }
 
-    public void AttackTown(BaseObject targetTown)
+    //所属的士兵请求一个目标，当前目标应当为士兵，当所有敌对士兵都被杀死，才能回城
+    public BaseObject SoliderFindTarget(Solider solider)
     {
-        //执行士兵进城
-        for (int i = 0; i < Soliders.Count; i++)
+        if (targetTown != null && targetTown.TownBattleJudge !=null)
         {
-            Soliders[i].ChangeTargetObject(targetTown);
+            return targetTown.TownBattleJudge.SoliderCommanderFindTarget(solider);    
         }
+        return null;
     }
 }

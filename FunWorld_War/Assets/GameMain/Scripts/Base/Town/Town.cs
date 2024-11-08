@@ -8,7 +8,14 @@ using Random = System.Random;
 
 public class Town : BaseTown
 {
-    private Town_BattleJudge m_TownBattleJudge;
+    private Town_BattleJudge townBattleJudge;
+
+    public Town_BattleJudge TownBattleJudge
+    {
+        get => townBattleJudge;
+        set => townBattleJudge = value;
+    }
+
     private List<SoliderCommander> SoliderCommanders;
     public GameObject ObjSolider;
     //目标城镇
@@ -39,8 +46,8 @@ public class Town : BaseTown
 
     private void Init()
     {
-        m_TownBattleJudge = new Town_BattleJudge();
-        m_TownBattleJudge.Init(this);
+        townBattleJudge = new Town_BattleJudge();
+        townBattleJudge.Init(this);
     }
 
     private void RegisterEvent()
@@ -71,13 +78,11 @@ public class Town : BaseTown
         }
 
         SoliderCommander soliderCommander = new SoliderCommander();
-        soliderCommander.Init(this);
+        soliderCommander.Init(this,TargetTown as Town);
         soliderCommander.AddSoliders(Soliders);
         CurSoliderNum = 0;
         return soliderCommander;
     }
-
-
     
     //创建士兵
     protected Solider CreateSolider(int index)
@@ -107,19 +112,19 @@ public class Town : BaseTown
     //检查战斗结果
     public override Tuple<bool, CampType> CheckBattleResult()
     {
-        return m_TownBattleJudge.CheckBattleResult();
+        return townBattleJudge.CheckBattleResult();
     }
 
     //是否正在发生战斗
     public override bool IsInBattle()
     {
-        return m_TownBattleJudge.IsInBattle();
+        return townBattleJudge.IsInBattle();
     }
 
     //加入一只敌方部队
     public override void JoinBattle(SoliderCommander enemySoliderCommander)
     {
-        m_TownBattleJudge.JoinBattle(enemySoliderCommander);
+        townBattleJudge.JoinBattle(enemySoliderCommander);
     }
 
     public void JoinBattle(BaseTown targetTown, SoliderCommander enemySoliderCommander)
@@ -137,7 +142,7 @@ public class Town : BaseTown
             {
                 IsOccupied = true;
                 //通知裁判，城池被占领
-                m_TownBattleJudge.Town_OccupiedSuccess();
+                townBattleJudge.Town_OccupiedSuccess();
             }            
         }
     }
@@ -146,4 +151,5 @@ public class Town : BaseTown
     {
         Hp -= injure;
     }
+    
 }

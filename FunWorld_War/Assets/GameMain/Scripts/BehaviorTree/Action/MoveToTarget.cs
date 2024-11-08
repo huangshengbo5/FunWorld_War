@@ -17,11 +17,13 @@ namespace BehaviorDesigner.Runtime.Tasks
         public float delay; 
         
         private NavMeshAgent nav;
+        private Solider selfSolider;
 
         public override void OnAwake()
         {
             base.OnAwake();
             nav = Owner.GetComponent<NavMeshAgent>();
+            selfSolider = Owner.GetComponent<Solider>();
         }
 
         public override void OnStart()
@@ -42,7 +44,8 @@ namespace BehaviorDesigner.Runtime.Tasks
             {
                 nav.isStopped = true;
             }
-            nav.stoppingDistance = 4;
+
+            nav.stoppingDistance = selfSolider.AttackRedius;
         }
 
         public override TaskStatus OnUpdate()

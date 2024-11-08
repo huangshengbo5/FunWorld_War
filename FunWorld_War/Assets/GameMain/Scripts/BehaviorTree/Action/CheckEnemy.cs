@@ -18,6 +18,7 @@ namespace BehaviorDesigner.Runtime.Tasks
         public override TaskStatus OnUpdate()
         {
             base.OnStart();
+            
             if (InOut_TargetTrans != null && InOut_TargetTrans.Value != null)
             {
                 var objectBase = InOut_TargetTrans.Value.GetComponent<BaseObject>();
@@ -34,6 +35,7 @@ namespace BehaviorDesigner.Runtime.Tasks
                 }
             }
             
+            //主动寻找敌方士兵，优先自己寻找视野范围内目标
             var ViewRedius = selfSolider.ViewRedius;
             RaycastHit hit = new RaycastHit();
             Collider[] hits = new Collider[]{};
@@ -43,21 +45,19 @@ namespace BehaviorDesigner.Runtime.Tasks
                 for (int i = 0; i < hits.Length; i++)
                 {
                     var tempSolider = hits[i].GetComponent<Solider>();
-                    if (tempSolider && tempSolider.campType != selfSolider.campType)
+                    if (tempSolider && tempSolider.CampType != selfSolider.CampType)
                     {
                         selfSolider.ChangeTargetObject(tempSolider);
                         return TaskStatus.Success;
                     }
                 }
-                // for (int i = 0; i < hits.Length; i++)
-                // {
-                //     var tempTown = hits[i].GetComponent<Town>();
-                //     if (tempTown && tempTown.Camp() != selfSolider.campType)
-                //     {
-                //         selfSolider.ChangeTargetObject(tempTown);
-                //         return TaskStatus.Success;
-                //     }
-                // }
+            }
+
+            var targetSolider = selfSolider.FindEnemy();
+            if (targetSolider != null)
+            {
+                selfSolider.ChangeTargetObject(targetSolider);
+                return TaskStatus.Success;
             }
             return TaskStatus.Failure;
         }

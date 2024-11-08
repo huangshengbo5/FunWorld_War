@@ -24,7 +24,7 @@ namespace BehaviorDesigner.Runtime.Tasks
             Town city;
             if (town.TryGetComponent<Town>(out city))
             {
-                var selfCamp = Owner.GetComponent<Solider>().campType;
+                var selfCamp = Owner.GetComponent<Solider>().CampType;
                 var cityCamp = city.Camp();
                 if (cityCamp == selfCamp)
                 {
@@ -32,7 +32,7 @@ namespace BehaviorDesigner.Runtime.Tasks
                 }
             }
 
-            var attackRedius = Owner.GetComponent<Solider>().ViewAttackRedius;
+            var attackRedius = Owner.GetComponent<Solider>().AttackRedius;
             if (Vector3.Distance(ownerTrans.position,town.position) < attackRedius)
             {
                 return true;

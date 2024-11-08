@@ -3,6 +3,7 @@ using BehaviorDesigner.Runtime;
 using Script.Game.Base;
 using UnityEngine;
 using UnityEngine.AI;
+using UnityEngine.Serialization;
 
 public partial class Solider : BaseObject
 {
@@ -54,7 +55,7 @@ public partial class Solider : BaseObject
         Dead,          //死亡
     }
 
-    public CampType campType;
+    private CampType campType;
 
     public CampType CampType
     {
@@ -65,7 +66,7 @@ public partial class Solider : BaseObject
     public State curState;   //当前的单位状态
     
     public int ViewRedius;   //视野半径
-    public int ViewAttackRedius;  //攻击半径
+    public int AttackRedius;  //攻击半径
     
     public Animator Animator;
     
@@ -261,5 +262,10 @@ public partial class Solider : BaseObject
         behaviorTree.OnDestroy();
         behaviorTree = null;
         this.gameObject.SetActive(false);
+    }
+
+    public BaseObject FindEnemy()
+    {
+        return OwnerSoliderCommander.SoliderFindTarget(this);
     }
 }
