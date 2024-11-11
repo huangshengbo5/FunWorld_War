@@ -165,6 +165,7 @@
      <Compile Include="Assets\UnityPackages\BehaviorTree\Behavior Designer\Runtime\Tasks\Unity\Rigidbody\SetIsKinematic.cs" />
      <Compile Include="Assets\UnityPackages\BehaviorTree\Behavior Designer\Runtime\Tasks\Unity\Timeline\Stop.cs" />
      <Compile Include="Assets\UnityPackages\BehaviorTree\Behavior Designer\Runtime\Tasks\Unity\Renderer\SetMaterial.cs" />
+     <Compile Include="Assets\GameMain\Scripts\UI\HPBar.cs" />
      <Compile Include="Assets\UnityPackages\BehaviorTree\Behavior Designer\Runtime\Tasks\Unity\Light\SetShadows.cs" />
      <Compile Include="Assets\UnityPackages\BehaviorTree\Behavior Designer\Runtime\Tasks\Unity\GameObject\CompareLayer.cs" />
      <Compile Include="Assets\UnityPackages\BehaviorTree\Behavior Designer\Runtime\Tasks\Unity\Transform\IsChildOf.cs" />
@@ -984,6 +985,7 @@
      <Folder Include="Assets\UnityPackages" />
      <None Include="Assets\Res\Scenes\Material\Shaders\MK4ToonTrees normal.shader" />
      <Folder Include="Assets\UnityPackages\BehaviorTree\Behavior Designer\Runtime\Tasks\Unity\AudioSource" />
+     <Folder Include="Assets\Resources\Prefab\UI" />
      <None Include="Assets\Resources\Configs\ResourceEditor.xml" />
      <None Include="Assets\UnityPackages\Hovl Studio\Resources\Shaders\Add_CenterGlow.shader" />
      <Folder Include="Assets\Res\Scenes\Material\Props\Models" />
@@ -1012,6 +1014,7 @@
      <Folder Include="Assets\Res\Model\bu_dunbing\Animation" />
      <Folder Include="Assets\Res\Scenes\Material\Props\Textures" />
      <Folder Include="Assets\UnityPackages\BehaviorTree\Behavior Designer\Runtime\Tasks\Unity" />
+     <Folder Include="Assets\GameMain\Scripts\UI" />
      <Folder Include="Assets\Res\Scenes\Groundtextures\Grass 03" />
      <Folder Include="Assets\Res\Model\bu_xiaozu" />
      <None Include="Assets\UnityPackages\TextMesh Pro\Shaders\TMP_SDF-Mobile.shader" />

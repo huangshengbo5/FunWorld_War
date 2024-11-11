@@ -4,6 +4,7 @@ public class BaseObject : MonoBehaviour
 {
     //血量
     public int Hp;
+    protected int MaxHp;
     private int Id;
     public int ID 
     {
