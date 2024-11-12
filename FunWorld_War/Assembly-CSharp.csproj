@@ -444,6 +444,7 @@
      <Compile Include="Assets\UnityPackages\BehaviorTree\Behavior Designer\Runtime\Tasks\Unity\ParticleSystem\IsPlaying.cs" />
      <Compile Include="Assets\UnityPackages\BehaviorTree\Behavior Designer\Runtime\Tasks\Unity\Vector3\MoveTowards.cs" />
      <Compile Include="Assets\UnityPackages\BehaviorTree\Behavior Designer\Runtime\Tasks\Unity\Vector2\ClampMagnitude.cs" />
+     <Compile Include="Assets\GameMain\Scripts\Util\Commmon_Color.cs" />
      <Compile Include="Assets\UnityPackages\BehaviorTree\Behavior Designer\Runtime\Tasks\Unity\Light\GetCookieSize.cs" />
      <Compile Include="Assets\GameMain\Scripts\CombineMesh.cs" />
      <Compile Include="Assets\UnityPackages\BehaviorTree\Behavior Designer\Runtime\Tasks\Unity\PlayerPrefs\GetString.cs" />
@@ -604,6 +605,7 @@
      <Compile Include="Assets\UnityPackages\BehaviorTree\Behavior Designer\Runtime\Tasks\Unity\ParticleSystem\GetMaxParticles.cs" />
      <Compile Include="Assets\UnityPackages\BehaviorTree\Behavior Designer\Runtime\Tasks\Unity\Vector2\GetMagnitude.cs" />
      <Compile Include="Assets\GameMain\Scripts\Util\JsonConverter\Vector3Converter.cs" />
+     <Compile Include="Assets\GameMain\Scripts\Util\Common.cs" />
      <Compile Include="Assets\UnityPackages\BehaviorTree\Behavior Designer\Runtime\Tasks\Unity\ParticleSystem\SetStartSpeed.cs" />
      <Compile Include="Assets\UnityPackages\BehaviorTree\Behavior Designer\Runtime\Tasks\Unity\SharedVariables\CompareSharedGameObject.cs" />
      <Compile Include="Assets\GameMain\Scripts\DataTable\DRScene.cs" />

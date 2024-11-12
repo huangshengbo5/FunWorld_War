@@ -31,6 +31,7 @@ public partial class Solider : BaseObject
         MaxHp = Hp;
         InitBehaviorTree();
         isKill = false;
+        hpBar.Init(this);
         hpBar.UpdatgeHP(Hp,MaxHp);
     }
 

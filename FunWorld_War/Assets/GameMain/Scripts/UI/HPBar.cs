@@ -5,8 +5,17 @@ using Slider = UnityEngine.UI.Slider;
 
 public class HPBar : MonoBehaviour
 {
+    
     public Slider Slider_HP;
+    public Image SliderImage_Hp;
     public TextMeshProUGUI Text_HP;
+    private BaseObject Parent;
+    public void Init(BaseObject parent)
+    {
+        Parent = parent;
+        var camp = parent.GetBaseObjectCamp();
+        SliderImage_Hp.color = Commmon_Color.HPBarColor(Parent,camp);
+    }
 
     public void UpdatgeHP(float CurHP,float MaxHP)
     {

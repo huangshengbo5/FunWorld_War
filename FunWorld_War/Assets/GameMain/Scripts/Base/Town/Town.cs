@@ -69,12 +69,12 @@ public class Town : BaseTown
         {
             var createSolider = CreateSolider(i); 
             Soliders.Add(createSolider);
+            createSolider.CampType = this.Camp();
             createSolider.Init();
             if (TargetTown)
             {
                 createSolider.ChangeTargetObject(TargetTown);    
             }
-            createSolider.CampType = this.Camp();
         }
 
         SoliderCommander soliderCommander = new SoliderCommander();
