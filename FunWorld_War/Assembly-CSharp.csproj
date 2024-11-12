@@ -71,6 +71,7 @@
      <Compile Include="Assets\UnityPackages\BehaviorTree\Behavior Designer\Runtime\Tasks\Composites\SelectorEvaluator.cs" />
      <Compile Include="Assets\UnityPackages\BehaviorTree\Behavior Designer\Runtime\Tasks\Unity\Rigidbody\AddRelativeTorque.cs" />
      <Compile Include="Assets\UnityPackages\BehaviorTree\Behavior Designer\Runtime\Tasks\Unity\Vector3\GetVector2.cs" />
+     <Compile Include="Assets\GameMain\Scripts\UI\UIExtension.cs" />
      <Compile Include="Assets\UnityPackages\BehaviorTree\Behavior Designer\Runtime\Tasks\Unity\Math\SetInt.cs" />
      <Compile Include="Assets\UnityPackages\BehaviorTree\Behavior Designer\Runtime\Tasks\Unity\Rigidbody\SetVelocity.cs" />
      <Compile Include="Assets\UnityPackages\Behavior Designer Movement\Scripts\Tasks\Cover.cs" />
@@ -509,6 +510,7 @@
      <Compile Include="Assets\UnityPackages\BehaviorTree\Behavior Designer\Runtime\Tasks\Unity\SharedVariables\SharedGameObjectToTransform.cs" />
      <Compile Include="Assets\UnityPackages\BehaviorTree\Behavior Designer\Runtime\Tasks\Unity\CircleCollider2D\GetOffset.cs" />
      <Compile Include="Assets\UnityPackages\BehaviorTree\Behavior Designer\Runtime\Tasks\Unity\Vector3\Lerp.cs" />
+     <Compile Include="Assets\GameMain\Scripts\UI\UIFormId.cs" />
      <Compile Include="Assets\UnityPackages\BehaviorTree\Behavior Designer\Runtime\Tasks\Unity\PlayerPrefs\DeleteAll.cs" />
      <Compile Include="Assets\UnityPackages\BehaviorTree\Behavior Designer\Runtime\Tasks\Actions\PerformInterruption.cs" />
      <Compile Include="Assets\UnityPackages\BehaviorTree\Behavior Designer\Runtime\Tasks\Unity\Animator\IsParameterControlledByCurve.cs" />
