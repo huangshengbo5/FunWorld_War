@@ -1,6 +1,5 @@
 using System.Collections;
 using System.Collections.Generic;
-using Config.JsonConfig;
 using GameFramework.Fsm;
 using UnityEditor.ShaderKeywordFilter;
 using UnityEngine;

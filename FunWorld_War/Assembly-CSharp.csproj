@@ -81,7 +81,6 @@
      <Compile Include="Assets\UnityPackages\BehaviorTree\Behavior Designer\Runtime\Tasks\Unity\GameObject\GetComponent.cs" />
      <Compile Include="Assets\GameMain\Scripts\Definition\Constant\Constant.Setting.cs" />
      <Compile Include="Assets\UnityPackages\BehaviorTree\Behavior Designer\Runtime\Tasks\Unity\Collider\SetEnabled.cs" />
-     <Compile Include="Assets\GameMain\Scripts\Data\Base\ConfigBinaryContainer.cs" />
      <Compile Include="Assets\UnityPackages\BehaviorTree\Behavior Designer\Runtime\Tasks\Unity\Vector3\Normalize.cs" />
      <Compile Include="Assets\UnityPackages\BehaviorTree\Behavior Designer\Runtime\Tasks\Unity\Rigidbody\GetCenterOfMass.cs" />
      <Compile Include="Assets\UnityPackages\BehaviorTree\Behavior Designer\Runtime\Tasks\Unity\Math\RandomInt.cs" />
@@ -111,17 +110,14 @@
      <Compile Include="Assets\UnityPackages\BehaviorTree\Behavior Designer\Runtime\Tasks\Conditionals\Physics\HasEnteredTrigger.cs" />
      <Compile Include="Assets\UnityPackages\BehaviorTree\Behavior Designer\Runtime\Tasks\Decorators\Interrupt.cs" />
      <Compile Include="Assets\UnityPackages\BehaviorTree\Behavior Designer\Runtime\Tasks\Unity\Transform\SetRightVector.cs" />
-     <Compile Include="Assets\GameMain\Scripts\Data\Base\ConfigJsonContainer.cs" />
      <Compile Include="Assets\UnityPackages\BehaviorTree\Behavior Designer\Runtime\Tasks\Unity\ParticleSystem\GetParticleCount.cs" />
      <Compile Include="Assets\UnityPackages\BehaviorTree\Behavior Designer\Runtime\Tasks\Unity\Quaternion\FromToRotation.cs" />
      <Compile Include="Assets\UnityPackages\BehaviorTree\Behavior Designer\Runtime\Tasks\Unity\String\GetSubstring.cs" />
-     <Compile Include="Assets\GameMain\Scripts\Data\Base\ConfigSoBase.cs" />
      <Compile Include="Assets\UnityPackages\BehaviorTree\Behavior Designer\Runtime\Tasks\Unity\SharedVariables\CompareSharedObject.cs" />
      <Compile Include="Assets\GameMain\Scripts\Define\EventDefine.cs" />
      <Compile Include="Assets\UnityPackages\BehaviorTree\Behavior Designer\Runtime\Tasks\Unity\SharedVariables\CompareSharedRect.cs" />
      <Compile Include="Assets\UnityPackages\BehaviorTree\Behavior Designer\Runtime\Tasks\Unity\Math\Lerp.cs" />
      <Compile Include="Assets\UnityPackages\BehaviorTree\Behavior Designer\Runtime\Tasks\Unity\Rigidbody2D\GetAngularVelocity.cs" />
-     <Compile Include="Assets\GameMain\Scripts\Data\CfgTrademoney.cs" />
      <Compile Include="Assets\UnityPackages\BehaviorTree\Behavior Designer\Runtime\Tasks\Unity\Light\SetShadowSoftness.cs" />
      <Compile Include="Assets\UnityPackages\BehaviorTree\Behavior Designer\Runtime\Tasks\Unity\ParticleSystem\SetLoop.cs" />
      <Compile Include="Assets\UnityPackages\BehaviorTree\Behavior Designer\Runtime\Tasks\Unity\AudioSource\SetPanLevel.cs" />
@@ -156,7 +152,6 @@
      <Compile Include="Assets\UnityPackages\BehaviorTree\Behavior Designer\Runtime\Tasks\Unity\Animator\GetGravityWeight.cs" />
      <Compile Include="Assets\UnityPackages\BehaviorTree\Behavior Designer\Runtime\Tasks\Unity\AudioSource\GetSpread.cs" />
      <Compile Include="Assets\UnityPackages\BehaviorTree\Behavior Designer\Runtime\Tasks\Unity\GameObject\FindWithTag.cs" />
-     <Compile Include="Assets\GameMain\Scripts\Data\CfgAvalue.cs" />
      <Compile Include="Assets\GameMain\Scripts\Definition\Enum\CampType.cs" />
      <Compile Include="Assets\UnityPackages\BehaviorTree\Behavior Designer\Runtime\Tasks\Unity\SharedVariables\SharedGameObjectsToGameObjectList.cs" />
      <Compile Include="Assets\UnityPackages\BehaviorTree\Behavior Designer\Runtime\Tasks\Unity\GameObject\Find.cs" />
@@ -171,7 +166,6 @@
      <Compile Include="Assets\UnityPackages\BehaviorTree\Behavior Designer\Runtime\Tasks\Unity\GameObject\CompareLayer.cs" />
      <Compile Include="Assets\UnityPackages\BehaviorTree\Behavior Designer\Runtime\Tasks\Unity\Transform\IsChildOf.cs" />
      <Compile Include="Assets\UnityPackages\BehaviorTree\Behavior Designer\Runtime\Tasks\Unity\AudioSource\Play.cs" />
-     <Compile Include="Assets\GameMain\Scripts\Data\Base\CfgScriptableObjectContainer.cs" />
      <Compile Include="Assets\UnityPackages\BehaviorTree\Behavior Designer\Runtime\Tasks\Unity\SharedVariables\CompareSharedColor.cs" />
      <Compile Include="Assets\UnityPackages\BehaviorTree\Behavior Designer\Runtime\Tasks\Conditionals\RandomProbability.cs" />
      <Compile Include="Assets\UnityPackages\BehaviorTree\Behavior Designer\Runtime\Tasks\Unity\Vector3\RotateTowards.cs" />
@@ -219,7 +213,6 @@
      <Compile Include="Assets\UnityPackages\BehaviorTree\Behavior Designer\Runtime\Tasks\Unity\AudioSource\PlayOneShot.cs" />
      <Compile Include="Assets\UnityPackages\BehaviorTree\Behavior Designer\Runtime\Tasks\Unity\Math\IntAbs.cs" />
      <Compile Include="Assets\UnityPackages\BehaviorTree\Behavior Designer\Runtime\Tasks\Unity\Rigidbody\AddExplosionForce.cs" />
-     <Compile Include="Assets\GameMain\Scripts\Data\Base\TableDataManager.cs" />
      <Compile Include="Assets\UnityPackages\BehaviorTree\Behavior Designer\Runtime\Tasks\Unity\Transform\GetLocalScale.cs" />
      <Compile Include="Assets\UnityPackages\BehaviorTree\Behavior Designer\Runtime\Tasks\Unity\BoxCollider\GetSize.cs" />
      <Compile Include="Assets\UnityPackages\BehaviorTree\Behavior Designer\Runtime\Tasks\Unity\Math\IntClamp.cs" />
@@ -258,6 +251,7 @@
      <Compile Include="Assets\UnityPackages\BehaviorTree\Behavior Designer\Runtime\Tasks\Unity\ParticleSystem\SetEmissionRate.cs" />
      <Compile Include="Assets\GameMain\Scripts\DataTable\DRConst.cs" />
      <Compile Include="Assets\UnityPackages\BehaviorTree\Behavior Designer\Runtime\Tasks\Unity\Input\GetMouseButton.cs" />
+     <Compile Include="Assets\GameMain\Scripts\DataTable\DRUIForm.cs" />
      <Compile Include="Assets\UnityPackages\BehaviorTree\Behavior Designer\Runtime\Tasks\Unity\Animator\SetApplyRootMotion.cs" />
      <Compile Include="Assets\GameMain\Scripts\Definition\Constant\Constant.AssetPriority.cs" />
      <Compile Include="Assets\UnityPackages\BehaviorTree\Behavior Designer\Runtime\Tasks\Unity\Physics2D\Linecast.cs" />
@@ -330,7 +324,6 @@
      <Compile Include="Assets\GameMain\Scripts\Game\GameMode.cs" />
      <Compile Include="Assets\UnityPackages\BehaviorTree\Behavior Designer\Runtime\Tasks\Unity\Animator\SetLookAtPosition.cs" />
      <Compile Include="Assets\UnityPackages\BehaviorTree\Behavior Designer\Runtime\Tasks\Conditionals\Physics\HasEnteredCollision.cs" />
-     <Compile Include="Assets\GameMain\Scripts\Data\Base\SingleTon.cs" />
      <Compile Include="Assets\UnityPackages\BehaviorTree\Behavior Designer\Runtime\Tasks\Actions\RestartBehaviorTree.cs" />
      <Compile Include="Assets\UnityPackages\BehaviorTree\Behavior Designer\Runtime\Variables\SharedVector2.cs" />
      <Compile Include="Assets\UnityPackages\BehaviorTree\Behavior Designer\Runtime\Tasks\Unity\CharacterController\GetVelocity.cs" />
@@ -341,7 +334,6 @@
      <Compile Include="Assets\UnityPackages\BehaviorTree\Behavior Designer\Runtime\Tasks\Decorators\Inverter.cs" />
      <Compile Include="Assets\UnityPackages\BehaviorTree\Behavior Designer\Runtime\Tasks\Unity\CharacterController\GetSlopeLimit.cs" />
      <Compile Include="Assets\UnityPackages\BehaviorTree\Behavior Designer\Runtime\Tasks\Unity\Animator\WaitForState.cs" />
-     <Compile Include="Assets\GameMain\Scripts\Data\Base\ConfigBinaryManager.cs" />
      <Compile Include="Assets\UnityPackages\BehaviorTree\Behavior Designer\Runtime\Tasks\Unity\Transform\SetParent.cs" />
      <Compile Include="Assets\UnityPackages\BehaviorTree\Behavior Designer\Runtime\Tasks\Unity\Rigidbody\SetFreezeRotation.cs" />
      <Compile Include="Assets\UnityPackages\BehaviorTree\Behavior Designer\Runtime\Tasks\Unity\AudioSource\GetIgnoreListenerPause.cs" />
@@ -414,7 +406,6 @@
      <Compile Include="Assets\GameMain\Scripts\Definition\Constant\Constant.Layer.cs" />
      <Compile Include="Assets\UnityPackages\BehaviorTree\Behavior Designer\Runtime\Tasks\Unity\Math\IntOperator.cs" />
      <Compile Include="Assets\UnityPackages\BehaviorTree\Behavior Designer\Runtime\Tasks\Unity\Physics2D\Raycast.cs" />
-     <Compile Include="Assets\GameMain\Scripts\Data\Base\ConfigTextBase.cs" />
      <Compile Include="Assets\UnityPackages\BehaviorTree\Behavior Designer\Runtime\Tasks\Unity\CapsuleCollider\SetRadius.cs" />
      <Compile Include="Assets\UnityPackages\BehaviorTree\Behavior Designer\Runtime\Tasks\Unity\NavMeshAgent\GetSpeed.cs" />
      <Compile Include="Assets\UnityPackages\Behavior Designer Movement\Scripts\Tasks\Wander.cs" />
@@ -432,7 +423,6 @@
      <Compile Include="Assets\UnityPackages\BehaviorTree\Behavior Designer\Runtime\Tasks\Unity\Vector3\Distance.cs" />
      <Compile Include="Assets\UnityPackages\BehaviorTree\Behavior Designer\Runtime\Tasks\Unity\Rigidbody2D\MoveRotation.cs" />
      <Compile Include="Assets\UnityPackages\BehaviorTree\Behavior Designer\Runtime\Tasks\Unity\Rigidbody2D\AddForce.cs" />
-     <Compile Include="Assets\GameMain\Scripts\Data\CfgMultilingual.cs" />
      <Compile Include="Assets\UnityPackages\BehaviorTree\Behavior Designer\Runtime\Tasks\Unity\Input\GetButton.cs" />
      <Compile Include="Assets\UnityPackages\BehaviorTree\Behavior Designer\Runtime\Tasks\Unity\CapsuleCollider\GetCenter.cs" />
      <Compile Include="Assets\UnityPackages\BehaviorTree\Behavior Designer\Runtime\Tasks\Unity\Time\GetDeltaTime.cs" />
@@ -502,7 +492,6 @@
      <Compile Include="Assets\UnityPackages\BehaviorTree\Behavior Designer\Runtime\Tasks\Unity\Rigidbody\AddTorque.cs" />
      <Compile Include="Assets\UnityPackages\BehaviorTree\Behavior Designer\Runtime\Tasks\Decorators\Repeater.cs" />
      <Compile Include="Assets\UnityPackages\BehaviorTree\Behavior Designer\Runtime\Tasks\Unity\SharedVariables\SetSharedQuaternion.cs" />
-     <Compile Include="Assets\GameMain\Scripts\Data\CfgScene.cs" />
      <Compile Include="Assets\UnityPackages\BehaviorTree\Behavior Designer\Runtime\Tasks\Conditionals\Physics\HasExitedTrigger2D.cs" />
      <Compile Include="Assets\GameMain\Scripts\Procedure\ProcedureBase.cs" />
      <Compile Include="Assets\UnityPackages\BehaviorTree\Behavior Designer\Runtime\Tasks\Unity\PlayerPrefs\GetFloat.cs" />
@@ -551,7 +540,6 @@
      <Compile Include="Assets\UnityPackages\BehaviorTree\Behavior Designer\Runtime\Tasks\Unity\Rigidbody2D\WakeUp.cs" />
      <Compile Include="Assets\GameMain\Scripts\Fsm\Solider\FSMSoliderAttack.cs" />
      <Compile Include="Assets\UnityPackages\BehaviorTree\Behavior Designer\Runtime\Tasks\Unity\ParticleSystem\IsStopped.cs" />
-     <Compile Include="Assets\GameMain\Scripts\Data\CfgCamp.cs" />
      <Compile Include="Assets\UnityPackages\BehaviorTree\Behavior Designer\Runtime\Tasks\Unity\Quaternion\Identity.cs" />
      <Compile Include="Assets\UnityPackages\BehaviorTree\Behavior Designer\Runtime\Tasks\Unity\Math\RandomFloat.cs" />
      <Compile Include="Assets\UnityPackages\BehaviorTree\Behavior Designer\Runtime\Tasks\Unity\Rigidbody2D\AddTorque.cs" />
@@ -564,7 +552,6 @@
      <Compile Include="Assets\UnityPackages\BehaviorTree\Behavior Designer\Runtime\Tasks\Unity\Animation\Play.cs" />
      <Compile Include="Assets\GameMain\Scripts\Base\BaseObject\BaseObject.cs" />
      <Compile Include="Assets\UnityPackages\BehaviorTree\Behavior Designer\Runtime\Tasks\Unity\Transform\GetEulerAngles.cs" />
-     <Compile Include="Assets\GameMain\Scripts\Data\CfgConst.cs" />
      <Compile Include="Assets\GameMain\Scripts\DataTable\DataTableExtension.cs" />
      <Compile Include="Assets\GameMain\Scripts\BehaviorTree\Decorators\SharedTransNotEmpty.cs" />
      <Compile Include="Assets\UnityPackages\BehaviorTree\Behavior Designer\Runtime\Tasks\Unity\GameObject\ActiveSelf.cs" />
@@ -586,7 +573,6 @@
      <Compile Include="Assets\UnityPackages\BehaviorTree\Behavior Designer\Runtime\Tasks\Unity\AudioSource\GetPitch.cs" />
      <Compile Include="Assets\UnityPackages\BehaviorTree\Behavior Designer\Runtime\Tasks\Unity\GameObject\Destroy.cs" />
      <Compile Include="Assets\UnityPackages\BehaviorTree\Behavior Designer\Runtime\Tasks\Unity\AudioSource\GetMaxDistance.cs" />
-     <Compile Include="Assets\GameMain\Scripts\Data\Base\ConfigFactory.cs" />
      <Compile Include="Assets\GameMain\Scripts\Base\GameFramework\GameEntry.cs" />
      <Compile Include="Assets\UnityPackages\BehaviorTree\Behavior Designer\Runtime\Tasks\Unity\SharedVariables\CompareSharedTransformList.cs" />
      <Compile Include="Assets\UnityPackages\BehaviorTree\Behavior Designer\Runtime\Tasks\Unity\Light\SetShadowStrength.cs" />
@@ -597,7 +583,6 @@
      <Compile Include="Assets\UnityPackages\BehaviorTree\Behavior Designer\Runtime\Tasks\Unity\NavMeshAgent\ResetPath.cs" />
      <Compile Include="Assets\UnityPackages\BehaviorTree\Behavior Designer\Runtime\Tasks\Unity\Animator\StopPlayback.cs" />
      <Compile Include="Assets\UnityPackages\BehaviorTree\Behavior Designer\Runtime\Tasks\Unity\Math\BoolOperator.cs" />
-     <Compile Include="Assets\GameMain\Scripts\Data\Base\IConfigBase.cs" />
      <Compile Include="Assets\UnityPackages\BehaviorTree\Behavior Designer\Runtime\Tasks\Unity\Physics2D\Circlecast.cs" />
      <Compile Include="Assets\UnityPackages\BehaviorTree\Behavior Designer\Runtime\Variables\SharedObjectList.cs" />
      <Compile Include="Assets\UnityPackages\BehaviorTree\Behavior Designer\Runtime\Tasks\Unity\Rigidbody\GetRotation.cs" />
@@ -620,7 +605,6 @@
      <Compile Include="Assets\UnityPackages\BehaviorTree\Behavior Designer\Runtime\Tasks\Unity\Rigidbody2D\GetDrag.cs" />
      <Compile Include="Assets\UnityPackages\BehaviorTree\Behavior Designer\Runtime\Tasks\Unity\Vector3\GetRightVector.cs" />
      <Compile Include="Assets\UnityPackages\BehaviorTree\Behavior Designer\Runtime\Tasks\Unity\GameObject\FindGameObjectsWithTag.cs" />
-     <Compile Include="Assets\GameMain\Scripts\Data\Base\ConfigJsonBase.cs" />
      <Compile Include="Assets\UnityPackages\BehaviorTree\Behavior Designer\Runtime\Tasks\Unity\Animator\SetBoolParameter.cs" />
      <Compile Include="Assets\GameMain\Scripts\Base\GameFramework\GameEntry.Builtin.cs" />
      <Compile Include="Assets\UnityPackages\BehaviorTree\Behavior Designer\Runtime\Tasks\Unity\Transform\SetRotation.cs" />
@@ -656,21 +640,17 @@
      <Compile Include="Assets\UnityPackages\BehaviorTree\Behavior Designer\Runtime\Tasks\Unity\Timeline\Play.cs" />
      <Compile Include="Assets\UnityPackages\BehaviorTree\Behavior Designer\Runtime\Tasks\Unity\Rigidbody\GetVelocity.cs" />
      <Compile Include="Assets\UnityPackages\BehaviorTree\Behavior Designer\Runtime\Tasks\Unity\NavMeshAgent\SetDestination.cs" />
-     <Compile Include="Assets\GameMain\Scripts\Data\CfgNPC.cs" />
      <Compile Include="Assets\UnityPackages\BehaviorTree\Behavior Designer\Runtime\Tasks\Unity\Rigidbody2D\IsSleeping.cs" />
      <Compile Include="Assets\UnityPackages\BehaviorTree\Behavior Designer\Runtime\Tasks\Unity\AudioSource\SetScheduledStartTime.cs" />
      <Compile Include="Assets\UnityPackages\BehaviorTree\Behavior Designer\Runtime\Tasks\Unity\Animator\StopRecording.cs" />
      <Compile Include="Assets\UnityPackages\BehaviorTree\Behavior Designer\Runtime\Tasks\Unity\SharedVariables\CompareSharedInt.cs" />
-     <Compile Include="Assets\GameMain\Scripts\Data\Base\ConfigBinaryBase.cs" />
      <Compile Include="Assets\UnityPackages\BehaviorTree\Behavior Designer\Runtime\Tasks\Unity\Quaternion\Dot.cs" />
      <Compile Include="Assets\UnityPackages\BehaviorTree\Behavior Designer\Runtime\Tasks\Unity\Rigidbody\UseGravity.cs" />
      <Compile Include="Assets\UnityPackages\BehaviorTree\Behavior Designer\Runtime\Tasks\Unity\Math\SetFloat.cs" />
-     <Compile Include="Assets\GameMain\Scripts\Data\Base\ConfigSOManager.cs" />
      <Compile Include="Assets\UnityPackages\BehaviorTree\Behavior Designer\Runtime\Tasks\Unity\AudioSource\GetTime.cs" />
      <Compile Include="Assets\UnityPackages\BehaviorTree\Behavior Designer\Runtime\Tasks\Unity\Timeline\Pause.cs" />
      <Compile Include="Assets\UnityPackages\BehaviorTree\Behavior Designer\Runtime\Tasks\Unity\AudioSource\GetPriority.cs" />
      <Compile Include="Assets\UnityPackages\BehaviorTree\Behavior Designer\Runtime\Object Drawers\FloatSliderAttribute.cs" />
-     <Compile Include="Assets\GameMain\Scripts\Data\Base\ConfigJsonManager.cs" />
      <Compile Include="Assets\UnityPackages\BehaviorTree\Behavior Designer\Runtime\Tasks\EntryTask.cs" />
      <Compile Include="Assets\UnityPackages\BehaviorTree\Behavior Designer\Runtime\Tasks\Unity\Rigidbody2D\GetPosition.cs" />
      <Compile Include="Assets\UnityPackages\BehaviorTree\Behavior Designer\Runtime\Tasks\Unity\NavMeshAgent\SetIsStopped.cs" />
@@ -678,7 +658,6 @@
      <Compile Include="Assets\UnityPackages\JsonNetSample\JsonNetSample.cs" />
      <Compile Include="Assets\UnityPackages\BehaviorTree\Behavior Designer\Runtime\Tasks\Unity\CharacterController\GetRadius.cs" />
      <Compile Include="Assets\UnityPackages\BehaviorTree\Behavior Designer\Runtime\Tasks\Unity\Animation\CrossFade.cs" />
-     <Compile Include="Assets\GameMain\Scripts\Data\Base\IConfigManager.cs" />
      <Compile Include="Assets\UnityPackages\BehaviorTree\Behavior Designer\Runtime\Tasks\Unity\Light\SetCullingMask.cs" />
      <Compile Include="Assets\UnityPackages\BehaviorTree\Behavior Designer\Runtime\Tasks\Unity\GameObject\Instantiate.cs" />
      <Compile Include="Assets\UnityPackages\BehaviorTree\Behavior Designer\Runtime\Tasks\Unity\ParticleSystem\GetDuration.cs" />
@@ -795,7 +774,6 @@
      <Folder Include="Assets\Res\UI\Texture\outcome" />
      <Folder Include="Assets\UnityPackages\orc_guard_tower\_source\Materials" />
      <Folder Include="Assets\Res\Model\gong_duangong" />
-     <Folder Include="Assets\GameMain\Scripts\Data\Base" />
      <Folder Include="Assets\Res\Scenes\Groundtextures\Grass &amp; dead leafs 02" />
      <Folder Include="Assets\Res\Scenes\Groundtextures\Ground &amp; rocks 03" />
      <None Include="Assets\UnityPackages\Hovl Studio\Resources\Shaders\DissolveNoise.shader" />
@@ -913,6 +891,7 @@
      <Folder Include="Assets\UnityPackages\Toon_RTS" />
      <Folder Include="Assets\Res" />
      <Folder Include="Assets\GameMain\Scripts\Definition\Constant" />
+     <None Include="Assets\GameMain\DataTables\Raw\UIForm.txt" />
      <None Include="Assets\UnityPackages\TextMesh Pro\Shaders\TMPro_Surface.cginc" />
      <None Include="Assets\Res\Scenes\Material\Shaders\MK4depthFogVertex.shader" />
      <Folder Include="Assets\UnityPackages\Toon_RTS\WesternKingdoms\models\Materials\Colors\textures" />

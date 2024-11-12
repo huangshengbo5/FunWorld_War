@@ -5,7 +5,7 @@
 // Feedback: mailto:ellan@gameframework.cn
 //------------------------------------------------------------
 // 此文件由工具自动生成，请勿直接修改。
-// 生成时间：2024-11-12 19:54:12.847
+// 生成时间：2024-11-12 19:54:12.859
 //------------------------------------------------------------
 
 using GameFramework;
@@ -19,14 +19,14 @@ using UnityGameFramework.Runtime;
 //namespace __DATA_TABLE_NAME_SPACE__
 //{
     /// <summary>
-    /// 常量表。
+    /// 界面配置表。
     /// </summary>
-    public class DRConst : DataRowBase
+    public class DRUIForm : DataRowBase
     {
         private int m_Id = 0;
 
         /// <summary>
-        /// 获取注释。
+        /// 获取界面编号。
         /// </summary>
         public override int Id
         {
@@ -37,18 +37,36 @@ using UnityGameFramework.Runtime;
         }
 
         /// <summary>
-        /// 获取名字。
+        /// 获取资源名称。
         /// </summary>
-        public string Chinese
+        public string AssetName
         {
             get;
             private set;
         }
 
         /// <summary>
-        /// 获取整数参数。
+        /// 获取界面组名称。
         /// </summary>
-        public string parameter1
+        public string UIGroupName
+        {
+            get;
+            private set;
+        }
+
+        /// <summary>
+        /// 获取是否允许多个界面实例。
+        /// </summary>
+        public bool AllowMultiInstance
+        {
+            get;
+            private set;
+        }
+
+        /// <summary>
+        /// 获取是否暂停被其覆盖的界面。
+        /// </summary>
+        public bool PauseCoveredUIForm
         {
             get;
             private set;
@@ -66,8 +84,10 @@ using UnityGameFramework.Runtime;
             index++;
             m_Id = int.Parse(columnStrings[index++]);
             index++;
-            Chinese = columnStrings[index++];
-            parameter1 = columnStrings[index++];
+            AssetName = columnStrings[index++];
+            UIGroupName = columnStrings[index++];
+            AllowMultiInstance = bool.Parse(columnStrings[index++]);
+            PauseCoveredUIForm = bool.Parse(columnStrings[index++]);
 
             GeneratePropertyArray();
             return true;
@@ -80,8 +100,10 @@ using UnityGameFramework.Runtime;
                 using (BinaryReader binaryReader = new BinaryReader(memoryStream, Encoding.UTF8))
                 {
                     m_Id = binaryReader.Read7BitEncodedInt32();
-                    Chinese = binaryReader.ReadString();
-                    parameter1 = binaryReader.ReadString();
+                    AssetName = binaryReader.ReadString();
+                    UIGroupName = binaryReader.ReadString();
+                    AllowMultiInstance = binaryReader.ReadBoolean();
+                    PauseCoveredUIForm = binaryReader.ReadBoolean();
                 }
             }
 
@@ -89,45 +111,9 @@ using UnityGameFramework.Runtime;
             return true;
         }
 
-        private KeyValuePair<int, string>[] m_parameter = null;
-
-        public int parameterCount
-        {
-            get
-            {
-                return m_parameter.Length;
-            }
-        }
-
-        public string Getparameter(int id)
-        {
-            foreach (KeyValuePair<int, string> i in m_parameter)
-            {
-                if (i.Key == id)
-                {
-                    return i.Value;
-                }
-            }
-
-            throw new GameFrameworkException(Utility.Text.Format("Getparameter with invalid id '{0}'.", id));
-        }
-
-        public string GetparameterAt(int index)
-        {
-            if (index < 0 || index >= m_parameter.Length)
-            {
-                throw new GameFrameworkException(Utility.Text.Format("GetparameterAt with invalid index '{0}'.", index));
-            }
-
-            return m_parameter[index].Value;
-        }
-
         private void GeneratePropertyArray()
         {
-            m_parameter = new KeyValuePair<int, string>[]
-            {
-                new KeyValuePair<int, string>(1, parameter1),
-            };
+
         }
     }
 //}

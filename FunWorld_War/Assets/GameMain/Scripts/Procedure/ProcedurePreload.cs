@@ -19,6 +19,7 @@ public class ProcedurePreload : ProcedureBase
         "Multilingual",
         "NPC",
         "Scene",
+        "UIForm",
         "Trademoney",
     };
 
