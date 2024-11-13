@@ -40,6 +40,7 @@ public class ProcedureMain : ProcedureBase
         // GameMode gameMode = (GameMode)procedureOwner.GetData<VarByte>("GameMode").Value;
         // m_CurrentGame = m_Games[gameMode];
         // m_CurrentGame.Initialize();
+        GameEntry.UI.OpenUIForm(UIFormId.MenuForm);
     }
 
     protected override void OnLeave(ProcedureOwner procedureOwner, bool isShutdown)

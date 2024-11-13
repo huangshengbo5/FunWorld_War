@@ -651,6 +651,7 @@
      <Compile Include="Assets\UnityPackages\BehaviorTree\Behavior Designer\Runtime\Tasks\Unity\Timeline\Pause.cs" />
      <Compile Include="Assets\UnityPackages\BehaviorTree\Behavior Designer\Runtime\Tasks\Unity\AudioSource\GetPriority.cs" />
      <Compile Include="Assets\UnityPackages\BehaviorTree\Behavior Designer\Runtime\Object Drawers\FloatSliderAttribute.cs" />
+     <Compile Include="Assets\GameMain\Scripts\UI\MenuForm.cs" />
      <Compile Include="Assets\UnityPackages\BehaviorTree\Behavior Designer\Runtime\Tasks\EntryTask.cs" />
      <Compile Include="Assets\UnityPackages\BehaviorTree\Behavior Designer\Runtime\Tasks\Unity\Rigidbody2D\GetPosition.cs" />
      <Compile Include="Assets\UnityPackages\BehaviorTree\Behavior Designer\Runtime\Tasks\Unity\NavMeshAgent\SetIsStopped.cs" />
@@ -720,6 +721,7 @@
      <Folder Include="Assets\Res\Scenes\Groundtextures\Grass 05" />
      <Folder Include="Assets\Res\Scenes\Groundtextures\Grass 02" />
      <None Include="Assets\Res\Scenes\Material\Shaders\MK4ToonTrees alpha.shader" />
+     <Folder Include="Assets\Resources\Prefab\UI\Lobby" />
      <Folder Include="Assets\UnityPackages\BehaviorTree\Behavior Designer\Runtime\Tasks\Actions" />
      <None Include="Assets\GameMain\DataTables\Raw\Trademoney.txt" />
      <Folder Include="Assets\GameMain\Scripts\Fsm\Town" />
@@ -947,7 +949,6 @@
      <None Include="Assets\UnityPackages\Hovl Studio\Toon projectiles\Demo scene\HDRP and URP(LWRP).txt" />
      <Folder Include="Assets\Res\Model\xiao_bing_dao\Animation" />
      <Folder Include="Assets\Resources\Fonts\minster" />
-     <Folder Include="Assets\GameMain\Scripts\Data" />
      <Folder Include="Assets\UnityPackages\Behavior Designer Movement\Textures" />
      <Folder Include="Assets\Res\Model\gong_changgong\Materials" />
      <Folder Include="Assets\Res\Scenes\Groundtextures\Ground 02" />
@@ -969,6 +970,7 @@
      <None Include="Assets\Res\Scenes\Material\Shaders\MK4ToonTrees normal.shader" />
      <Folder Include="Assets\UnityPackages\BehaviorTree\Behavior Designer\Runtime\Tasks\Unity\AudioSource" />
      <Folder Include="Assets\Resources\Prefab\UI" />
+     <Folder Include="Assets\Resources\Prefab\UI\Battle" />
      <None Include="Assets\Resources\Configs\ResourceEditor.xml" />
      <None Include="Assets\UnityPackages\Hovl Studio\Resources\Shaders\Add_CenterGlow.shader" />
      <Folder Include="Assets\Res\Scenes\Material\Props\Models" />
