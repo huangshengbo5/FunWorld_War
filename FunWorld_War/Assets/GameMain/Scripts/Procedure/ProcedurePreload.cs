@@ -10,19 +10,6 @@ using ProcedureOwner = GameFramework.Fsm.IFsm<GameFramework.Procedure.IProcedure
 
 public class ProcedurePreload : ProcedureBase
 {
-    //当前项目需要加载的配置
-    public static readonly string[] DataTableNames = new string[]
-    {
-        "Avalue",
-        "Camp",
-        "Const",
-        "Multilingual",
-        "NPC",
-        "Scene",
-        "UIForm",
-        "Trademoney",
-    };
-
     private Dictionary<string, bool> m_LoadedFlag = new();
 
     public override bool UseNativeDialog => true;
@@ -30,16 +17,13 @@ public class ProcedurePreload : ProcedureBase
     protected override void OnEnter(ProcedureOwner procedureOwner)
     {
         base.OnEnter(procedureOwner);
-
         GameEntry.Event.Subscribe(LoadConfigSuccessEventArgs.EventId, OnLoadConfigSuccess);
         GameEntry.Event.Subscribe(LoadConfigFailureEventArgs.EventId, OnLoadConfigFailure);
         GameEntry.Event.Subscribe(LoadDataTableSuccessEventArgs.EventId, OnLoadDataTableSuccess);
         GameEntry.Event.Subscribe(LoadDataTableFailureEventArgs.EventId, OnLoadDataTableFailure);
         GameEntry.Event.Subscribe(LoadDictionarySuccessEventArgs.EventId, OnLoadDictionarySuccess);
         GameEntry.Event.Subscribe(LoadDictionaryFailureEventArgs.EventId, OnLoadDictionaryFailure);
-
         m_LoadedFlag.Clear();
-
         PreloadResources();
     }
 
@@ -73,7 +57,7 @@ public class ProcedurePreload : ProcedureBase
         LoadConfig("DefaultConfig");
 
         // // Preload data tables
-        foreach (var dataTableName in DataTableNames)
+        foreach (var dataTableName in DataTable_Config.DataTableNames)
             LoadDataTable(dataTableName);
         
         // // Preload dictionaries
