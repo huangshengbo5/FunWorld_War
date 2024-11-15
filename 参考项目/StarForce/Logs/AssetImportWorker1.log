@@ -194,3 +194,19 @@ Received Import Request.
 Start importing Assets/GameMain/DataTables/UIForm.txt using Guid(352da872791696c48af3b21132e3e3c3) Importer(815301076,1909f56bfc062723c751e8b465ee728b)  -> (artifact id: '0c0771446e2776b4ce147512f92f845e') in 0.008360 seconds
 Number of updated asset objects reloaded before import = 0
 Number of asset objects unloaded after import = 1
+========================================================================
+Received Import Request.
+  Time since last request: 84715.464787 seconds.
+  path: Assets/GameMain/UI/UIForms/DialogForm.prefab
+  artifactKey: Guid(04d7dde7615d71b4db1a0c8d67a62e95) Importer(815301076,1909f56bfc062723c751e8b465ee728b)
+Start importing Assets/GameMain/UI/UIForms/DialogForm.prefab using Guid(04d7dde7615d71b4db1a0c8d67a62e95) Importer(815301076,1909f56bfc062723c751e8b465ee728b)  -> (artifact id: '4fb974368ad70309d43caf2ab95eeeed') in 16.046606 seconds
+Number of updated asset objects reloaded before import = 0
+Number of asset objects unloaded after import = 109
+========================================================================
+Received Import Request.
+  Time since last request: 17.208579 seconds.
+  path: Assets/GameMain/UI/UIForms/UpdateResourceForm.prefab
+  artifactKey: Guid(a6c731de80e9d824d8f657301a357269) Importer(815301076,1909f56bfc062723c751e8b465ee728b)
+Start importing Assets/GameMain/UI/UIForms/UpdateResourceForm.prefab using Guid(a6c731de80e9d824d8f657301a357269) Importer(815301076,1909f56bfc062723c751e8b465ee728b)  -> (artifact id: '6ee1361a616926509551d664b755a63c') in 0.624586 seconds
+Number of updated asset objects reloaded before import = 0
+Number of asset objects unloaded after import = 30

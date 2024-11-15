@@ -103,9 +103,9 @@ public class Town : BaseTown
     {
         var selfPosition = this.gameObject.transform.position;
         var random = new Random();
-        var posx = random.Next((int)selfPosition.x+3,(int)selfPosition.x+4);
+        var posx = random.Next((int)selfPosition.x+3,(int)selfPosition.x+5);
         //var posy = random.Next((int)selfPosition.y,(int)selfPosition.y+10);
-        var posz = random.Next((int)selfPosition.z+3,(int)selfPosition.z+4);
+        var posz = random.Next((int)selfPosition.z+3,(int)selfPosition.z+5);
         return new Vector3(posx,0,posz);
     }
 

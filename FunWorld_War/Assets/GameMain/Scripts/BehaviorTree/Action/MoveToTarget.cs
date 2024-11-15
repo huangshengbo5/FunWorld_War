@@ -37,14 +37,14 @@ namespace BehaviorDesigner.Runtime.Tasks
             yield return new WaitForSeconds(delay);
             if (targetTrans != null && targetTrans.Value != null)
             {
+                var targetObject = targetTrans.Value.GetComponent<BaseObject>();
                 nav.isStopped = false;
-                nav.SetDestination(targetTrans.Value.position);
+                nav.SetDestination(targetObject.GetInteractPoint());
             }
             else
             {
                 nav.isStopped = true;
             }
-
             nav.stoppingDistance = selfSolider.AttackRedius;
         }
 
@@ -59,7 +59,7 @@ namespace BehaviorDesigner.Runtime.Tasks
         {
             if (agent.hasPath)
             {
-                if (agent.remainingDistance <= agent.stoppingDistance)
+                if (agent.remainingDistance <= selfSolider.AttackRedius)
                 {
                     return true;
                 }

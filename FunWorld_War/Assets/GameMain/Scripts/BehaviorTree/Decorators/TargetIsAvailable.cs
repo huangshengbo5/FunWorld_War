@@ -9,12 +9,12 @@ namespace BehaviorDesigner.Runtime.Tasks
         public override bool CanExecute()
         {
             if (In_TargetTrans == null) return false;
-            var town = In_TargetTrans.Value;
-            if (town is null) return false;
-            
+            var townTrans = In_TargetTrans.Value;
+            if (townTrans is null) return false;
+            var townObject = townTrans.GetComponent<BaseObject>();
             var ownerTrans = Owner.GetComponent<Transform>();
             Solider solider;
-            if (town.TryGetComponent<Solider>(out solider))
+            if (townTrans.TryGetComponent<Solider>(out solider))
             {
                 if (solider.IsDead())
                 {
@@ -22,7 +22,7 @@ namespace BehaviorDesigner.Runtime.Tasks
                 }
             }
             Town city;
-            if (town.TryGetComponent<Town>(out city))
+            if (townTrans.TryGetComponent<Town>(out city))
             {
                 var selfCamp = Owner.GetComponent<Solider>().CampType;
                 var cityCamp = city.Camp();
@@ -33,7 +33,8 @@ namespace BehaviorDesigner.Runtime.Tasks
             }
 
             var attackRedius = Owner.GetComponent<Solider>().AttackRedius;
-            if (Vector3.Distance(ownerTrans.position,town.position) < attackRedius)
+            
+            if (Vector3.Distance(ownerTrans.position,townObject.GetInteractPoint()) < attackRedius)
             {
                 return true;
             }

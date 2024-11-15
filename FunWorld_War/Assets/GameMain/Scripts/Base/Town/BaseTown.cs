@@ -1,8 +1,11 @@
 using System;
 using System.Collections.Generic;
+using System.IO.Enumeration;
+using System.Linq;
 using TMPro;
 using UnityEngine;
 using UnityEngine.Serialization;
+using Random = UnityEngine.Random;
 
 namespace Script.Game.Base
 {
@@ -23,13 +26,14 @@ namespace Script.Game.Base
         public int ViewRedius;  //视野范围
         private bool isOccupied;
 
+        private List<Transform> SpawnerPoints;
+
         public bool IsOccupied
         {
             get => isOccupied;
             set => isOccupied = value;
         }
-
-
+        
         public override ObjectType ObjectType()
         {
             return global::ObjectType.Town;
@@ -93,6 +97,27 @@ namespace Script.Game.Base
                 }
             }
             return enemySoliders.Count > 0;
+        }
+        
+        public override Vector3 GetInteractPoint(Vector3 position)
+        {
+            if (SpawnerPoints == null || SpawnerPoints.Count == 0)
+            {
+                if (SpawnerPoints == null)
+                {
+                    SpawnerPoints = new List<Transform>();
+                }
+                SpawnerPoints.Clear();
+                var spawnerHolder = gameObject.transform.Find("Spawner").gameObject;
+                var childCount = spawnerHolder.transform.childCount;
+                for (int i = 0; i < childCount; i++)
+                {
+                    SpawnerPoints.Add(spawnerHolder.transform.GetChild(i).transform);
+                }
+                //SpawnerPoints =  gameObject.transform.Find("Spawner").gameObject.GetComponentsInChildren<Transform>().ToList();
+            }
+            int index = Random.Range(0, SpawnerPoints.Count-1);
+            return SpawnerPoints[index].position;
         }
     }
 }

@@ -15,7 +15,12 @@ public class BaseObject : MonoBehaviour
     {
         //Id = gameObject.GetHashCode();
     }
-
+    
+    public virtual Vector3 GetInteractPoint(Vector3 position = new Vector3())
+    {
+        return transform.position;
+    }
+    
     public virtual ObjectType ObjectType()
     {
         return global::ObjectType.None;

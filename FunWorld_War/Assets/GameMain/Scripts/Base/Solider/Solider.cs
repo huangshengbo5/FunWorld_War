@@ -152,6 +152,12 @@ public partial class Solider : BaseObject
         Debug.Log("Solider DoAttack");
     }
 
+    public void ChangeState(State state)
+    {
+        ChangeAnimatorState(state);
+    }
+    
+
     public void OnAttackHited()
     {
         if (targetObject is Solider)
