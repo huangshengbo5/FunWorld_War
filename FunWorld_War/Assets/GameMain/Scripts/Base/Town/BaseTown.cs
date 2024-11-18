@@ -120,16 +120,16 @@ namespace Script.Game.Base
             return SpawnerPoints[index].position;
         }
         
-        //被选中
+        //被点击选中
         public override void OnClick()
         {
-            
+            CreateClickUI();
         }
 
+        //生成被选中UI
         void CreateClickUI()
         {
             
         }
-        
     }
 }
