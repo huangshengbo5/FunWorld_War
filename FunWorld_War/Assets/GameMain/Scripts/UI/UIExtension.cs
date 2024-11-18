@@ -41,18 +41,17 @@ public static class UIExtension
 
     public static bool HasUIForm(this UIComponent uiComponent, int uiFormId, string uiGroupName = null)
     {
-        // IDataTable<DRUIForm> dtUIForm = GameEntry.DataTable.GetDataTable<DRUIForm>();
-        // DRUIForm drUIForm = dtUIForm.GetDataRow(uiFormId);
-        // if (drUIForm == null) return false;
-        //
-        // var assetName = AssetUtility.GetUIFormAsset(drUIForm.AssetName);
-        // if (string.IsNullOrEmpty(uiGroupName)) return uiComponent.HasUIForm(assetName);
-        //
-        // var uiGroup = uiComponent.GetUIGroup(uiGroupName);
-        // if (uiGroup == null) return false;
-        //
-        // return uiGroup.HasUIForm(assetName);
-        return false;
+        IDataTable<DRUIForm> dtUIForm = GameEntry.DataTable.GetDataTable<DRUIForm>();
+        DRUIForm drUIForm = dtUIForm.GetDataRow(uiFormId);
+        if (drUIForm == null) return false;
+        
+        var assetName = AssetUtility.GetUIFormAsset(drUIForm.AssetName);
+        if (string.IsNullOrEmpty(uiGroupName)) return uiComponent.HasUIForm(assetName);
+        
+        var uiGroup = uiComponent.GetUIGroup(uiGroupName);
+        if (uiGroup == null) return false;
+        
+        return uiGroup.HasUIForm(assetName);
     }
 
     public static UIFormLogic GetUIForm(this UIComponent uiComponent, UIFormId uiFormId, string uiGroupName = null)
@@ -62,28 +61,27 @@ public static class UIExtension
 
     public static UIFormLogic GetUIForm(this UIComponent uiComponent, int uiFormId, string uiGroupName = null)
     {
-        // IDataTable<DRUIForm> dtUIForm = GameEntry.DataTable.GetDataTable<DRUIForm>();
-        // DRUIForm drUIForm = dtUIForm.GetDataRow(uiFormId);
-        // if (drUIForm == null) return null;
-        //
-        // var assetName = AssetUtility.GetUIFormAsset(drUIForm.AssetName);
-        // UIForm uiForm = null;
-        // if (string.IsNullOrEmpty(uiGroupName))
-        // {
-        //     uiForm = uiComponent.GetUIForm(assetName);
-        //     if (uiForm == null) return null;
-        //
-        //     return (UIFormLogic)uiForm.Logic;
-        // }
-        //
-        // var uiGroup = uiComponent.GetUIGroup(uiGroupName);
-        // if (uiGroup == null) return null;
-        //
-        // uiForm = (UIForm)uiGroup.GetUIForm(assetName);
-        // if (uiForm == null) return null;
-        //
-        // return (UIFormLogic)uiForm.Logic;
-        return null;
+        IDataTable<DRUIForm> dtUIForm = GameEntry.DataTable.GetDataTable<DRUIForm>();
+        DRUIForm drUIForm = dtUIForm.GetDataRow(uiFormId);
+        if (drUIForm == null) return null;
+        
+        var assetName = AssetUtility.GetUIFormAsset(drUIForm.AssetName);
+        UIForm uiForm = null;
+        if (string.IsNullOrEmpty(uiGroupName))
+        {
+            uiForm = uiComponent.GetUIForm(assetName);
+            if (uiForm == null) return null;
+        
+            return (UIFormLogic)uiForm.Logic;
+        }
+        
+        var uiGroup = uiComponent.GetUIGroup(uiGroupName);
+        if (uiGroup == null) return null;
+        
+        uiForm = (UIForm)uiGroup.GetUIForm(assetName);
+        if (uiForm == null) return null;
+        
+        return (UIFormLogic)uiForm.Logic;
     }
 
     public static void CloseUIForm(this UIComponent uiComponent, UIFormLogic uiForm)
@@ -131,5 +129,14 @@ public static class UIExtension
     // {
     //     // TODO：这里应该弹出原生对话框，先简化实现为直接按确认按钮
     //     if (dialogParams.OnClickConfirm != null) dialogParams.OnClickConfirm(dialogParams.UserData);
+    // }
+
+    // public static void Open3DUI(this UIComponent uiComponent, UIFormId uiFormId,Vector3 position,object param)
+    // {
+    //     var uiId = uiComponent.OpenUIForm(uiFormId,param);
+    //     var ui = uiComponent.GetUIForm(uiFormId);
+    //     ui.gameObject.transform.position = position;
+    //     ui.
+    //
     // }
 }

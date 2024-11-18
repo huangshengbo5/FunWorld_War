@@ -1,4 +1,5 @@
 using System;
+using Script.Game.Base;
 using UnityEngine;
 
 public class Battle_Camera : MonoBehaviour
@@ -16,6 +17,12 @@ public class Battle_Camera : MonoBehaviour
         RaycastHit hit;
         if (Physics.Raycast(ray,out hit))
         {
+            var baseObj = hit.collider.gameObject;
+            var baseTown = baseObj.GetComponent<BaseObject>();
+            if (baseTown)
+            {
+                baseTown.OnClick();
+            }
             Debug.Log($"hit object:{hit.collider.name}");
         }
     }

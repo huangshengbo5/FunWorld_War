@@ -119,5 +119,17 @@ namespace Script.Game.Base
             int index = Random.Range(0, SpawnerPoints.Count-1);
             return SpawnerPoints[index].position;
         }
+        
+        //被选中
+        public override void OnClick()
+        {
+            
+        }
+
+        void CreateClickUI()
+        {
+            
+        }
+        
     }
 }

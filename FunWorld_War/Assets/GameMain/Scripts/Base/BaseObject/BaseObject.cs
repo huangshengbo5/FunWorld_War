@@ -26,8 +26,6 @@ public class BaseObject : MonoBehaviour
         return global::ObjectType.None;
     }
     
-    public virtual void BeAttack(BaseObject attacker, int damageNum)
-    {
-           
-    }
+    public virtual void BeAttack(BaseObject attacker, int damageNum) { }
+    public virtual void OnClick(){}
 }
