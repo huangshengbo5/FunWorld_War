@@ -149,7 +149,6 @@ public partial class Solider : BaseObject
     public void DoAttack()
     {
         ChangeAnimatorState(State.Attack_Enemy);
-        Debug.Log("Solider DoAttack");
     }
 
     public void ChangeState(State state)

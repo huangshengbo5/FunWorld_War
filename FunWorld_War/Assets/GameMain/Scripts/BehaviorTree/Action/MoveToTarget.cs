@@ -51,7 +51,6 @@ namespace BehaviorDesigner.Runtime.Tasks
         public override TaskStatus OnUpdate()
         {
             var isStop = CheckDestinationReached(nav);
-            Debug.Log("Solider MoveToTarget  is Stopped :"+isStop);
             return isStop ? TaskStatus.Success : TaskStatus.Running;
         }
 

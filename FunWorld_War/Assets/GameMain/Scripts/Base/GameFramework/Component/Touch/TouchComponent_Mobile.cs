@@ -1,21 +1,7 @@
-using System;
-using Unity.VisualScripting;
 using UnityEngine;
 
-public class TouchManger : MonoBehaviour
+public class TouchComponent_Mobile : TouchComponent
 {
-    public static TouchManger Instance { get; private set; }
-    //单击
-    public event Action<Vector2> OnSingleTap;
-    //双击
-    public event Action<Vector2> OnDoubleTap;
-    //长按
-    public event Action<Vector2> OnLongPress;
-    //双指，缩放
-    public event Action<Vector2, float> OnPinch;
-    //双指拖动
-    public event Action<Vector2> OnTwoFingerDrag;
-    
     private float doubleTapTimeThreshold = 0.3f;
     private float longPressTimeThreshold = 0.5f;
     private float minPinchDistance = 10f;
@@ -26,22 +12,9 @@ public class TouchManger : MonoBehaviour
     private bool isLongPressing;
     private Vector2 touchStartPos;
 
-    private void Awake()
-    {
-        if (Instance == null)
-        {
-            Instance = this;
-            DontDestroyOnLoad(gameObject);
-        }
-        else
-        {
-            Destroy(gameObject);
-        }
-    }
-
     private void Update()
     {
-        if (Input.touchCount == 1)
+        if (Input.touchCount == 1 )
         {
             HandlerSingleFingerTouch();
         }
@@ -64,7 +37,7 @@ public class TouchManger : MonoBehaviour
             case TouchPhase.Ended:
                 if (isLongPressing && Time.time - touchStartTime >= longPressTimeThreshold)
                 {
-                    OnLongPress?.Invoke(touch.position);
+                    TriggerLongPressd(touch.position);
                 }
                 else
                 {
@@ -73,17 +46,17 @@ public class TouchManger : MonoBehaviour
                 break;
         }
     }
-
+    
     private void HandleTap(Vector2 position)
     {
         if (Time.time - lastTapTime < doubleTapTimeThreshold && Vector2.Distance(position,lastTapPosition) < 100f)
         {
-            OnDoubleTap?.Invoke(position);
+            TriggerDoubleTap(position);
             lastTapTime = 0;
         }
         else
         {
-            OnSingleTap?.Invoke(position);
+            TriggerSingleTap(position);
             lastTapTime = Time.time;
             lastTapPosition = position;
         }
@@ -103,7 +76,7 @@ public class TouchManger : MonoBehaviour
         float pinchDelta = currentDistance - previousDistance;
         if (Mathf.Abs(pinchDelta) > minPinchDistance)
         {
-            OnPinch?.Invoke(touchCenter,pinchDelta);
+            TriggerPinch(touchCenter,pinchDelta);
         }
 
         Vector2 touch1Delta = touch1.deltaPosition;
@@ -111,7 +84,7 @@ public class TouchManger : MonoBehaviour
         if (Vector2.Dot(touch1Delta.normalized,touch2Delta.normalized) > 0.8f)
         {
             Vector2 averageDelta = (touch1Delta + touch2Delta) / 2;
-            OnTwoFingerDrag?.Invoke(averageDelta);
+            TriggerTwoFingerDrag(averageDelta);
         }
     }
 }
