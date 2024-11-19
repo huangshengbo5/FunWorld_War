@@ -13,7 +13,7 @@ public partial class Solider : BaseObject
     //归属的部队
     private SoliderCommander ownerSoliderCommander;
 
-    public HPBar hpBar;
+    public SoliderHUD soliderHUD;
 
     public SoliderCommander OwnerSoliderCommander
     {
@@ -31,8 +31,8 @@ public partial class Solider : BaseObject
         MaxHp = Hp;
         InitBehaviorTree();
         isKill = false;
-        hpBar.Init(this);
-        hpBar.UpdatgeHP(Hp,MaxHp);
+        soliderHUD.Init(this);
+        soliderHUD.UpdatgeHP(Hp,MaxHp);
     }
 
     public void Init_SoliderCommander(SoliderCommander soliderCommander)
@@ -143,7 +143,7 @@ public partial class Solider : BaseObject
     public void SufferInjure(int injure)
     {
         Hp -= injure;
-        hpBar.UpdatgeHP(Hp,MaxHp);
+        soliderHUD.UpdatgeHP(Hp,MaxHp);
     }
     
     public void DoAttack()

@@ -3,7 +3,7 @@ using UnityEngine;
 using UnityEngine.UI;
 using Slider = UnityEngine.UI.Slider;
 
-public class HPBar : MonoBehaviour
+public class SoliderHUD : MonoBehaviour
 {
     
     public Slider Slider_HP;

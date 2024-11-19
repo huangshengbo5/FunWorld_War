@@ -1,5 +1,8 @@
 using System;
+using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.EventSystems;
+using UnityEngine.Rendering;
 
 public class TouchComponent_Editor : TouchComponent
 {
@@ -20,8 +23,23 @@ public class TouchComponent_Editor : TouchComponent
     {
         if (Input.GetMouseButtonUp(0))
         {
-            HanlderMouseButtonUp();
+            if (!IsPointerOverUI())
+            {
+                HanlderMouseButtonUp();    
+            }
         }
+    }
+
+    //是否电击在UI上
+    private bool IsPointerOverUI()
+    {
+        PointerEventData pointerEventData = new PointerEventData(EventSystem.current)
+        {
+            position = Input.mousePosition
+        };
+        var results = new List<RaycastResult>();
+        EventSystem.current.RaycastAll(pointerEventData, results);
+        return results.Count > 0;
     }
     
     private void HanlderMouseButtonUp()

@@ -12,6 +12,8 @@ namespace Script.Game.Base
     public class BaseTown :BaseObject
     {
         public TextMeshProUGUI CurSoliderNum_Txt;
+
+        public GameObject Obj_TownHUD;
         
         //目标城镇
         public BaseTown TargetTown;
@@ -128,14 +130,20 @@ namespace Script.Game.Base
             if (OwnerCamp == CampType.Player) //处理我方城池被选中逻辑
             {
                 GameEntry.Event.Fire(this,new BattleClickPlayerTownEventArgs());
-                CreateClickUI_Player();
+                //CreateClickUI_Player();
+            }
+            else
+            {
+                //显示操作按钮UI
+                Obj_TownHUD.SetActive(true);
             }
         }
 
-        //生成被选中UI
-        void CreateClickUI_Player()
+        //TODO 逻辑不应该写在这，需要一个单独的场景中的所有城镇关系的管理类
+        //敌对城镇显示操作UI
+        public void EnemyTownShowOperateUI()
         {
-            
+            if (TargetTown) { TargetTown.OnClick(); }
         }
     }
 }

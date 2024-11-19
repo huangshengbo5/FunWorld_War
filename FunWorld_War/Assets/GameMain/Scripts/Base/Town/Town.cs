@@ -25,7 +25,7 @@ public class Town : BaseTown
         Init();
         RegisterEvent();
         CurSoliderNum = DefaultMaxSoliderNum;
-        CurSoliderNum_Txt.SetText(CurSoliderNum.ToString());
+        // CurSoliderNum_Txt.SetText(CurSoliderNum.ToString());
         
         //test code
         StartCoroutine(AttackTargetTown());

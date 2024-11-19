@@ -39,8 +39,7 @@ public class ProcedureMain : ProcedureBase
         m_GotoMenu = false;
         // GameMode gameMode = (GameMode)procedureOwner.GetData<VarByte>("GameMode").Value;
         // m_CurrentGame = m_Games[gameMode];
-        // m_CurrentGame.Initialize();
-        GameEntry.UI.OpenUIForm(UIFormId.MenuForm);
+        // m_CurrentGame.Initialize()
         GameEntry.UI.OpenUIForm(UIFormId.BattleMainForm);
     }
 
