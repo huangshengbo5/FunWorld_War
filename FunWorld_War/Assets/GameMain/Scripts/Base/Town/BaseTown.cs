@@ -13,6 +13,9 @@ namespace Script.Game.Base
     {
         public TextMeshProUGUI CurSoliderNum_Txt;
         
+        //目标城镇
+        public BaseTown TargetTown;
+        
         //生成士兵的时间间隔
         public float CreateSoliderInterval;
 
@@ -114,7 +117,6 @@ namespace Script.Game.Base
                 {
                     SpawnerPoints.Add(spawnerHolder.transform.GetChild(i).transform);
                 }
-                //SpawnerPoints =  gameObject.transform.Find("Spawner").gameObject.GetComponentsInChildren<Transform>().ToList();
             }
             int index = Random.Range(0, SpawnerPoints.Count-1);
             return SpawnerPoints[index].position;
@@ -123,11 +125,15 @@ namespace Script.Game.Base
         //被点击选中
         public override void OnClick()
         {
-            CreateClickUI();
+            if (OwnerCamp == CampType.Player) //处理我方城池被选中逻辑
+            {
+                GameEntry.Event.Fire(this,new BattleClickPlayerTownEventArgs());
+                CreateClickUI_Player();
+            }
         }
 
         //生成被选中UI
-        void CreateClickUI()
+        void CreateClickUI_Player()
         {
             
         }

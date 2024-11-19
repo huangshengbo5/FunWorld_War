@@ -41,6 +41,7 @@ public class ProcedureMain : ProcedureBase
         // m_CurrentGame = m_Games[gameMode];
         // m_CurrentGame.Initialize();
         GameEntry.UI.OpenUIForm(UIFormId.MenuForm);
+        GameEntry.UI.OpenUIForm(UIFormId.BattleMainForm);
     }
 
     protected override void OnLeave(ProcedureOwner procedureOwner, bool isShutdown)

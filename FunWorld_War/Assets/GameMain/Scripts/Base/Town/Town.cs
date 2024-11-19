@@ -18,8 +18,7 @@ public class Town : BaseTown
 
     private List<SoliderCommander> SoliderCommanders;
     public GameObject ObjSolider;
-    //目标城镇
-    public BaseTown TargetTown;
+
 
     private void Start()
     {

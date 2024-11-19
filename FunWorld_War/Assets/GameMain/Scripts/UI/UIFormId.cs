@@ -8,4 +8,8 @@ public enum UIFormId : byte
     /// 主菜单。
     /// </summary>
     MenuForm = 1,
+    /// <summary>
+    /// 战斗主界面
+    /// </summary>
+    BattleMainForm = 2,
 }
