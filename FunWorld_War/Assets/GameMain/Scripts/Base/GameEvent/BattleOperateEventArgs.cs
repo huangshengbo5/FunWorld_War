@@ -20,3 +20,22 @@ public class BattleClickPlayerTownEventArgs : GameEventArgs
     public override int Id { get {return EventId;} }
     public override void Clear() { }
 }
+
+public class BattleClickTargetTownEventArgs : GameEventArgs
+{
+    public static readonly int EventId = typeof(BattleClickTargetTownEventArgs).GetHashCode();
+    
+    public static BattleClickTargetTownEventArgs Create(BaseTown town)
+    {
+        BattleClickTargetTownEventArgs battleClickTargetTown = ReferencePool.Acquire<BattleClickTargetTownEventArgs>();
+        battleClickTargetTown.Town = town;
+        return battleClickTargetTown;
+    }
+
+    private BaseTown town;
+    
+    public BaseTown Town { get; set; }
+    
+    public override int Id { get {return EventId;} }
+    public override void Clear() { }
+}
