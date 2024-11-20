@@ -129,7 +129,7 @@ namespace Script.Game.Base
         {
             if (OwnerCamp == CampType.Player) //处理我方城池被选中逻辑
             {
-                GameEntry.Event.Fire(this,new BattleClickPlayerTownEventArgs());
+                GameEntry.Event.Fire(this,BattleClickPlayerTownEventArgs.Create(this));
                 //CreateClickUI_Player();
             }
             else

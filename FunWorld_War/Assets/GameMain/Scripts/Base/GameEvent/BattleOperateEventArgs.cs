@@ -6,10 +6,10 @@ public class BattleClickPlayerTownEventArgs : GameEventArgs
 {
     public static readonly int EventId = typeof(BattleClickPlayerTownEventArgs).GetHashCode();
     
-    
-    public static BattleClickPlayerTownEventArgs Create(int townId,CampType ownerType)
+    public static BattleClickPlayerTownEventArgs Create(BaseTown town)
     {
         BattleClickPlayerTownEventArgs battleClickPlayerTown = ReferencePool.Acquire<BattleClickPlayerTownEventArgs>();
+        battleClickPlayerTown.Town = town;
         return battleClickPlayerTown;
     }
 
