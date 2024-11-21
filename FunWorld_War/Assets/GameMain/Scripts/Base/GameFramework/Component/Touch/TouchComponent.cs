@@ -19,6 +19,7 @@ public class TouchComponent : MonoBehaviour
 
     //双指拖动
     public event Action<Vector2> OnTwoFingerDrag;
+    
 
     public TouchComponent Instance()
     {
