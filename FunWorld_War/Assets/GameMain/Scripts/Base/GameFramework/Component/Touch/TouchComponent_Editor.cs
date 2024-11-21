@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.EventSystems;
 using UnityEngine.Rendering;
@@ -18,10 +19,9 @@ public class TouchComponent_Editor : TouchComponent
     private Vector2 touchStartPos;
 
 
-
-    private void Update()
+    void Update()
     {
-        if (Input.GetMouseButtonUp(0))
+        if (Input.GetMouseButtonDown(0))
         {
             if (!IsPointerOverUI())
             {

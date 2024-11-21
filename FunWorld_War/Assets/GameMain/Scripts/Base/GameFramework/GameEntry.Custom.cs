@@ -12,6 +12,14 @@ using UnityGameFramework.Runtime;
 /// </summary>
 public partial class GameEntry : MonoBehaviour
 {
+    
+    public static ItemComponent Item
+    {
+        get;
+        private set;
+    }
+
+    
     public static TouchComponent Touch { get; private set; }
     private  void InitCustomComponents()
     {

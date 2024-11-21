@@ -26,6 +26,7 @@ namespace UnityGameFramework.Runtime
 
         [SerializeField]
         private string[] m_AvailableProcedureTypeNames = null;
+        
 
         [SerializeField]
         private string m_EntranceProcedureTypeName = null;
