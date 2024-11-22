@@ -136,7 +136,6 @@
      <Compile Include="Assets\GameFramework\Scripts\Runtime\Sound\SoundGroupHelperBase.cs" />
      <Compile Include="Assets\GameFramework\Scripts\Runtime\UI\OpenUIFormFailureEventArgs.cs" />
      <Compile Include="Assets\GameFramework\Scripts\Runtime\Variable\VarUInt16.cs" />
-     <Compile Include="Assets\GameFramework\Scripts\Runtime\Resource\ResourceUpdateAllCompleteEventArgs.cs" />
      <Compile Include="Assets\GameFramework\Scripts\Runtime\Debugger\DebuggerComponent.SceneInformationWindow.cs" />
      <Compile Include="Assets\GameFramework\Scripts\Runtime\Resource\BuiltinVersionListSerializer.UpdatableVersionListSerializeCallback.cs" />
      <Compile Include="Assets\GameFramework\Scripts\Runtime\Utility\UnityExtension.cs" />
@@ -195,7 +194,6 @@
      <Compile Include="Assets\GameFramework\Scripts\Runtime\Sound\SoundAgentHelperBase.cs" />
      <Compile Include="Assets\GameFramework\Scripts\Runtime\Variable\VarUInt64.cs" />
      <Compile Include="Assets\GameFramework\Scripts\Runtime\Debugger\DebuggerComponent.ProfilerInformationWindow.cs" />
-     <Compile Include="Assets\GameFramework\Scripts\Runtime\Utility\DefaultCompressionHelper.cs" />
      <Compile Include="Assets\GameFramework\Scripts\Runtime\Variable\VarVector3.cs" />
      <Compile Include="Assets\GameFramework\Scripts\Runtime\UI\UIComponent.UIGroup.cs" />
      <Compile Include="Assets\GameFramework\Scripts\Runtime\Config\DefaultConfigHelper.cs" />
@@ -289,11 +287,11 @@
      <Folder Include="Assets\GameFramework\Scripts\Runtime\Download" />
      <Folder Include="Assets\GameFramework\Scripts\Runtime\WebRequest" />
      <Folder Include="Assets\GameFramework\Scripts\Runtime\Network" />
-     <Folder Include="Assets\GameFramework\Scripts\Runtime\FileSystem" />
      <Folder Include="Assets\GameFramework\Scripts\Runtime\Entity" />
      <Folder Include="Assets\GameFramework\Scripts\Runtime\ReferencePool" />
      <Folder Include="Assets\GameFramework\Scripts\Runtime\DataNode" />
      <Folder Include="Assets\GameFramework\Scripts\Runtime\Event" />
+     <Folder Include="Assets\GameFramework\Scripts\Runtime\FileSystem" />
      <Folder Include="Assets\GameFramework\Scripts\Runtime\Item" />
      <Folder Include="Assets\GameFramework\Scripts\Runtime\Debugger" />
      <Folder Include="Assets\GameFramework\Scripts\Runtime" />
@@ -576,9 +574,6 @@
      </Reference>
      <Reference Include="ReportGeneratorMerged">
      <HintPath>G:\Project\Unity\FunWorldMaster\FunWorld_War\FunWorld_War\Library\PackageCache\com.unity.testtools.codecoverage@1.2.4\lib\ReportGenerator\ReportGeneratorMerged.dll</HintPath>
-     </Reference>
-     <Reference Include="GameFramework">
-     <HintPath>G:\Project\Unity\FunWorldMaster\FunWorld_War\FunWorld_War\Assets\GameFramework\Libraries\GameFramework.dll</HintPath>
      </Reference>
      <Reference Include="Unity.Plastic.Antlr3.Runtime">
      <HintPath>G:\Project\Unity\FunWorldMaster\FunWorld_War\FunWorld_War\Library\PackageCache\com.unity.collab-proxy@2.2.0\Lib\Editor\PlasticSCM\Unity.Plastic.Antlr3.Runtime.dll</HintPath>
@@ -1017,6 +1012,10 @@
      </Reference>
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="GameFramework.csproj">
+      <Project>{86dfadb2-3a64-7087-c267-2f40f35186cb}</Project>
+      <Name>GameFramework</Name>
+    </ProjectReference>
     <ProjectReference Include="UnityEditor.UI.csproj">
       <Project>{7e8269f4-d3c2-9299-c9ad-307e7b2192f6}</Project>
       <Name>UnityEditor.UI</Name>
