@@ -52,18 +52,7 @@ namespace Script.Game.Base
             return OwnerCamp;
         }
 
-        private void Start()
-        {
-            GameEntry.Event.Subscribe(BattleClickTargetTownEventArgs.EventId,HandlerBattleClickTargetTown);
-        }
-
-        public void HandlerBattleClickTargetTown(object s ,EventArgs e)
-        {
-            var clickEvent = e as BattleClickTargetTownEventArgs;
-            //todo 此处应该处理赋予目标城镇的逻辑
-            //TargetTown = clickEvent.Town;
-            //todo 开始进攻敌方城镇
-        }
+  
 
         public void ChangeCamp(CampType type)
         {
@@ -90,6 +79,11 @@ namespace Script.Game.Base
         }
 
         public virtual void JoinBattle(SoliderCommander enemySoliderCommander)
+        {
+            
+        }
+
+        public virtual void JoinBattle(BaseTown town, SoliderCommander enemySoliderCommander)
         {
             
         }

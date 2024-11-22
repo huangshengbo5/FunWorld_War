@@ -25,20 +25,27 @@ public class Town : BaseTown
         Init();
         RegisterEvent();
         CurSoliderNum = DefaultMaxSoliderNum;
-        // CurSoliderNum_Txt.SetText(CurSoliderNum.ToString());
-        
-        //test code
-        StartCoroutine(AttackTargetTown());
+        //StartCoroutine(AttackTargetTown());
+        GameEntry.Event.Subscribe(BattleClickTargetTownEventArgs.EventId,HandlerBattleClickTargetTown);
     }
-    
+
+    public void HandlerBattleClickTargetTown(object s ,EventArgs e)
+    {
+        BattleClickTargetTownEventArgs clickEventArgs = e as BattleClickTargetTownEventArgs;
+        if (clickEventArgs != null)
+        {
+            TargetTown = clickEventArgs.Town;
+            var soliderCommander = CreateSolider();
+            JoinBattle(TargetTown, soliderCommander);
+        }
+    }
     
     IEnumerator AttackTargetTown()
     {
         yield return new WaitForSeconds(1f);
         if (OwnerCamp == global::CampType.Player && TargetTown != null)
         {
-            var soliderCommander = CreateSolider();
-            JoinBattle(TargetTown, soliderCommander);
+           
         }
         yield return null;
     }
@@ -47,6 +54,8 @@ public class Town : BaseTown
     {
         townBattleJudge = new Town_BattleJudge();
         townBattleJudge.Init(this);
+        var townHUD = Obj_TownHUD.GetComponent<TownHUD>();
+        townHUD.Init(this);
     }
 
     private void RegisterEvent()
@@ -126,7 +135,7 @@ public class Town : BaseTown
         townBattleJudge.JoinBattle(enemySoliderCommander);
     }
 
-    public void JoinBattle(BaseTown targetTown, SoliderCommander enemySoliderCommander)
+    public override void JoinBattle(BaseTown targetTown, SoliderCommander enemySoliderCommander)
     {
         targetTown.JoinBattle(enemySoliderCommander);
     }

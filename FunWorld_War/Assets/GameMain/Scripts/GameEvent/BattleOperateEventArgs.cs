@@ -39,3 +39,19 @@ public class BattleClickTargetTownEventArgs : GameEventArgs
     public override int Id { get {return EventId;} }
     public override void Clear() { }
 }
+
+
+//玩家点击位置是非UI区域
+public class TouchClickNotUIEventArgs : GameEventArgs
+{
+    public static readonly int EventId = typeof(TouchClickNotUIEventArgs).GetHashCode();
+    
+    public static TouchClickNotUIEventArgs Create()
+    {
+        TouchClickNotUIEventArgs touchClickNotUI = ReferencePool.Acquire<TouchClickNotUIEventArgs>();
+        return touchClickNotUI;
+    }
+    
+    public override int Id { get {return EventId;} }
+    public override void Clear() { }
+}

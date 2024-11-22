@@ -25,7 +25,8 @@ public class TouchComponent_Editor : TouchComponent
         {
             if (!IsPointerOverUI())
             {
-                HanlderMouseButtonUp();    
+                HanlderMouseButtonUp();
+                GameEntry.Event.Fire(this, TouchClickNotUIEventArgs.Create());
             }
         }
     }
