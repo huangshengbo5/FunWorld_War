@@ -12,4 +12,4 @@ public enum UIFormId : byte
     /// 战斗主界面
     /// </summary>
     BattleMainForm = 2,
-}
+} 

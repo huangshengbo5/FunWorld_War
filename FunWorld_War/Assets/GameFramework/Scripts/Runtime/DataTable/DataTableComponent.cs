@@ -10,7 +10,6 @@ using GameFramework.DataTable;
 using GameFramework.Resource;
 using System;
 using System.Collections.Generic;
-using NPOI.OpenXmlFormats.Spreadsheet;
 using UnityEngine;
 
 namespace UnityGameFramework.Runtime
@@ -20,10 +19,10 @@ namespace UnityGameFramework.Runtime
     /// </summary>
     [DisallowMultipleComponent]
     [AddComponentMenu("Game Framework/Data Table")]
-    public class DataTableComponent : GameFrameworkComponent
+    public sealed class DataTableComponent : GameFrameworkComponent
     {
         private const int DefaultPriority = 0;
-        
+
         private IDataTableManager m_DataTableManager = null;
         private EventComponent m_EventComponent = null;
 
@@ -71,7 +70,6 @@ namespace UnityGameFramework.Runtime
         {
             base.Awake();
 
-            
             m_DataTableManager = GameFrameworkEntry.GetModule<IDataTableManager>();
             if (m_DataTableManager == null)
             {
