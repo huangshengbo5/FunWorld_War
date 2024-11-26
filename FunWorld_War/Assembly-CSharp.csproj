@@ -117,7 +117,6 @@
      <Compile Include="Assets\GameMain\Scripts\Define\EventDefine.cs" />
      <Compile Include="Assets\UnityPackages\BehaviorTree\Behavior Designer\Runtime\Tasks\Unity\SharedVariables\CompareSharedRect.cs" />
      <Compile Include="Assets\UnityPackages\BehaviorTree\Behavior Designer\Runtime\Tasks\Unity\Math\Lerp.cs" />
-     <Compile Include="Assets\GameMain\Scripts\DataTable\DRUIGroup.cs" />
      <Compile Include="Assets\UnityPackages\BehaviorTree\Behavior Designer\Runtime\Tasks\Unity\Rigidbody2D\GetAngularVelocity.cs" />
      <Compile Include="Assets\UnityPackages\BehaviorTree\Behavior Designer\Runtime\Tasks\Unity\Light\SetShadowSoftness.cs" />
      <Compile Include="Assets\UnityPackages\BehaviorTree\Behavior Designer\Runtime\Tasks\Unity\ParticleSystem\SetLoop.cs" />
@@ -258,7 +257,6 @@
      <Compile Include="Assets\UnityPackages\BehaviorTree\Behavior Designer\Runtime\Tasks\Unity\Physics2D\Linecast.cs" />
      <Compile Include="Assets\UnityPackages\BehaviorTree\Behavior Designer\Runtime\Tasks\Unity\Light\SetIntensity.cs" />
      <Compile Include="Assets\UnityPackages\BehaviorTree\Behavior Designer\Runtime\Tasks\Actions\Reflection\SetPropertyValue.cs" />
-     <Compile Include="Assets\GameMain\Scripts\DataTable\DRAssetsPath.cs" />
      <Compile Include="Assets\UnityPackages\BehaviorTree\Behavior Designer\Runtime\Tasks\Unity\Transform\LookAt.cs" />
      <Compile Include="Assets\UnityPackages\BehaviorTree\Behavior Designer\Runtime\Tasks\Actions\Reflection\GetPropertyValue.cs" />
      <Compile Include="Assets\UnityPackages\BehaviorTree\Behavior Designer\Runtime\Tasks\Unity\Vector2\Distance.cs" />
@@ -793,6 +791,7 @@
      <None Include="Library\PackageCache\com.unity.modules.tilemap@1.0.0\package.json" />
      <Folder Include="Assets\Res\model\gong_nubing" />
      <Folder Include="Assets\UnityPackages\Behavior Designer Movement\Scripts" />
+     <None Include="Assets\GameMain\DataTables\Raw\UIGroup.txt" />
      <Folder Include="Library\PackageCache\com.unity.modules.assetbundle@1.0.0" />
      <Folder Include="Assets\UnityPackages\Toon_RTS\WesternKingdoms\animation\Mage" />
      <Folder Include="Assets\UnityPackages\BehaviorTree\Behavior Designer\Runtime\Tasks\Unity\Transform" />
@@ -970,7 +969,6 @@
      <None Include="Library\PackageCache\com.unity.ide.visualstudio@2.0.22\ValidationExceptions.json" />
      <Folder Include="Assets\Res\Scenes\Material\Shaders" />
      <None Include="Library\PackageCache\com.unity.nuget.newtonsoft-json@3.2.1\link.xml" />
-     <None Include="Assets\GameMain\DataTables\Raw\UIGroup.txt" />
      <None Include="Library\PackageCache\com.unity.modules.wind@1.0.0\package.json" />
      <None Include="Assets\UnityPackages\TextMesh Pro\Shaders\TMP_SDF-Mobile SSD.shader" />
      <None Include="Assets\Res\Scenes\Material\Shaders\MK4Toon Water.shader" />
