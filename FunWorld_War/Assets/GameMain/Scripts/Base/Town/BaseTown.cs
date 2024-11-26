@@ -1,10 +1,7 @@
 using System;
 using System.Collections.Generic;
-using System.IO.Enumeration;
-using System.Linq;
 using TMPro;
 using UnityEngine;
-using UnityEngine.Serialization;
 using Random = UnityEngine.Random;
 
 namespace Script.Game.Base
@@ -55,6 +52,8 @@ namespace Script.Game.Base
             return OwnerCamp;
         }
 
+  
+
         public void ChangeCamp(CampType type)
         {
             OwnerCamp = type;
@@ -80,6 +79,11 @@ namespace Script.Game.Base
         }
 
         public virtual void JoinBattle(SoliderCommander enemySoliderCommander)
+        {
+            
+        }
+
+        public virtual void JoinBattle(BaseTown town, SoliderCommander enemySoliderCommander)
         {
             
         }
@@ -129,7 +133,7 @@ namespace Script.Game.Base
         {
             if (OwnerCamp == CampType.Player) //处理我方城池被选中逻辑
             {
-                GameEntry.Event.Fire(this,new BattleClickPlayerTownEventArgs());
+                GameEntry.Event.Fire(this,BattleClickPlayerTownEventArgs.Create(this));
                 //CreateClickUI_Player();
             }
             else
