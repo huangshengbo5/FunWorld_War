@@ -98,8 +98,8 @@
      <Compile Include="Library\PackageCache\com.unity.purchasing@4.9.3\Editor\Analytics\Entity\EventComponents.cs" />
      <Compile Include="Library\PackageCache\com.unity.purchasing@4.9.3\Editor\BuildTargetGroupExtensions.cs" />
      <Compile Include="Library\PackageCache\com.unity.purchasing@4.9.3\Editor\ServiceProjectSettings\PurchasingGameService.cs" />
-     <Compile Include="Library\PackageCache\com.unity.purchasing@4.9.3\Editor\ServiceProjectSettings\Service\GoogleConfigService.cs" />
      <Compile Include="Library\PackageCache\com.unity.purchasing@4.9.3\Editor\ServiceProjectSettings\PurchasingSettingsProvider.cs" />
+     <Compile Include="Library\PackageCache\com.unity.purchasing@4.9.3\Editor\ServiceProjectSettings\Service\GoogleConfigService.cs" />
      <Compile Include="Library\PackageCache\com.unity.purchasing@4.9.3\Editor\Analytics\Helpers\GenericEditorButtonClickEventSenderHelpers.cs" />
      <Compile Include="Library\PackageCache\com.unity.purchasing@4.9.3\Editor\UnityPurchasingEditor.cs" />
      <Compile Include="Library\PackageCache\com.unity.purchasing@4.9.3\Editor\ServiceProjectSettings\UI\Views\AppleConfigurationSettingsBlock.cs" />

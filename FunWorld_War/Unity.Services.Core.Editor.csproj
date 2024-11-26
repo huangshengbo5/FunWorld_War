@@ -50,8 +50,8 @@
      <Compile Include="Library\PackageCache\com.unity.services.core@1.12.0\Editor\Core\Shared\DependencyInversion\Singleton.Gen.cs" />
      <Compile Include="Library\PackageCache\com.unity.services.core@1.12.0\Editor\Core\EditorGameService\Analytics\IEditorGameServiceAnalyticsSender.cs" />
      <Compile Include="Library\PackageCache\com.unity.services.core@1.12.0\Editor\Core\Utils\OrganizationHandler\OrganizationHandler.cs" />
-     <Compile Include="Library\PackageCache\com.unity.services.core@1.12.0\Editor\Core\EditorGameService\Analytics\EditorGameServiceAnalytic.cs" />
      <Compile Include="Library\PackageCache\com.unity.services.core@1.12.0\Editor\Core\Shared\DependencyInversion\TypeAlreadyRegisteredException.Gen.cs" />
+     <Compile Include="Library\PackageCache\com.unity.services.core@1.12.0\Editor\Core\EditorGameService\Analytics\EditorGameServiceAnalytic.cs" />
      <Compile Include="Library\PackageCache\com.unity.services.core@1.12.0\Editor\Core\BackendHelpers\JsonHelper.cs" />
      <Compile Include="Library\PackageCache\com.unity.services.core@1.12.0\Editor\Core\Shared\UI\CollectionBinding.Gen.cs" />
      <Compile Include="Library\PackageCache\com.unity.services.core@1.12.0\Editor\Core\Networking\ITokenExchangeUrls.cs" />

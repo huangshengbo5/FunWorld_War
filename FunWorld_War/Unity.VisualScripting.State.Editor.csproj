@@ -71,8 +71,8 @@
      <Compile Include="Library\PackageCache\com.unity.visualscripting@1.9.1\Editor\VisualScripting.State\Description\StateMacroDescriptor.cs" />
      <Compile Include="Library\PackageCache\com.unity.visualscripting@1.9.1\Editor\VisualScripting.State\StateRevealCondition.cs" />
      <Compile Include="Library\PackageCache\com.unity.visualscripting@1.9.1\Editor\VisualScripting.State\Description\StateMachineDescriptor.cs" />
-     <Compile Include="Library\PackageCache\com.unity.visualscripting@1.9.1\Editor\VisualScripting.State\Plugin\Changelogs\Changelog_1_2_2.cs" />
      <Compile Include="Library\PackageCache\com.unity.visualscripting@1.9.1\Editor\VisualScripting.State\Plugin\Changelogs\Changelog_1_1_1.cs" />
+     <Compile Include="Library\PackageCache\com.unity.visualscripting@1.9.1\Editor\VisualScripting.State\Plugin\Changelogs\Changelog_1_2_2.cs" />
      <Compile Include="Library\PackageCache\com.unity.visualscripting@1.9.1\Editor\VisualScripting.State\Plugin\Migrations\Migration_1_6_to_1_7.cs" />
      <Compile Include="Library\PackageCache\com.unity.visualscripting@1.9.1\Editor\VisualScripting.State\Flow\StateUnitDescriptor.cs" />
      <Compile Include="Library\PackageCache\com.unity.visualscripting@1.9.1\Editor\VisualScripting.State\Transitions\IStateTransitionWidget.cs" />
