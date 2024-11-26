@@ -18,36 +18,20 @@ public class Town : BaseTown
 
     private List<SoliderCommander> SoliderCommanders;
     public GameObject ObjSolider;
-
-
+    
     private void Start()
     {
         Init();
         RegisterEvent();
         CurSoliderNum = DefaultMaxSoliderNum;
-        //StartCoroutine(AttackTargetTown());
-        GameEntry.Event.Subscribe(BattleClickTargetTownEventArgs.EventId,HandlerBattleClickTargetTown);
-    }
-
-    public void HandlerBattleClickTargetTown(object s ,EventArgs e)
-    {
-        BattleClickTargetTownEventArgs clickEventArgs = e as BattleClickTargetTownEventArgs;
-        if (clickEventArgs != null)
-        {
-            TargetTown = clickEventArgs.Town;
-            var soliderCommander = CreateSolider();
-            JoinBattle(TargetTown, soliderCommander);
-        }
     }
     
-    IEnumerator AttackTargetTown()
+    //攻击敌方城池
+    public void AttackTargetTown(BaseTown targetTown)
     {
-        yield return new WaitForSeconds(1f);
-        if (OwnerCamp == global::CampType.Player && TargetTown != null)
-        {
-           
-        }
-        yield return null;
+        TargetTown = targetTown;
+        var soliderCommander = CreateSolider();
+        JoinBattle(TargetTown, soliderCommander);
     }
 
     private void Init()
@@ -57,7 +41,8 @@ public class Town : BaseTown
         var townHUD = Obj_TownHUD.GetComponent<TownHUD>();
         townHUD.Init(this);
     }
-
+    
+    
     private void RegisterEvent()
     {
         GameEntry.Event.Subscribe(BattleSingleTownResultEventArgs.EventId,OnSingleTownResult); 

@@ -4,7 +4,6 @@ using Script.Game.Base;
 public class GameMode_Survival : GameBase
 {
     private float m_ElapseSeconds = 0f;
-
     public override GameMode GameMode => GameMode.Survival;
     
     public BaseTown CurOperateTown;
@@ -34,8 +33,8 @@ public class GameMode_Survival : GameBase
         if (clickEventArgs != null)
         {
             var TargetTown = clickEventArgs.Town;
-            // var soliderCommander = CurOperateTown.CreateSolider();
-            // CurOperateTown.JoinBattle(TargetTown, soliderCommander);
+            var town = CurOperateTown as Town;
+            town.AttackTargetTown(TargetTown);
         }
     }
 
