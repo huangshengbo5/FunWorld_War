@@ -207,8 +207,8 @@
      <Compile Include="Assets\GameFramework\Scripts\Runtime\FileSystem\DefaultFileSystemHelper.cs" />
      <Compile Include="Assets\GameFramework\Scripts\Runtime\Fsm\FsmComponent.cs" />
      <Compile Include="Assets\GameFramework\Scripts\Runtime\Utility\DefaultJsonHelper.cs" />
-     <Compile Include="Assets\GameFramework\Scripts\Runtime\Resource\BuiltinVersionListSerializer.LocalVersionListSerializeCallback.cs" />
      <Compile Include="Assets\GameFramework\Scripts\Runtime\Item\ItemLogic.cs" />
+     <Compile Include="Assets\GameFramework\Scripts\Runtime\Resource\BuiltinVersionListSerializer.LocalVersionListSerializeCallback.cs" />
      <Compile Include="Assets\GameFramework\Scripts\Runtime\Download\UnityWebRequestDownloadAgentHelper.cs" />
      <Compile Include="Assets\GameFramework\Scripts\Runtime\Sound\SoundGroupHelperBase.cs" />
      <Compile Include="Assets\GameFramework\Scripts\Runtime\Setting\SettingHelperBase.cs" />
