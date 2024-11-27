@@ -14,4 +14,30 @@ public static class Common
           }
           return CampType.None;
      }
+
+     /// <summary>
+     /// 当前的GameMode
+     /// </summary>
+     /// <returns></returns>
+     public static GameBase CurGameMode()
+     {
+          var curProcedure = GameEntry.Procedure.CurrentProcedure;
+          if (curProcedure is ProcedureMain)
+          {
+               var procedureMain =curProcedure as ProcedureMain; 
+               GameBase curGameMode = procedureMain.CurGameMode();
+               return curGameMode;
+          }
+          return null;
+     }
+
+     //获取阵营之间的关系
+     public static RelationType GetRelation(CampType camp1,CampType camp2)
+     {
+          if (camp1 == camp2)
+          {
+               return RelationType.Friend;
+          }
+          return RelationType.Hostile;
+     }
 }

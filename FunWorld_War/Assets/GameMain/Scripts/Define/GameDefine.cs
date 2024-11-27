@@ -12,6 +12,12 @@ public enum CampType
     Neutral     ,   //中立
 }
 
+public enum RelationType
+{
+    Hostile , //敌人
+    Friend  , //好友
+}
+
 public enum ObjectType
 {
     None   ,

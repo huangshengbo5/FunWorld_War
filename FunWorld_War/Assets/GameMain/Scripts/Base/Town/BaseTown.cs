@@ -12,9 +12,6 @@ namespace Script.Game.Base
 
         public GameObject Obj_TownHUD;
         
-        //目标城镇
-        public BaseTown TargetTown;
-        
         //生成士兵的时间间隔
         public float CreateSoliderInterval;
 
@@ -23,13 +20,15 @@ namespace Script.Game.Base
 
         public CampType OwnerCamp = global::CampType.None;
         
-        protected int CurSoliderNum;
         
+        protected int CurSoliderNum;
+        //目标城镇
+        protected BaseTown TargetTown;
         public int ViewRedius;  //视野范围
         private bool isOccupied;
 
         private List<Transform> SpawnerPoints;
-
+        
         public bool IsOccupied
         {
             get => isOccupied;
@@ -51,9 +50,7 @@ namespace Script.Game.Base
         {
             return OwnerCamp;
         }
-
-  
-
+        
         public void ChangeCamp(CampType type)
         {
             OwnerCamp = type;
@@ -147,7 +144,13 @@ namespace Script.Game.Base
         //敌对城镇显示操作UI
         public void EnemyTownShowOperateUI()
         {
-            if (TargetTown) { TargetTown.OnClick(); }
+            var gameMode = Common.CurGameMode();
+            var gameMode_Survival = gameMode as GameMode_Survival;
+            var hostileTowns = gameMode_Survival.GetHostileTown(this);
+            foreach (var townItem in hostileTowns)
+            {
+                townItem.OnClick();
+            }
         }
     }
 }

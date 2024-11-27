@@ -19,10 +19,10 @@ public abstract class GameBase
 
     public virtual void Initialize()
     {
+        GameOver = false;
         GameEntry.Event.Subscribe(ShowEntitySuccessEventArgs.EventId, OnShowEntitySuccess);
         GameEntry.Event.Subscribe(ShowEntityFailureEventArgs.EventId, OnShowEntityFailure);
 
-        GameOver = false;
     }
 
     public virtual void Shutdown()

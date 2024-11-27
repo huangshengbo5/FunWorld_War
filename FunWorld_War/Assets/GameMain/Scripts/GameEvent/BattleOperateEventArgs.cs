@@ -55,3 +55,18 @@ public class TouchClickNotUIEventArgs : GameEventArgs
     public override int Id { get {return EventId;} }
     public override void Clear() { }
 }
+
+//游戏开始事件
+public class GameStartEventArgs : GameEventArgs
+{
+    public static readonly int EventId = typeof(GameStartEventArgs).GetHashCode();
+    
+    public static GameStartEventArgs Create()
+    {
+        GameStartEventArgs gameStartEventArgs = ReferencePool.Acquire<GameStartEventArgs>();
+        return gameStartEventArgs;
+    }
+    
+    public override int Id { get {return EventId;} }
+    public override void Clear() { }
+}

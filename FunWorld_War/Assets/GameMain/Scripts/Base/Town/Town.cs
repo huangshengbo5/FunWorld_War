@@ -1,5 +1,4 @@
 using System;
-using System.Collections;
 using System.Collections.Generic;
 using GameFramework.Event;
 using Script.Game.Base;
@@ -21,7 +20,6 @@ public class Town : BaseTown
     
     private void Start()
     {
-        Init();
         RegisterEvent();
         CurSoliderNum = DefaultMaxSoliderNum;
     }
@@ -36,18 +34,28 @@ public class Town : BaseTown
 
     private void Init()
     {
+        var gameMode = Common.CurGameMode();
+        var gameModeSurvival = gameMode as GameMode_Survival;
+        if (gameModeSurvival != null)
+        {
+            gameModeSurvival.JoinBattle(this);
+        }
         townBattleJudge = new Town_BattleJudge();
         townBattleJudge.Init(this);
         var townHUD = Obj_TownHUD.GetComponent<TownHUD>();
         townHUD.Init(this);
     }
     
-    
     private void RegisterEvent()
     {
         GameEntry.Event.Subscribe(BattleSingleTownResultEventArgs.EventId,OnSingleTownResult); 
+        GameEntry.Event.Subscribe(GameStartEventArgs.EventId,OnGameStart);
     }
-    
+
+    void OnGameStart(object sender, GameEventArgs e)
+    {
+        Init();
+    }
     void OnSingleTownResult(object sender, GameEventArgs e)
     {
         var eventData = e as BattleSingleTownResultEventArgs;
@@ -144,5 +152,4 @@ public class Town : BaseTown
     {
         Hp -= injure;
     }
-    
 }

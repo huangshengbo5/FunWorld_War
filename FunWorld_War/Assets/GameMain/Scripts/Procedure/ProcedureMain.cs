@@ -2,6 +2,7 @@
 using UnityGameFramework.Runtime;
 using ProcedureOwner = GameFramework.Fsm.IFsm<GameFramework.Procedure.IProcedureManager>;
 
+//该流程可以视为已经进入游戏
 public class ProcedureMain : ProcedureBase
 {
     private const float GameOverDelayedSeconds = 2f;
@@ -21,7 +22,6 @@ public class ProcedureMain : ProcedureBase
     protected override void OnInit(ProcedureOwner procedureOwner)
     {
         base.OnInit(procedureOwner);
-
         m_Games.Add(GameMode.Survival, new GameMode_Survival());
     }
 
@@ -37,9 +37,12 @@ public class ProcedureMain : ProcedureBase
         base.OnEnter(procedureOwner);
 
         m_GotoMenu = false;
-        // GameMode gameMode = (GameMode)procedureOwner.GetData<VarByte>("GameMode").Value;
-        // m_CurrentGame = m_Games[gameMode];
-        // m_CurrentGame.Initialize()
+        //todo 设置不同玩法
+        procedureOwner.SetData<VarByte>("GameMode",(int)GameMode.Survival);
+        GameMode gameMode = (GameMode)procedureOwner.GetData<VarByte>("GameMode").Value;
+        m_CurrentGame = m_Games[gameMode];
+        m_CurrentGame.Initialize();
+        
         GameEntry.UI.OpenUIForm(UIFormId.BattleMainForm);
     }
 
@@ -50,7 +53,6 @@ public class ProcedureMain : ProcedureBase
             m_CurrentGame.Shutdown();
             m_CurrentGame = null;
         }
-
         base.OnLeave(procedureOwner, isShutdown);
     }
 
@@ -77,4 +79,11 @@ public class ProcedureMain : ProcedureBase
             // ChangeState<ProcedureChangeScene>(procedureOwner);
         }
     }
+
+    //获取当前的游戏模式
+    public GameBase CurGameMode()
+    {
+        return m_CurrentGame;
+    }
+    
 }
