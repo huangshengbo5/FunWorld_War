@@ -7,7 +7,7 @@ public class GameMode_Survival : GameBase
     private float m_ElapseSeconds = 0f;
     public override GameMode GameMode => GameMode.Survival;
     
-    public BaseTown CurOperateTown;
+    public Town CurOperateTown;
 
     public override void Initialize()
     {
@@ -51,24 +51,24 @@ public class GameMode_Survival : GameBase
     /// <summary>
     /// 当前所有参与战斗的城池
     /// </summary>
-    public List<BaseTown> AllBattleTowns;
+    public List<Town> AllBattleTowns;
     //todo 后面应该使用GameState来处理所有战场数据
     /// <summary>
     /// 城池加入战场
     /// </summary>
     /// <param name="town"></param>
-    public void JoinBattle(BaseTown town)
+    public void JoinBattle(Town town)
     {
         if (AllBattleTowns == null)
         {
-            AllBattleTowns = new List<BaseTown>();    
+            AllBattleTowns = new List<Town>();    
         }
         AllBattleTowns.Add(town);
     }
 
-    public List<BaseTown> GetHostileTown(BaseTown town)
+    public List<Town> GetHostileTown(Town town)
     {
-        List<BaseTown> hostileTowns = new List<BaseTown>();
+        List<Town> hostileTowns = new List<Town>();
         foreach (var townItem in AllBattleTowns)
         {
             if (Common.GetRelation(townItem.Camp(),town.Camp()) == RelationType.Hostile)

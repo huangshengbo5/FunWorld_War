@@ -39,7 +39,7 @@ public partial class Solider : BaseObject
     {
         if (OwnerSoliderCommander != soliderCommander)
         {
-            OwnerSoliderCommander = soliderCommander;    
+            OwnerSoliderCommander = soliderCommander;
         }
         else
         {
@@ -79,7 +79,7 @@ public partial class Solider : BaseObject
     
 
     //士兵归属的城镇
-    protected BaseTown ownerTown;
+    protected Town ownerTown;
 
     private bool retreat;  //撤退
 
@@ -98,7 +98,7 @@ public partial class Solider : BaseObject
         }
     }
 
-    public BaseTown OwnerTown
+    public Town OwnerTown
     {
         get
         {
@@ -210,6 +210,7 @@ public partial class Solider : BaseObject
 
     protected IEnumerator DeadSuccess()
     {
+        ownerSoliderCommander.RemoveSolider(this);
         behaviorTree.OnDestroy();
         behaviorTree = null;
         yield return new WaitForSeconds(1);

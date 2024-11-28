@@ -4,9 +4,8 @@ using TMPro;
 using UnityEngine;
 using Random = UnityEngine.Random;
 
-namespace Script.Game.Base
-{
-    public class BaseTown :BaseObject
+
+    public partial class Town :BaseObject
     {
         public TextMeshProUGUI CurSoliderNum_Txt;
 
@@ -23,7 +22,7 @@ namespace Script.Game.Base
         
         protected int CurSoliderNum;
         //目标城镇
-        protected BaseTown TargetTown;
+        protected Town TargetTown;
         public int ViewRedius;  //视野范围
         private bool isOccupied;
 
@@ -40,12 +39,6 @@ namespace Script.Game.Base
             return global::ObjectType.Town;
         }
 
-        //生成士兵
-        protected virtual SoliderCommander CreateSolider()
-        {
-            return null;
-        }
-
         public CampType Camp()
         {
             return OwnerCamp;
@@ -55,35 +48,32 @@ namespace Script.Game.Base
         {
             OwnerCamp = type;
         }
-
-        public virtual Tuple<bool, CampType> CheckBattleResult()
-        {
-            return new Tuple<bool, CampType>(false,global::CampType.None);
-        }
-
-        public virtual bool IsInBattle()
-        {
-            return false;
-        }
+        
 
         public void Update()
         {
             List<Solider> enemySoliders;
             if (CheckHaveEnemyInView(out enemySoliders))
+            {   
+                SelfDefense();
+            }
+            if (this.townBattleJudge != null)
             {
-                CreateSolider();
+                this.townBattleJudge.DoUpdate();    
             }
         }
 
-        public virtual void JoinBattle(SoliderCommander enemySoliderCommander)
+        //进行自卫
+        private void SelfDefense()
         {
-            
+            var soliderCommander = CreateSolider();
+            if (soliderCommander != null)
+            {
+                Debug.Log("有敌人靠近，造兵进行自卫！！");
+                JoinBattle(soliderCommander);
+            }
         }
-
-        public virtual void JoinBattle(BaseTown town, SoliderCommander enemySoliderCommander)
-        {
-            
-        }
+        
         //附近是否有把自己当作目标的部队
         private bool CheckHaveEnemyInView(out List<Solider> enemySoliders)
         {
@@ -153,4 +143,3 @@ namespace Script.Game.Base
             }
         }
     }
-}

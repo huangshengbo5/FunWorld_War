@@ -14,8 +14,8 @@ public class TownHUD : MonoBehaviour
 
     void HandlerClickEnter()
     {
-        var baseTown = parent_Obj as BaseTown;
-        GameEntry.Event.Fire(this,BattleClickTargetTownEventArgs.Create(baseTown));
+        var Town = parent_Obj as Town;
+        GameEntry.Event.Fire(this,BattleClickTargetTownEventArgs.Create(Town));
         gameObject.SetActive(false);
     }
     

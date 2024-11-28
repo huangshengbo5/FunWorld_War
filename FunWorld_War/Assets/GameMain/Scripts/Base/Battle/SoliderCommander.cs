@@ -61,6 +61,18 @@ public class SoliderCommander
         }
     }
 
+    public void RemoveSolider(Solider solider)
+    {
+        if (soliders.Contains(solider))
+        {
+            soliders.Remove(solider);
+        }
+        //部队全部阵亡，退出战斗
+        if (soliders.Count == 0)
+        {
+            ownerTown.TownBattleJudge.LeaveBattle(this);
+        }
+    }
     //战斗胜利
     public void OnBattleWin()
     {

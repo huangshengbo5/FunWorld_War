@@ -5,7 +5,7 @@ using Script.Game.Base;
 using UnityEngine;
 using Random = System.Random;
 
-public class Town : BaseTown
+public partial class Town : BaseObject
 {
     private Town_BattleJudge townBattleJudge;
 
@@ -25,7 +25,7 @@ public class Town : BaseTown
     }
     
     //攻击敌方城池
-    public void AttackTargetTown(BaseTown targetTown)
+    public void AttackTargetTown(Town targetTown)
     {
         TargetTown = targetTown;
         var soliderCommander = CreateSolider();
@@ -63,8 +63,12 @@ public class Town : BaseTown
         Debug.Log(string.Format("胜利{0}",type));
     }
     
-    protected override SoliderCommander CreateSolider()
+    protected  SoliderCommander CreateSolider()
     {
+        if (CurSoliderNum  == 0)
+        {
+            return null;
+        }
         List<Solider> Soliders = new List<Solider>();
         for (int i = 0; i < CurSoliderNum; i++)
         {
@@ -111,24 +115,24 @@ public class Town : BaseTown
     }
 
     //检查战斗结果
-    public override Tuple<bool, CampType> CheckBattleResult()
+    public  Tuple<bool, CampType> CheckBattleResult()
     {
         return townBattleJudge.CheckBattleResult();
     }
 
     //是否正在发生战斗
-    public override bool IsInBattle()
+    public  bool IsInBattle()
     {
         return townBattleJudge.IsInBattle();
     }
 
     //加入一只敌方部队
-    public override void JoinBattle(SoliderCommander enemySoliderCommander)
+    public  void JoinBattle(SoliderCommander enemySoliderCommander)
     {
         townBattleJudge.JoinBattle(enemySoliderCommander);
     }
 
-    public override void JoinBattle(BaseTown targetTown, SoliderCommander enemySoliderCommander)
+    public  void JoinBattle(Town targetTown, SoliderCommander enemySoliderCommander)
     {
         targetTown.JoinBattle(enemySoliderCommander);
     }

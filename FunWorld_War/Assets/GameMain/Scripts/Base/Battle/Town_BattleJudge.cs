@@ -110,7 +110,10 @@ public class Town_BattleJudge
         
     }
     
-    //士兵部队请求一个敌方士兵
+    List<Solider> fightingSoliders;
+    List<Solider> noFightingSoliders ;
+    
+    //士兵部队寻找一个敌方士兵
     public BaseObject SoliderCommanderFindTarget(Solider solider)
     {
         if (IsInBattle()==false)
@@ -118,8 +121,10 @@ public class Town_BattleJudge
             return null;
         }
 
-        SortedDictionary<float, Solider> fightingSoliders = new SortedDictionary<float, Solider>();
-        SortedDictionary<float, Solider> noFightingSoliders = new SortedDictionary<float, Solider>();
+        if (fightingSoliders == null) fightingSoliders = new List<Solider>();
+        if (noFightingSoliders == null) noFightingSoliders = new List<Solider>();
+        fightingSoliders.Clear();
+        noFightingSoliders.Clear();
         foreach (var soliderCommander in LeftSoliderCommanders)
         {
             if (soliderCommander.Key != solider.CampType)
@@ -130,13 +135,13 @@ public class Town_BattleJudge
                     for (int j = 0; j < soliderCommanderItem.Soliders.Count; j++)
                     {
                         var soliderItem = soliderCommanderItem.Soliders[j];
-                        if (!soliderItem.IsDead())
+                        if (soliderItem.IsDead())
                         {
                             continue;
                         }
-                        var dis = Vector3.Distance(solider.transform.position, soliderItem.transform.position);
-                        if (soliderItem.TargetObject != null) fightingSoliders.Add(dis, soliderItem);
-                        else noFightingSoliders.Add(dis,soliderItem);
+                        //var dis = Vector3.Distance(solider.transform.position, soliderItem.transform.position);
+                        if (soliderItem.TargetObject != null) fightingSoliders.Add(soliderItem);
+                        else noFightingSoliders.Add(soliderItem);
                     }
                 }
             }
@@ -144,11 +149,11 @@ public class Town_BattleJudge
         
         foreach (var noFightingSoliderItem in noFightingSoliders)
         {
-            return noFightingSoliderItem.Value;
+            return noFightingSoliderItem;
         }
         foreach (var fightingSoliderItem in fightingSoliders)
         {
-            return fightingSoliderItem.Value;
+            return fightingSoliderItem;
         }
         return targetTown;
     }

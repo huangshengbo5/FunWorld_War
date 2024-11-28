@@ -47,8 +47,11 @@ namespace BehaviorDesigner.Runtime.Tasks
                     var tempSolider = hits[i].GetComponent<Solider>();
                     if (tempSolider && tempSolider.CampType != selfSolider.CampType)
                     {
-                        selfSolider.ChangeTargetObject(tempSolider);
-                        return TaskStatus.Success;
+                        if (tempSolider.TargetObject == null)
+                        {
+                            selfSolider.ChangeTargetObject(tempSolider);
+                            return TaskStatus.Success;
+                        }
                     }
                 }
             }
