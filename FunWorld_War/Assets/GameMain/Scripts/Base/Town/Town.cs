@@ -1,13 +1,18 @@
 using System;
 using System.Collections.Generic;
 using GameFramework.Event;
-using Script.Game.Base;
 using UnityEngine;
 using Random = System.Random;
 
 public partial class Town : BaseObject
 {
     private Town_BattleJudge townBattleJudge;
+    private List<SoliderCommander> SoliderCommanders;
+    
+    /// <summary>
+    /// 可以生成的士兵
+    /// </summary>
+    public GameObject ObjSolider;
 
     public Town_BattleJudge TownBattleJudge
     {
@@ -15,8 +20,6 @@ public partial class Town : BaseObject
         set => townBattleJudge = value;
     }
 
-    private List<SoliderCommander> SoliderCommanders;
-    public GameObject ObjSolider;
     
     private void Start()
     {
@@ -24,14 +27,6 @@ public partial class Town : BaseObject
         CurSoliderNum = DefaultMaxSoliderNum;
     }
     
-    //攻击敌方城池
-    public void AttackTargetTown(Town targetTown)
-    {
-        TargetTown = targetTown;
-        var soliderCommander = CreateSolider();
-        JoinBattle(TargetTown, soliderCommander);
-    }
-
     private void Init()
     {
         var gameMode = Common.CurGameMode();
@@ -56,6 +51,16 @@ public partial class Town : BaseObject
     {
         Init();
     }
+    
+        
+    //攻击敌方城池
+    public void AttackTargetTown(Town targetTown)
+    {
+        TargetTown = targetTown;
+        var soliderCommander = CreateSolider();
+        JoinBattle(TargetTown, soliderCommander);
+    }
+    
     void OnSingleTownResult(object sender, GameEventArgs e)
     {
         var eventData = e as BattleSingleTownResultEventArgs;

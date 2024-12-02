@@ -14,7 +14,7 @@ public class FSMTownBattleEnd : FsmState<Town>
         base.OnEnter(fsm);
         var result = fsm.Owner.CheckBattleResult();
         var townOwnerType = result.Item2;
-        fsm.Owner.ChangeCamp(townOwnerType);
+        //fsm.Owner.ChangeCamp(townOwnerType);
     }
 
     protected override void OnUpdate(IFsm<Town> fsm, float elapseSeconds, float realElapseSeconds)

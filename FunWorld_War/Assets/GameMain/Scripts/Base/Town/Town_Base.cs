@@ -43,13 +43,16 @@ using Random = UnityEngine.Random;
         {
             return OwnerCamp;
         }
-        
-        public void ChangeCamp(CampType type)
+
+        //被占领
+        //todo 处理被占领时的其他数据变化
+        public void BeOccupied(CampType campType)
         {
-            OwnerCamp = type;
+            OwnerCamp = campType;
+            //todo 重置可生产士兵数量
+            CurSoliderNum = DefaultMaxSoliderNum;
         }
         
-
         public void Update()
         {
             List<Solider> enemySoliders;

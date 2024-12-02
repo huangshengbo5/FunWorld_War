@@ -1,9 +1,7 @@
 using System.Collections;
 using BehaviorDesigner.Runtime;
-using Script.Game.Base;
 using UnityEngine;
 using UnityEngine.AI;
-using UnityEngine.Serialization;
 
 public partial class Solider : BaseObject
 {
@@ -214,7 +212,6 @@ public partial class Solider : BaseObject
         behaviorTree.OnDestroy();
         behaviorTree = null;
         yield return new WaitForSeconds(1);
-        //DestroyImmediate(this.gameObject);
         this.gameObject.SetActive(false);
     }
 

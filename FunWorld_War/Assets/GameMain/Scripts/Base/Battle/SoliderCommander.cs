@@ -93,6 +93,15 @@ public class SoliderCommander
         }
     }
 
+    //入城
+    public void EnterTown(BaseObject targetTown)
+    {
+        for (int i = 0; i < soliders.Count; i++)
+        {
+            soliders[i].ChangeTargetObject(targetTown);
+        }
+    }
+
     //所属的士兵请求一个目标，当前目标应当为士兵，当所有敌对士兵都被杀死，才能回城
     public BaseObject SoliderFindTarget(Solider solider)
     {
