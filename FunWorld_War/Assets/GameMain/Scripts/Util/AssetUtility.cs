@@ -55,4 +55,9 @@ public static class AssetUtility
     {
         return Utility.Text.Format("Assets/GameMain/UI/UISounds/{0}.wav", assetName);
     }
+
+    public static string GetBehaviorAsset(string assetName)
+    {
+        return Utility.Text.Format("Assets/Resources/BehaviorTree/{0}", assetName);
+    }
 }

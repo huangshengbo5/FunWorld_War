@@ -40,4 +40,16 @@ public static class Common
           }
           return RelationType.Hostile;
      }
+
+     public static string GetBehaviorTreePath(BehaviorTreeEnum behaviorTreeEnum)
+     {
+          switch (behaviorTreeEnum)
+          {
+               case BehaviorTreeEnum.Player:
+                    return "";
+                    break;
+          }
+
+          return "";
+     }
 }

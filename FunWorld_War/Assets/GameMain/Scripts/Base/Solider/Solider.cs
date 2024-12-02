@@ -48,6 +48,27 @@ public partial class Solider : BaseObject
     public void InitBehaviorTree()
     {
         behaviorTree= this.gameObject.GetComponent<BehaviorTree>();
+        ExternalBehavior externalBehavior;
+        BehaviorTreeEnum behaviorTreeEnum;
+
+        switch (campType)
+        {
+            case CampType.Player:
+                behaviorTreeEnum = BehaviorTreeEnum.Player;
+                break;
+            case CampType.Neutral:
+                behaviorTreeEnum = BehaviorTreeEnum.Neutral;
+                break;
+            default:
+                behaviorTreeEnum = BehaviorTreeEnum.Neutral;
+                break;
+        }
+
+        var behaviorPath = AssetUtility.GetBehaviorAsset(Common.GetBehaviorTreePath(behaviorTreeEnum));
+        //todo  加载中立士兵AI行为树
+        // GameEntry.Resource.LoadAsset(behaviorPath,null) as ExternalBehavior;
+        
+        //behaviorTree.ExternalBehavior =
     }
     
     public enum State
