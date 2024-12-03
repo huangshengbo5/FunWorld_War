@@ -1,5 +1,6 @@
 using System.Collections;
 using BehaviorDesigner.Runtime;
+using GameFramework.Resource;
 using UnityEngine;
 using UnityEngine.AI;
 
@@ -26,11 +27,11 @@ public partial class Solider : BaseObject
 
     public void Init()
     {
-        MaxHp = Hp;
+        CurHp = MaxHp;
         InitBehaviorTree();
         isKill = false;
         soliderHUD.Init(this);
-        soliderHUD.UpdatgeHP(Hp,MaxHp);
+        soliderHUD.UpdatgeHP(CurHp,MaxHp);
     }
 
     public void Init_SoliderCommander(SoliderCommander soliderCommander)
@@ -50,7 +51,6 @@ public partial class Solider : BaseObject
         behaviorTree= this.gameObject.GetComponent<BehaviorTree>();
         ExternalBehavior externalBehavior;
         BehaviorTreeEnum behaviorTreeEnum;
-
         switch (campType)
         {
             case CampType.Player:
@@ -63,12 +63,13 @@ public partial class Solider : BaseObject
                 behaviorTreeEnum = BehaviorTreeEnum.Neutral;
                 break;
         }
-
         var behaviorPath = AssetUtility.GetBehaviorAsset(Common.GetBehaviorTreePath(behaviorTreeEnum));
-        //todo  加载中立士兵AI行为树
-        // GameEntry.Resource.LoadAsset(behaviorPath,null) as ExternalBehavior;
-        
-        //behaviorTree.ExternalBehavior =
+        var  m_LoadAssetCallbacks = new LoadAssetCallbacks((string assetName,object asset,float duration,object userData)=>
+        {
+            externalBehavior = asset as ExternalBehavior;
+            behaviorTree.ExternalBehavior = externalBehavior;
+        }, null, null, null);
+        GameEntry.Resource.LoadAsset(behaviorPath, m_LoadAssetCallbacks);
     }
     
     public enum State
@@ -161,8 +162,8 @@ public partial class Solider : BaseObject
 
     public void SufferInjure(int injure)
     {
-        Hp -= injure;
-        soliderHUD.UpdatgeHP(Hp,MaxHp);
+        CurHp -= injure;
+        soliderHUD.UpdatgeHP(CurHp,MaxHp);
     }
     
     public void DoAttack()
@@ -213,7 +214,7 @@ public partial class Solider : BaseObject
             return;
         }
         SufferInjure(damageNum);
-        if (Hp <= damageNum)
+        if (CurHp <= damageNum)
         {
             if (ChangeAnimatorState(State.Dead))
             {

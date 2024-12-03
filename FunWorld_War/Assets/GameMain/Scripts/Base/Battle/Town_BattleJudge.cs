@@ -10,13 +10,13 @@ public class Town_BattleJudge
     private List<Solider> fightingSoliders;
     private List<Solider> noFightingSoliders ;
     //当前争夺的城池
-    private Town targetTown;
+    private Town ownerTown;
 
     Tuple<bool, CampType> battleResult;
     
     public void Init(Town town)
     {
-        targetTown = town;
+        ownerTown = town;
         LeftSoliderCommanders = new Dictionary<CampType, List<SoliderCommander>>();
     }
     
@@ -42,7 +42,7 @@ public class Town_BattleJudge
                 LeftSoliderCommanders[camp].Remove(soliderCommander);
             }
         }
-        if (LeftSoliderCommanders[camp].Count == 0)
+        if (LeftSoliderCommanders.ContainsKey(camp) && LeftSoliderCommanders[camp].Count == 0)
         {
             LeftSoliderCommanders.Remove(camp);
         }
@@ -55,16 +55,15 @@ public class Town_BattleJudge
         {
             if (result.Item2 != CampType.None) //只剩余一只部队
             {
-                if (result.Item2 == targetTown.Camp())  //守城成功
+                if (result.Item2 == ownerTown.Camp())  //守城成功
                 {
-                    //11.29,todo
-                    Town_ProtectSuccess();
+                    Town_ProtectSuccess(result.Item2);
                 }
                 foreach (var commander in LeftSoliderCommanders)
                 {
                     foreach (var soliderCommander in commander.Value)
                     {
-                        soliderCommander.AttackTown(targetTown);
+                        soliderCommander.AttackTown(ownerTown);
                     }
                 }
             }
@@ -91,7 +90,7 @@ public class Town_BattleJudge
                 }
             }
         }
-        var battleEnd = targetTown.IsOccupied == true && leftCamp != CampType.None;
+        var battleEnd = ownerTown.IsOccupied == true && leftCamp != CampType.None;
         battleResult = new Tuple<bool, CampType>(battleEnd, leftCamp);
         return battleResult;
     }
@@ -106,7 +105,7 @@ public class Town_BattleJudge
             return;
         }
         var winner_camp = battleResult.Item2;
-        targetTown.BeOccupied(winner_camp);
+        ownerTown.BeOccupied(winner_camp);
         Debug.Log($"城池已被占领，胜利方阵营为：{winner_camp}");
         LeftSoliderCommanders[winner_camp][0].OnBattleWin();
         BattleEnd();
@@ -120,8 +119,11 @@ public class Town_BattleJudge
     }
     
     //守城成功
-    public void Town_ProtectSuccess()
+    public void Town_ProtectSuccess(CampType winnerCamp)
     {
+        Debug.Log("守城成功！！");
+        ownerTown.BeOccupied(winnerCamp);
+        LeftSoliderCommanders[winnerCamp][0].OnBattleWin();
         BattleEnd();
     }
     
@@ -167,6 +169,6 @@ public class Town_BattleJudge
         {
             return fightingSoliderItem;
         }
-        return targetTown;
+        return ownerTown;
     }
 }

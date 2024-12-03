@@ -1,11 +1,13 @@
 using UnityEngine;
+using UnityEngine.Serialization;
 
 public class BaseObject : MonoBehaviour
 {
-    //血量
-    public int Hp;
-    protected int MaxHp;
+    public int MaxHp;
     private int Id;
+    
+    //血量
+    protected int CurHp;
     public int ID 
     {
         get { return Id; }

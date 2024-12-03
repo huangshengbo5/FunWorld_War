@@ -70,7 +70,7 @@ public class SoliderCommander
         //部队全部阵亡，退出战斗
         if (soliders.Count == 0)
         {
-            ownerTown.TownBattleJudge.LeaveBattle(this);
+            targetTown.TownBattleJudge.LeaveBattle(this);
         }
     }
     //战斗胜利

@@ -26,9 +26,16 @@ public partial class Town : BaseObject
         RegisterEvent();
         CurSoliderNum = DefaultMaxSoliderNum;
     }
+
+    private void ResetData()
+    {
+        CurHp = MaxHp;
+        CurSoliderNum = DefaultMaxSoliderNum;
+    }
     
     private void Init()
     {
+        ResetData();
         var gameMode = Common.CurGameMode();
         var gameModeSurvival = gameMode as GameMode_Survival;
         if (gameModeSurvival != null)
@@ -148,7 +155,7 @@ public partial class Town : BaseObject
         if (IsOccupied == false)
         {
             SufferInjure(damageNum);
-            if (Hp <= damageNum)
+            if (CurHp <= damageNum)
             {
                 IsOccupied = true;
                 //通知裁判，城池被占领
@@ -159,6 +166,6 @@ public partial class Town : BaseObject
     
     public void SufferInjure(int injure)
     {
-        Hp -= injure;
+        CurHp -= injure;
     }
 }

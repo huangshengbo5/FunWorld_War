@@ -46,10 +46,12 @@ public static class Common
           switch (behaviorTreeEnum)
           {
                case BehaviorTreeEnum.Player:
-                    return "";
+                    return "BT_Solider_Player";
+                    break;
+               case BehaviorTreeEnum.Neutral:
+                    return "BT_Solider_Neutral";
                     break;
           }
-
-          return "";
+          return "BT_Solider_Player";
      }
 }
