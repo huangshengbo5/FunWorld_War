@@ -67,7 +67,7 @@ using Random = UnityEngine.Random;
         //进行自卫
         private void SelfDefense()
         {
-            var soliderCommander = CreateSolider();
+            var soliderCommander = CreateSolider(this);
             if (soliderCommander != null)
             {
                 Debug.Log("有敌人靠近，造兵进行自卫！！");

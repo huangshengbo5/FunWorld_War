@@ -64,7 +64,7 @@ public partial class Town : BaseObject
     public void AttackTargetTown(Town targetTown)
     {
         TargetTown = targetTown;
-        var soliderCommander = CreateSolider();
+        var soliderCommander = CreateSolider(targetTown);
         JoinBattle(TargetTown, soliderCommander);
     }
     
@@ -75,7 +75,7 @@ public partial class Town : BaseObject
         Debug.Log(string.Format("胜利{0}",type));
     }
     
-    protected  SoliderCommander CreateSolider()
+    protected  SoliderCommander CreateSolider(Town targetTown)
     {
         if (CurSoliderNum  == 0)
         {
@@ -95,7 +95,7 @@ public partial class Town : BaseObject
         }
 
         SoliderCommander soliderCommander = new SoliderCommander();
-        soliderCommander.Init(this,TargetTown as Town);
+        soliderCommander.Init(this,targetTown as Town);
         soliderCommander.AddSoliders(Soliders);
         CurSoliderNum = 0;
         return soliderCommander;
