@@ -2,15 +2,15 @@ using System;
 using System.Collections.Generic;
 using TMPro;
 using UnityEngine;
+using UnityEngine.Events;
+using UnityEngine.Timeline;
 using Random = UnityEngine.Random;
 
 
     public partial class Town :BaseObject
     {
         public TextMeshProUGUI CurSoliderNum_Txt;
-
         public GameObject Obj_TownHUD;
-        
         //生成士兵的时间间隔
         public float CreateSoliderInterval;
 
@@ -27,6 +27,13 @@ using Random = UnityEngine.Random;
         private bool isOccupied;
 
         private List<Transform> SpawnerPoints;
+        
+        [HideInInspector]
+        public UnityAction<CampType> DelegateTownCampChange;
+        [HideInInspector]
+        public UnityAction<int,int> DelegateTownHpChange;
+        [HideInInspector]
+        public UnityAction<int, int> DelegateTownSoliderNumChange;
         
         public bool IsOccupied
         {
@@ -48,6 +55,7 @@ using Random = UnityEngine.Random;
         public void BeOccupied(CampType campType)
         {
             OwnerCamp = campType;
+            DelegateTownCampChange.Invoke(OwnerCamp);
             ResetData();
         }
         

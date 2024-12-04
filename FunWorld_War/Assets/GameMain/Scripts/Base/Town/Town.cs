@@ -2,13 +2,15 @@ using System;
 using System.Collections.Generic;
 using GameFramework.Event;
 using UnityEngine;
+using UnityEngine.Events;
 using Random = System.Random;
 
 public partial class Town : BaseObject
 {
     private Town_BattleJudge townBattleJudge;
     private List<SoliderCommander> SoliderCommanders;
-    
+
+
     /// <summary>
     /// 可以生成的士兵
     /// </summary>
@@ -167,5 +169,6 @@ public partial class Town : BaseObject
     public void SufferInjure(int injure)
     {
         CurHp -= injure;
+        DelegateTownHpChange.Invoke(CurHp,MaxHp);
     }
 }
