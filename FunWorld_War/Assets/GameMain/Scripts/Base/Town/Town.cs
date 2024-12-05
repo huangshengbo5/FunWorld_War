@@ -9,8 +9,7 @@ public partial class Town : BaseObject
 {
     private Town_BattleJudge townBattleJudge;
     private List<SoliderCommander> SoliderCommanders;
-
-
+    
     /// <summary>
     /// 可以生成的士兵
     /// </summary>
@@ -22,7 +21,6 @@ public partial class Town : BaseObject
         set => townBattleJudge = value;
     }
 
-    
     private void Start()
     {
         RegisterEvent();
@@ -33,10 +31,14 @@ public partial class Town : BaseObject
     {
         CurHp = MaxHp;
         CurSoliderNum = DefaultMaxSoliderNum;
+        DelegateTownCampChange.Invoke(Camp());
+        DelegateTownHpChange.Invoke(CurHp,MaxHp);
+        DelegateTownSoliderNumChange(CurSoliderNum, DefaultMaxSoliderNum);
     }
     
     private void Init()
     {
+        TownHUD.Init(this);
         ResetData();
         var gameMode = Common.CurGameMode();
         var gameModeSurvival = gameMode as GameMode_Survival;
@@ -46,8 +48,6 @@ public partial class Town : BaseObject
         }
         townBattleJudge = new Town_BattleJudge();
         townBattleJudge.Init(this);
-        var townHUD = Obj_TownHUD.GetComponent<TownHUD>();
-        townHUD.Init(this);
     }
     
     private void RegisterEvent()
@@ -61,7 +61,6 @@ public partial class Town : BaseObject
         Init();
     }
     
-        
     //攻击敌方城池
     public void AttackTargetTown(Town targetTown)
     {

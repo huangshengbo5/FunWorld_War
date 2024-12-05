@@ -1,24 +1,15 @@
-using System;
 using System.Collections.Generic;
-using TMPro;
 using UnityEngine;
 using UnityEngine.Events;
-using UnityEngine.Timeline;
 using Random = UnityEngine.Random;
-
 
     public partial class Town :BaseObject
     {
-        public TextMeshProUGUI CurSoliderNum_Txt;
-        public GameObject Obj_TownHUD;
-        //生成士兵的时间间隔
-        public float CreateSoliderInterval;
-
+        public TownHUD TownHUD;
         //默认生成士兵数量
         public int DefaultMaxSoliderNum;
 
         public CampType OwnerCamp = global::CampType.None;
-        
         
         protected int CurSoliderNum;
         //目标城镇
@@ -135,7 +126,7 @@ using Random = UnityEngine.Random;
             else
             {
                 //显示操作按钮UI
-                Obj_TownHUD.SetActive(true);
+                TownHUD.ShowOperateBtn();
             }
         }
 

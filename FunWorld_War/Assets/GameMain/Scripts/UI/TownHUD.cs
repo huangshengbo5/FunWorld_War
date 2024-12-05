@@ -13,6 +13,7 @@ public class TownHUD : MonoBehaviour
     
     public void Init(BaseObject parent)
     {
+        Btn_Enter.gameObject.SetActive(false);
         parent_Obj = parent;
         Btn_Enter.onClick.AddListener(HandlerClickEnter);
         Town ownerTown = parent_Obj as Town;
@@ -52,11 +53,17 @@ public class TownHUD : MonoBehaviour
     {
         var Town = parent_Obj as Town;
         GameEntry.Event.Fire(this,BattleClickTargetTownEventArgs.Create(Town));
-        gameObject.SetActive(false);
+        Btn_Enter.gameObject.SetActive(false);
     }
     
     private void LateUpdate()
     {
         this.transform.forward = Camera.main.transform.forward;
     }
+
+    public void ShowOperateBtn()
+    {
+        Btn_Enter.gameObject.SetActive(true);
+    }
+    
 }
