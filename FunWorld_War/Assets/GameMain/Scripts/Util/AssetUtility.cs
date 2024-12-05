@@ -63,6 +63,6 @@ public static class AssetUtility
 
     public static string GetTextureAsset(string assetName)
     {
-        return Utility.Text.Format("Assets/Res/UI/Texture/{0}.asset", assetName);
+        return Utility.Text.Format("Assets/Res/UI/Texture/{0}.png", assetName);
     }
 }

@@ -24,16 +24,16 @@ public partial class Town : BaseObject
     private void Start()
     {
         RegisterEvent();
-        CurSoliderNum = DefaultMaxSoliderNum;
+        curSoliderNum = DefaultMaxSoliderNum;
     }
 
     private void ResetData()
     {
         CurHp = MaxHp;
-        CurSoliderNum = DefaultMaxSoliderNum;
+        curSoliderNum = DefaultMaxSoliderNum;
         DelegateTownCampChange.Invoke(Camp());
         DelegateTownHpChange.Invoke(CurHp,MaxHp);
-        DelegateTownSoliderNumChange(CurSoliderNum, DefaultMaxSoliderNum);
+        DelegateTownSoliderNumChange(curSoliderNum, DefaultMaxSoliderNum);
     }
     
     private void Init()
@@ -78,12 +78,12 @@ public partial class Town : BaseObject
     
     protected  SoliderCommander CreateSolider(Town targetTown)
     {
-        if (CurSoliderNum  == 0)
+        if (curSoliderNum  == 0)
         {
             return null;
         }
         List<Solider> Soliders = new List<Solider>();
-        for (int i = 0; i < CurSoliderNum; i++)
+        for (int i = 0; i < curSoliderNum; i++)
         {
             var createSolider = CreateSolider(i); 
             Soliders.Add(createSolider);
@@ -106,7 +106,7 @@ public partial class Town : BaseObject
     protected Solider CreateSolider(int index)
     {
         var solider = (GameObject)Instantiate(ObjSolider);
-        solider.name = string.Format("Solider_{0}_{1}",OwnerCamp.ToString(),index) ;
+        solider.name = string.Format("Solider_{0}_{1}",ownerCamp.ToString(),index) ;
         var soliderTans = solider.GetComponent<Transform>();
         soliderTans.position = GetSoliderPosition();
         soliderTans.localScale = Vector3.one;

@@ -30,10 +30,11 @@ public class TownHUD : MonoBehaviour
         {
             if (asset != null)
             {
-                var texture = asset as Sprite;
+                var texture = asset  as Texture2D;
+                var sprite = Sprite.Create(texture, new Rect(0, 0, texture.width, texture.height), new Vector2(0.5f, 0.5f));
                 if (texture != null)
                 {
-                    Image_Camp.sprite = texture;
+                    Image_Camp.sprite = sprite;
                 }
             }
         });

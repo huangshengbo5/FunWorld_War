@@ -9,9 +9,20 @@ using Random = UnityEngine.Random;
         //默认生成士兵数量
         public int DefaultMaxSoliderNum;
 
-        public CampType OwnerCamp = global::CampType.None;
+        public CampType ownerCamp = global::CampType.None;
         
-        protected int CurSoliderNum;
+        protected int curSoliderNum;
+
+        public int CurSoliderNum
+        {
+            get => curSoliderNum;
+            set
+            {
+                curSoliderNum = value;
+                DelegateTownSoliderNumChange.Invoke(curSoliderNum,DefaultMaxSoliderNum);
+            }
+        }
+
         //目标城镇
         protected Town TargetTown;
         public int ViewRedius;  //视野范围
@@ -39,14 +50,14 @@ using Random = UnityEngine.Random;
 
         public CampType Camp()
         {
-            return OwnerCamp;
+            return ownerCamp;
         }
 
         //被占领
         public void BeOccupied(CampType campType)
         {
-            OwnerCamp = campType;
-            DelegateTownCampChange.Invoke(OwnerCamp);
+            ownerCamp = campType;
+            DelegateTownCampChange.Invoke(ownerCamp);
             ResetData();
         }
         
@@ -118,7 +129,7 @@ using Random = UnityEngine.Random;
         //被点击选中
         public override void OnClick()
         {
-            if (OwnerCamp == CampType.Player) //处理我方城池被选中逻辑
+            if (ownerCamp == CampType.Player) //处理我方城池被选中逻辑
             {
                 GameEntry.Event.Fire(this,BattleClickPlayerTownEventArgs.Create(this));
                 //CreateClickUI_Player();
