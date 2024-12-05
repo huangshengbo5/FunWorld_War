@@ -1,4 +1,4 @@
-using Script.Game.Base;
+using GameFramework.Resource;
 using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
@@ -6,11 +6,9 @@ using UnityEngine.UI;
 public class TownHUD : MonoBehaviour
 {
     public Button Btn_Enter;
-    public Solider Solider_Hp;
+    public Slider Solider_Hp;
     public Image Image_Camp;
     public TextMeshProUGUI Text_Num;
-    
-    
     private BaseObject parent_Obj;
     
     public void Init(BaseObject parent)
@@ -25,17 +23,30 @@ public class TownHUD : MonoBehaviour
 
     public void OnTownCampChange(CampType campType)
     {
-        
+        var assetName = Common.GetCampImagePath(campType);
+        var fullPath = AssetUtility.GetTextureAsset(assetName);
+        LoadAssetCallbacks callBack = new LoadAssetCallbacks((string assetName,object asset,float duration,object userData) =>
+        {
+            if (asset != null)
+            {
+                var texture = asset as Sprite;
+                if (texture != null)
+                {
+                    Image_Camp.sprite = texture;
+                }
+            }
+        });
+        GameEntry.Resource.LoadAsset(fullPath,callBack);
     }
 
     public void OnTownHpChange(int curHp, int maxHp)
     {
-        
+        Solider_Hp.value = curHp / maxHp;
     }
 
     public void OnTownSoliderNumChange(int curNum, int maxNum)
     {
-        
+        Text_Num.text = string.Format("{0}/{1}", curNum, maxNum);
     }
     void HandlerClickEnter()
     {

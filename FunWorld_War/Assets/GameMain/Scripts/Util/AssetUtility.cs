@@ -60,4 +60,9 @@ public static class AssetUtility
     {
         return Utility.Text.Format("Assets/Resources/BehaviorTree/{0}.asset", assetName);
     }
+
+    public static string GetTextureAsset(string assetName)
+    {
+        return Utility.Text.Format("Assets/Res/UI/Texture/{0}.asset", assetName);
+    }
 }

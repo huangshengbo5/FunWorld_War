@@ -1,4 +1,4 @@
-public static class Common
+public static partial class Common
 {
      public static CampType GetBaseObjectCamp(this BaseObject baseObject)
      {
