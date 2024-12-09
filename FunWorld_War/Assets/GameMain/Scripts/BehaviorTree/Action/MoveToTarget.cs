@@ -40,6 +40,7 @@ namespace BehaviorDesigner.Runtime.Tasks
                 var targetObject = targetTrans.Value.GetComponent<BaseObject>();
                 nav.isStopped = false;
                 nav.SetDestination(targetObject.GetInteractPoint());
+                selfSolider.ChangeState(Solider.State.Moving);
             }
             else
             {
