@@ -51,31 +51,41 @@ namespace StarForce.Editor.DataTableTools
             {
                 throw new GameFrameworkException(Utility.Text.Format("Data table file '{0}' is not exist.", dataTableFileName));
             }
-
-            string[] lines = File.ReadAllLines(dataTableFileName, encoding);
-            int rawRowCount = lines.Length;
-
-            int rawColumnCount = 0;
+            
             List<string[]> rawValues = new List<string[]>();
-            for (int i = 0; i < lines.Length; i++)
+            int rawColumnCount = 0;
+            int rawRowCount = 0;
+            try
             {
-                string[] rawValue = lines[i].Split(DataSplitSeparators);
-                for (int j = 0; j < rawValue.Length; j++)
+                string[] lines = File.ReadAllLines(dataTableFileName, encoding);
+                rawRowCount = lines.Length;
+                for (int i = 0; i < lines.Length; i++)
                 {
-                    rawValue[j] = rawValue[j].Trim(DataTrimSeparators);
-                }
+                    string[] rawValue = lines[i].Split(DataSplitSeparators);
+                    for (int j = 0; j < rawValue.Length; j++)
+                    {
+                        rawValue[j] = rawValue[j].Trim(DataTrimSeparators);
+                    }
 
-                if (i == 0)
-                { 
-                    rawColumnCount = rawValue.Length;
-                }
-                else if (rawValue.Length != rawColumnCount)
-                {
-                    throw new GameFrameworkException(Utility.Text.Format("Data table file '{0}', raw Column is '{2}', but line '{1}' column is '{3}'.", dataTableFileName, i, rawColumnCount, rawValue.Length));
-                }
+                    if (i == 0)
+                    { 
+                        rawColumnCount = rawValue.Length;
+                    }
+                    else if (rawValue.Length != rawColumnCount)
+                    {
+                        throw new GameFrameworkException(Utility.Text.Format("Data table file '{0}', raw Column is '{2}', but line '{1}' column is '{3}'.", dataTableFileName, i, rawColumnCount, rawValue.Length));
+                    }
 
-                rawValues.Add(rawValue);
+                    rawValues.Add(rawValue);
+                }
             }
+            catch (Exception e)
+            {
+                Console.WriteLine(e);
+                Debug.LogError( $"请检查表格:{dataTableFileName}是否已被其他编辑工具打开。");
+                throw;
+            }
+            
 
             m_RawValues = rawValues.ToArray();
 

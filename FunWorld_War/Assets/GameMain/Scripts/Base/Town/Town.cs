@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using GameFramework.Event;
 using UnityEngine;
 using UnityEngine.Events;
+using UnityEngine.UI;
 using Random = System.Random;
 
 public partial class Town : BaseObject
@@ -52,7 +53,7 @@ public partial class Town : BaseObject
     
     private void RegisterEvent()
     {
-        GameEntry.Event.Subscribe(BattleSingleTownResultEventArgs.EventId,OnSingleTownResult); 
+        //GameEntry.Event.Subscribe(BattleSingleTownResultEventArgs.EventId,OnSingleTownResult); 
         GameEntry.Event.Subscribe(GameStartEventArgs.EventId,OnGameStart);
     }
 
@@ -69,12 +70,12 @@ public partial class Town : BaseObject
         JoinBattle(TargetTown, soliderCommander);
     }
     
-    void OnSingleTownResult(object sender, GameEventArgs e)
-    {
-        var eventData = e as BattleSingleTownResultEventArgs;
-        var type = eventData.OwnerType;
-        Debug.Log(string.Format("胜利{0}",type));
-    }
+    // void OnSingleTownResult(object sender, GameEventArgs e)
+    // {
+    //     var eventData = e as BattleSingleTownResultEventArgs;
+    //     var type = eventData.OwnerType;
+    //     Debug.Log(string.Format("胜利{0}",type));
+    // }
     
     protected  SoliderCommander CreateSolider(Town targetTown)
     {
@@ -159,8 +160,11 @@ public partial class Town : BaseObject
             if (CurHp <= damageNum)
             {
                 IsOccupied = true;
+                Solider solider = (Solider)attacker;
+                GameEntry.Event.Fire(this,BattleSingleTownResultEventArgs.Create(this.ID,solider.CampType));
                 //通知裁判，城池被占领
                 townBattleJudge.Town_OccupiedSuccess();
+                Debug.Log($"城池被占领，占领方:{solider.CampType}");
             }            
         }
     }

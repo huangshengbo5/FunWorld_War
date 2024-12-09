@@ -1,21 +1,23 @@
+using System;
 using UnityEngine;
-using UnityEngine.Serialization;
 
 public class BaseObject : MonoBehaviour
 {
     public int MaxHp;
     private int Id;
-    
     //血量
     protected int CurHp;
+    
+    
+    [HideInInspector]
     public int ID 
     {
         get { return Id; }
     }
 
-    public BaseObject()
+    private void Awake()
     {
-        //Id = gameObject.GetHashCode();
+        Id = gameObject.GetHashCode();
     }
     
     public virtual Vector3 GetInteractPoint(Vector3 position = new Vector3())

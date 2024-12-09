@@ -3,7 +3,7 @@ using UnityEngine;
 using UnityEngine.UI;
 using UnityGameFramework.Runtime;
 
-public class BattleWinForm : UIFormLogic
+public class BattleMainForm : UIFormLogic
 {
     public Button Btn_AllAttack;
     public GameObject Attack_Holder;

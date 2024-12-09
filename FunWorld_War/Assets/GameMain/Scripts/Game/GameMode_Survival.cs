@@ -1,6 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Net.Mail;
 using Script.Game.Base;
+using UnityEngine;
 
 public class GameMode_Survival : GameBase
 {
@@ -14,6 +16,7 @@ public class GameMode_Survival : GameBase
         base.Initialize();
         GameEntry.Event.Subscribe(BattleClickTargetTownEventArgs.EventId,HandlerBattleClickTargetTown);
         GameEntry.Event.Subscribe(BattleClickPlayerTownEventArgs.EventId,HandlerBattleClickPlayerTown);
+        GameEntry.Event.Subscribe(BattleSingleTownResultEventArgs.EventId,HandlerOnSingleTownResult); 
         GameEntry.Event.Fire(this,GameStartEventArgs.Create());
     }
 
@@ -51,6 +54,8 @@ public class GameMode_Survival : GameBase
     /// <summary>
     /// 当前所有参与战斗的城池
     /// </summary>
+    ///
+    [HideInInspector]
     public List<Town> AllBattleTowns;
     //todo 后面应该使用GameState来处理所有战场数据
     /// <summary>
@@ -66,6 +71,7 @@ public class GameMode_Survival : GameBase
         AllBattleTowns.Add(town);
     }
 
+    //获取所有敌对城池
     public List<Town> GetHostileTown(Town town)
     {
         List<Town> hostileTowns = new List<Town>();
@@ -78,5 +84,38 @@ public class GameMode_Survival : GameBase
         }
         return hostileTowns;
     }
-    
+
+    public void HandlerOnSingleTownResult(object sender, EventArgs args)
+    {
+        var singleTownArgs = args as BattleSingleTownResultEventArgs;
+        bool havePlayerCampTown = false;
+        bool haveOtherCampTown = false;
+        foreach (var townItem in AllBattleTowns)
+        {
+            if (townItem.Camp() == CampType.Player)
+            {
+                havePlayerCampTown = true;
+            }
+            else
+            {
+                haveOtherCampTown = true;
+            }
+        }
+
+        if (!havePlayerCampTown || !haveOtherCampTown)
+        {
+            BattleResultType battleResultType = BattleResultType.Draw; 
+            if (!havePlayerCampTown)
+            {
+                //玩家失败
+                battleResultType = BattleResultType.Fail;
+            }
+            else if (!haveOtherCampTown)
+            {
+                //玩家胜利
+                battleResultType = BattleResultType.Win;
+            }
+            GameEntry.Event.Fire(this,BattleResultEventArgs.Create(battleResultType));
+        }
+    }
 }
