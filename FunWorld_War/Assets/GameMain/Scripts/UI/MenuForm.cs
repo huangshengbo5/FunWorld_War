@@ -1,28 +1,24 @@
 ﻿using UnityEngine;
+using UnityEngine.UI;
 using UnityGameFramework.Runtime;
 
 public class MenuForm : UIFormLogic
 {
-    [SerializeField] private GameObject m_QuitButton = null;
+    [SerializeField]
+    private Button Btn_Survival;
 
-    public void OnStartButtonClick()
+    private ProcedureMenu ProcedureMenu;
+
+    protected override void OnInit(object userData)
     {
-        
+        base.OnInit(userData);
+        ProcedureMenu = userData as ProcedureMenu;
+        Btn_Survival.onClick.AddListener(OnBtnSurvivalClick);
     }
-
-    public void OnSettingButtonClick()
+    
+    public void OnBtnSurvivalClick()
     {
-        
-    }
-
-    public void OnAboutButtonClick()
-    {
-        
-    }
-
-    public void OnQuitButtonClick()
-    {
-        
+        ProcedureMenu.StartGame();
     }
     
     protected override void OnOpen(object userData)
@@ -33,5 +29,10 @@ public class MenuForm : UIFormLogic
     protected override void OnClose(bool isShutdown, object userData)
     {
         base.OnClose(isShutdown, userData);
+    }
+
+    public void Close(bool isShutDown)
+    {
+        GameEntry.UI.CloseUIForm(this);
     }
 }

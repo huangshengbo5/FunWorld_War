@@ -71,7 +71,7 @@ public class ProcedureMain : ProcedureBase
             m_GotoMenu = true;
             m_GotoMenuDelaySeconds = 0;
         }
-
+        
         m_GotoMenuDelaySeconds += elapseSeconds;
         if (m_GotoMenuDelaySeconds >= GameOverDelayedSeconds)
         {

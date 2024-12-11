@@ -7,7 +7,6 @@ using UnityEngine.SceneManagement;
 using UnityGameFramework.Runtime;
 using ProcedureOwner = GameFramework.Fsm.IFsm<GameFramework.Procedure.IProcedureManager>;
 
-
 public class ProcedurePreload : ProcedureBase
 {
     private Dictionary<string, bool> m_LoadedFlag = new();
@@ -42,13 +41,11 @@ public class ProcedurePreload : ProcedureBase
     protected override void OnUpdate(ProcedureOwner procedureOwner, float elapseSeconds, float realElapseSeconds)
     {
         base.OnUpdate(procedureOwner, elapseSeconds, realElapseSeconds);
-
         foreach (var loadedFlag in m_LoadedFlag)
             if (!loadedFlag.Value)
                 return;
-
-        procedureOwner.SetData<VarInt32>("NextSceneId", GameEntry.Config.GetInt("Scene.Main"));
-        ChangeState<ProcedureChangeScene>(procedureOwner);
+        //procedureOwner.SetData<VarInt32>("NextSceneId", GameEntry.Config.GetInt("Scene.Main"));
+        ChangeState<ProcedureMenu>(procedureOwner);
     }
 
     private void PreloadResources()

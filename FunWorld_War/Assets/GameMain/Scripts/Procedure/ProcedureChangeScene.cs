@@ -53,6 +53,7 @@ public class ProcedureChangeScene : ProcedureBase
         GameEntry.Scene.LoadScene(AssetUtility.GetSceneAsset(drScene.AssetName), Constant.AssetPriority.SceneAsset,
             this);
         // m_BackgroundMusicId = drScene.BackgroundMusicId;
+        
     }
 
     protected override void OnLeave(ProcedureOwner procedureOwner, bool isShutdown)
@@ -80,8 +81,8 @@ public class ProcedureChangeScene : ProcedureBase
         Log.Info("Load scene '{0}' OK.", ne.SceneAssetName);
 
         //if (m_BackgroundMusicId > 0) GameEntry.Sound.PlayMusic(m_BackgroundMusicId);
-
         m_IsChangeSceneComplete = true;
+        GameEntry.UI.OpenUIForm(UIFormId.MenuForm);
     }
 
     private void OnLoadSceneFailure(object sender, GameEventArgs e)
