@@ -109,11 +109,13 @@ public class GameMode_Survival : GameBase
             {
                 //玩家失败
                 battleResultType = BattleResultType.Fail;
+                GameEntry.UI.OpenUIForm(UIFormId.BattleFailForm);
             }
             else if (!haveOtherCampTown)
             {
                 //玩家胜利
                 battleResultType = BattleResultType.Win;
+                GameEntry.UI.OpenUIForm(UIFormId.BattleFailForm);
             }
             GameEntry.Event.Fire(this,BattleResultEventArgs.Create(battleResultType));
         }
