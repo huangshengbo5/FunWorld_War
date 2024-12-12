@@ -115,7 +115,7 @@ public class GameMode_Survival : GameBase
             {
                 //玩家胜利
                 battleResultType = BattleResultType.Win;
-                GameEntry.UI.OpenUIForm(UIFormId.BattleFailForm);
+                GameEntry.UI.OpenUIForm(UIFormId.BattleWinForm);
             }
             GameEntry.Event.Fire(this,BattleResultEventArgs.Create(battleResultType));
         }
