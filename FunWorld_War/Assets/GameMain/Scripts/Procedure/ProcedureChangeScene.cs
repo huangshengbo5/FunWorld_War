@@ -50,10 +50,10 @@ public class ProcedureChangeScene : ProcedureBase
             return;
         }
 
-        // GameEntry.Scene.LoadScene(AssetUtility.GetSceneAsset(drScene.AssetName), Constant.AssetPriority.SceneAsset,
-        //     this);
+        GameEntry.Scene.LoadScene(AssetUtility.GetSceneAsset(drScene.AssetName), Constant.AssetPriority.SceneAsset,
+            this);
         
-        GameEntry.Scene.LoadScene(AssetUtility.GetSceneAsset(drScene.AssetName));
+        //GameEntry.Scene.LoadScene(AssetUtility.GetSceneAsset(drScene.AssetName));
         // m_BackgroundMusicId = drScene.BackgroundMusicId;
         
     }

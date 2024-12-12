@@ -214,7 +214,7 @@ public partial class Solider : BaseObject
             return;
         }
         SufferInjure(damageNum);
-        if (CurHp <= damageNum)
+        if (CurHp <= damageNum || CurHp < 0)
         {
             if (ChangeAnimatorState(State.Dead))
             {
@@ -235,6 +235,7 @@ public partial class Solider : BaseObject
         behaviorTree = null;
         yield return new WaitForSeconds(1);
         this.gameObject.SetActive(false);
+        Debug.LogWarning($"士兵：{this.gameObject.name},死亡");
     }
 
     private void OnDrawGizmos()
