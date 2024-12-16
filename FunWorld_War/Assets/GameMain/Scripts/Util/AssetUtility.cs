@@ -65,4 +65,9 @@ public static class AssetUtility
     {
         return Utility.Text.Format("Assets/Res/UI/Texture/{0}.png", assetName);
     }
+    
+    public static string GetModelAsset(string assetName)
+    {
+        return Utility.Text.Format("Assets/Resources/Prefab/Solider/{0}.png", assetName);
+    }
 }

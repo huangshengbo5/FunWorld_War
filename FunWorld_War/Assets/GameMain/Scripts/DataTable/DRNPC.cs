@@ -5,7 +5,7 @@
 // Feedback: mailto:ellan@gameframework.cn
 //------------------------------------------------------------
 // 此文件由工具自动生成，请勿直接修改。
-// 生成时间：2024-12-09 19:55:58.242
+// 生成时间：2024-12-16 19:44:11.475
 //------------------------------------------------------------
 
 using GameFramework;
@@ -111,7 +111,7 @@ using UnityGameFramework.Runtime;
         /// <summary>
         /// 获取士兵模型。
         /// </summary>
-        public int model
+        public string model
         {
             get;
             private set;
@@ -218,7 +218,7 @@ using UnityGameFramework.Runtime;
             sex = int.Parse(columnStrings[index++]);
             level = int.Parse(columnStrings[index++]);
             vocation = int.Parse(columnStrings[index++]);
-            model = int.Parse(columnStrings[index++]);
+            model = columnStrings[index++];
             fee = int.Parse(columnStrings[index++]);
             avalue_base = columnStrings[index++];
             avalue_senior = columnStrings[index++];
@@ -248,7 +248,7 @@ using UnityGameFramework.Runtime;
                     sex = binaryReader.Read7BitEncodedInt32();
                     level = binaryReader.Read7BitEncodedInt32();
                     vocation = binaryReader.Read7BitEncodedInt32();
-                    model = binaryReader.Read7BitEncodedInt32();
+                    model = binaryReader.ReadString();
                     fee = binaryReader.Read7BitEncodedInt32();
                     avalue_base = binaryReader.ReadString();
                     avalue_senior = binaryReader.ReadString();
