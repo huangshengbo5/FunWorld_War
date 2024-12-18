@@ -66,9 +66,11 @@ public class ProcedureMain : ProcedureBase
             return;
         }
 
+      
+
         if (!m_GotoMenu)
         {
-            m_GotoMenu = true;
+            //m_GotoMenu = true;
             m_GotoMenuDelaySeconds = 0;
         }
         
