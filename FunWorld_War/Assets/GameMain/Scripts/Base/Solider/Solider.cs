@@ -300,4 +300,5 @@ public partial class Solider : BaseObject
     {
         return OwnerSoliderCommander.SoliderFindTarget(this);
     }
+    
 }

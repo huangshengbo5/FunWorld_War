@@ -9,7 +9,7 @@ public class ConfigManager : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
-        Handles.CapFunction cap = Handles.CylinderHandleCap;
+//        Handles.CapFunction cap = Handles.CylinderHandleCap;
         // Handles.SphereHandleCap();
         // Handles.ConeHandleCap();
         // try {
