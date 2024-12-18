@@ -3,7 +3,7 @@ using UnityEngine;
 using UnityEngine.UI;
 using UnityGameFramework.Runtime;
 
-public class BattleMainForm : UIFormLogic
+public class BattleWinForm : UIFormLogic
 {
     protected override void OnInit(object userData)
     {
