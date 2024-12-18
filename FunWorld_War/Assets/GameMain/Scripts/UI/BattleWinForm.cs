@@ -5,6 +5,8 @@ using UnityGameFramework.Runtime;
 
 public class BattleWinForm : UIFormLogic
 {
+    [SerializeField]
+    private Button Btn_BG;
     protected override void OnInit(object userData)
     {
         base.OnInit(userData);
@@ -13,27 +15,21 @@ public class BattleWinForm : UIFormLogic
     protected override void OnOpen(object userData)
     {
         base.OnOpen(userData);
-        AddEvent();
+        Btn_BG.onClick.AddListener(OnFullBGBtnClick);
     }
 
-    void AddEvent()
+    void OnFullBGBtnClick()
     {
-        GameEntry.Event.Subscribe(BattleClickPlayerTownEventArgs.EventId,HandlerBattleClickPlayerTown);
-    }
-
-    void RemoveEvent()
-    {
-        GameEntry.Event.Unsubscribe(BattleClickPlayerTownEventArgs.EventId,HandlerBattleClickPlayerTown);
-    }
-
-    void HandlerBattleClickPlayerTown(object o,EventArgs e)
-    {
-
+        var curProcedure = GameEntry.Procedure.CurrentProcedure;
+        if (curProcedure is ProcedureMain)
+        {
+            var procedureMain = curProcedure as ProcedureMain;
+            procedureMain.GotoMenu();
+        }
     }
     
     protected override void OnClose(bool isShutdown, object userData)
     {
         base.OnClose(isShutdown, userData);
-        RemoveEvent();
     }
 }
