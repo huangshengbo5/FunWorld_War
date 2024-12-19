@@ -123,7 +123,7 @@ using Random = UnityEngine.Random;
                 }
             }
             int index = Random.Range(0, SpawnerPoints.Count-1);
-            return SpawnerPoints[index].position;
+            return SpawnerPoints[1].position;
         }
         
         //被点击选中
