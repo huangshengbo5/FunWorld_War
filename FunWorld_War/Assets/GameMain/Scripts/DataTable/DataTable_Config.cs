@@ -10,6 +10,7 @@ public static class DataTable_Config
         "NPC",
         "Scene",
         "UIForm",
-        "Trademoney"
+        "Trademoney",
+        "Attribute"
     };
 }

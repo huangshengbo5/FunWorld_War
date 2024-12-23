@@ -5,7 +5,7 @@
 // Feedback: mailto:ellan@gameframework.cn
 //------------------------------------------------------------
 // 此文件由工具自动生成，请勿直接修改。
-// 生成时间：2024-12-23 19:53:16.142
+// 生成时间：2024-12-23 19:53:16.148
 //------------------------------------------------------------
 
 using GameFramework;
@@ -19,14 +19,14 @@ using UnityGameFramework.Runtime;
 //namespace __DATA_TABLE_NAME_SPACE__
 //{
     /// <summary>
-    /// 界面配置表。
+    /// 属性表。
     /// </summary>
-    public class DRUIForm : DataRowBase
+    public class DRAttribute : DataRowBase
     {
         private int m_Id = 0;
 
         /// <summary>
-        /// 获取界面编号。
+        /// 获取//注释,attrid。
         /// </summary>
         public override int Id
         {
@@ -37,36 +37,18 @@ using UnityGameFramework.Runtime;
         }
 
         /// <summary>
-        /// 获取资源名称。
+        /// 获取默认值。
         /// </summary>
-        public string AssetName
+        public int defaultValue
         {
             get;
             private set;
         }
 
         /// <summary>
-        /// 获取界面组名称。
+        /// 获取类型1=固定值，2=万分比。
         /// </summary>
-        public string UIGroupName
-        {
-            get;
-            private set;
-        }
-
-        /// <summary>
-        /// 获取是否允许多个界面实例。
-        /// </summary>
-        public bool AllowMultiInstance
-        {
-            get;
-            private set;
-        }
-
-        /// <summary>
-        /// 获取是否暂停被其覆盖的界面。
-        /// </summary>
-        public bool PauseCoveredUIForm
+        public int Type
         {
             get;
             private set;
@@ -84,10 +66,8 @@ using UnityGameFramework.Runtime;
             index++;
             m_Id = int.Parse(columnStrings[index++]);
             index++;
-            AssetName = columnStrings[index++];
-            UIGroupName = columnStrings[index++];
-            AllowMultiInstance = bool.Parse(columnStrings[index++]);
-            PauseCoveredUIForm = bool.Parse(columnStrings[index++]);
+            defaultValue = int.Parse(columnStrings[index++]);
+            Type = int.Parse(columnStrings[index++]);
 
             GeneratePropertyArray();
             return true;
@@ -100,10 +80,8 @@ using UnityGameFramework.Runtime;
                 using (BinaryReader binaryReader = new BinaryReader(memoryStream, Encoding.UTF8))
                 {
                     m_Id = binaryReader.Read7BitEncodedInt32();
-                    AssetName = binaryReader.ReadString();
-                    UIGroupName = binaryReader.ReadString();
-                    AllowMultiInstance = binaryReader.ReadBoolean();
-                    PauseCoveredUIForm = binaryReader.ReadBoolean();
+                    defaultValue = binaryReader.Read7BitEncodedInt32();
+                    Type = binaryReader.Read7BitEncodedInt32();
                 }
             }
 
