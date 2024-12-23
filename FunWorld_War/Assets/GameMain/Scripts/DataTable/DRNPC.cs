@@ -5,7 +5,7 @@
 // Feedback: mailto:ellan@gameframework.cn
 //------------------------------------------------------------
 // 此文件由工具自动生成，请勿直接修改。
-// 生成时间：2024-12-16 19:44:11.475
+// 生成时间：2024-12-23 19:36:05.039
 //------------------------------------------------------------
 
 using GameFramework;
@@ -73,7 +73,7 @@ using UnityGameFramework.Runtime;
         }
 
         /// <summary>
-        /// 获取阵营。
+        /// 获取阵营1=默认，2=玩家，3=怪。
         /// </summary>
         public int camp
         {
@@ -111,14 +111,14 @@ using UnityGameFramework.Runtime;
         /// <summary>
         /// 获取士兵模型。
         /// </summary>
-        public string model
+        public int model
         {
             get;
             private set;
         }
 
         /// <summary>
-        /// 获取士兵的费值。
+        /// 获取士兵的费值（也代表士兵的战力和兵力）。
         /// </summary>
         public int fee
         {
@@ -127,7 +127,7 @@ using UnityGameFramework.Runtime;
         }
 
         /// <summary>
-        /// 获取士兵基础属性(属性id，值)，(属性id，值)。
+        /// 获取士兵基础属性属性id，值，属性id，值。
         /// </summary>
         public string avalue_base
         {
@@ -136,7 +136,7 @@ using UnityGameFramework.Runtime;
         }
 
         /// <summary>
-        /// 获取士兵高级基础属性(属性id，值)，(属性id，值)。
+        /// 获取士兵高级基础属性属性id，值，属性id，值。
         /// </summary>
         public string avalue_senior
         {
@@ -145,9 +145,27 @@ using UnityGameFramework.Runtime;
         }
 
         /// <summary>
+        /// 获取攻击距离。
+        /// </summary>
+        public int Attack_range
+        {
+            get;
+            private set;
+        }
+
+        /// <summary>
+        /// 获取追击距离。
+        /// </summary>
+        public int Pursuit_distance
+        {
+            get;
+            private set;
+        }
+
+        /// <summary>
         /// 获取主动技能。
         /// </summary>
-        public int skill
+        public double skill
         {
             get;
             private set;
@@ -156,7 +174,7 @@ using UnityGameFramework.Runtime;
         /// <summary>
         /// 获取被动技能。
         /// </summary>
-        public int skill_passive
+        public double skill_passive
         {
             get;
             private set;
@@ -218,12 +236,14 @@ using UnityGameFramework.Runtime;
             sex = int.Parse(columnStrings[index++]);
             level = int.Parse(columnStrings[index++]);
             vocation = int.Parse(columnStrings[index++]);
-            model = columnStrings[index++];
+            model = int.Parse(columnStrings[index++]);
             fee = int.Parse(columnStrings[index++]);
             avalue_base = columnStrings[index++];
             avalue_senior = columnStrings[index++];
-            skill = int.Parse(columnStrings[index++]);
-            skill_passive = int.Parse(columnStrings[index++]);
+            Attack_range = int.Parse(columnStrings[index++]);
+            Pursuit_distance = int.Parse(columnStrings[index++]);
+            skill = double.Parse(columnStrings[index++]);
+            skill_passive = double.Parse(columnStrings[index++]);
             build_time = int.Parse(columnStrings[index++]);
             next = int.Parse(columnStrings[index++]);
             upgrade_gold = int.Parse(columnStrings[index++]);
@@ -248,12 +268,14 @@ using UnityGameFramework.Runtime;
                     sex = binaryReader.Read7BitEncodedInt32();
                     level = binaryReader.Read7BitEncodedInt32();
                     vocation = binaryReader.Read7BitEncodedInt32();
-                    model = binaryReader.ReadString();
+                    model = binaryReader.Read7BitEncodedInt32();
                     fee = binaryReader.Read7BitEncodedInt32();
                     avalue_base = binaryReader.ReadString();
                     avalue_senior = binaryReader.ReadString();
-                    skill = binaryReader.Read7BitEncodedInt32();
-                    skill_passive = binaryReader.Read7BitEncodedInt32();
+                    Attack_range = binaryReader.Read7BitEncodedInt32();
+                    Pursuit_distance = binaryReader.Read7BitEncodedInt32();
+                    skill = binaryReader.ReadDouble();
+                    skill_passive = binaryReader.ReadDouble();
                     build_time = binaryReader.Read7BitEncodedInt32();
                     next = binaryReader.Read7BitEncodedInt32();
                     upgrade_gold = binaryReader.Read7BitEncodedInt32();
