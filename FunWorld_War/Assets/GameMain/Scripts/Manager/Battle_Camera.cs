@@ -9,6 +9,8 @@ public class Battle_Camera : MonoBehaviour
     {
         mainCamera = Camera.main;
         GameEntry.Touch.OnSingleTap += HandlerSingleTap;
+        
+        
     }
 
     void HandlerSingleTap(Vector2 position)
