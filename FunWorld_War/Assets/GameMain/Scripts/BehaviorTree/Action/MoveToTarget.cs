@@ -29,7 +29,21 @@ namespace BehaviorDesigner.Runtime.Tasks
         public override void OnStart()
         {
             base.OnStart();
-            StartCoroutine(DelayMove());
+            
+            if (targetTrans != null && targetTrans.Value != null)
+            {
+                var targetObject = targetTrans.Value.GetComponent<BaseObject>();
+                nav.isStopped = false;
+                nav.SetDestination(targetObject.GetInteractPoint());
+                selfSolider.ChangeState(Solider.State.Moving);
+            }
+            else
+            {
+                nav.isStopped = true;
+            }
+            nav.stoppingDistance = selfSolider.AttackRedius;
+            
+            //StartCoroutine(DelayMove());
         }
 
         private IEnumerator DelayMove()

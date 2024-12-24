@@ -6,6 +6,18 @@ using UnityEngine;
 
 public class GameMode_Survival : GameBase
 {
+    /// <summary>
+    /// 当前所有参与战斗的城池
+    /// </summary>
+    ///
+    [HideInInspector]
+    private List<Town> allBattleTowns;
+
+    public List<Town> AllBattleTowns
+    {
+        get { return allBattleTowns; }
+    }
+    
     private float m_ElapseSeconds = 0f;
     public override GameMode GameMode => GameMode.Survival;
     
@@ -51,12 +63,7 @@ public class GameMode_Survival : GameBase
         if (m_ElapseSeconds >= 1f) m_ElapseSeconds = 0f;
     }
 
-    /// <summary>
-    /// 当前所有参与战斗的城池
-    /// </summary>
-    ///
-    [HideInInspector]
-    public List<Town> AllBattleTowns;
+
     //todo 后面应该使用GameState来处理所有战场数据
     /// <summary>
     /// 城池加入战场
@@ -64,18 +71,18 @@ public class GameMode_Survival : GameBase
     /// <param name="town"></param>
     public void JoinBattle(Town town)
     {
-        if (AllBattleTowns == null)
+        if (allBattleTowns == null)
         {
-            AllBattleTowns = new List<Town>();    
+            allBattleTowns = new List<Town>();    
         }
-        AllBattleTowns.Add(town);
+        allBattleTowns.Add(town);
     }
 
     //获取所有敌对城池
     public List<Town> GetHostileTown(Town town)
     {
         List<Town> hostileTowns = new List<Town>();
-        foreach (var townItem in AllBattleTowns)
+        foreach (var townItem in allBattleTowns)
         {
             if (Common.GetRelation(townItem.Camp(),town.Camp()) == RelationType.Hostile)
             {
@@ -90,7 +97,7 @@ public class GameMode_Survival : GameBase
         var singleTownArgs = args as BattleSingleTownResultEventArgs;
         bool havePlayerCampTown = false;
         bool haveOtherCampTown = false;
-        foreach (var townItem in AllBattleTowns)
+        foreach (var townItem in allBattleTowns)
         {
             if (townItem.Camp() == CampType.Player)
             {

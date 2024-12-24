@@ -6,6 +6,7 @@ using UnityEngine.UI;
 public class TownHUD : MonoBehaviour
 {
     public Button Btn_Enter;
+    public Button Btn_Retreat;
     public Slider Solider_Hp;
     public Image Image_Camp;
     public TextMeshProUGUI Text_Num;
@@ -14,8 +15,10 @@ public class TownHUD : MonoBehaviour
     public void Init(BaseObject parent)
     {
         Btn_Enter.gameObject.SetActive(false);
+        Btn_Retreat.gameObject.SetActive(false);
         parent_Obj = parent;
         Btn_Enter.onClick.AddListener(HandlerClickEnter);
+        Btn_Retreat.onClick.AddListener(HandlerClickRetreat);
         Town ownerTown = parent_Obj as Town;
         ownerTown.DelegateTownCampChange += OnTownCampChange;
         ownerTown.DelegateTownHpChange += OnTownHpChange;
@@ -56,15 +59,26 @@ public class TownHUD : MonoBehaviour
         GameEntry.Event.Fire(this,BattleClickTargetTownEventArgs.Create(Town));
         Btn_Enter.gameObject.SetActive(false);
     }
+
+    void HandlerClickRetreat()
+    {
+        var Town = parent_Obj as Town;
+        Town.OnPlayerEnemySoliderCommanderRetreat();
+        Btn_Retreat.gameObject.SetActive(false);
+    }
     
     private void LateUpdate()
     {
         this.transform.forward = Camera.main.transform.forward;
     }
 
-    public void ShowOperateBtn()
+    public void SwitchEnterBtn(bool isShow = true)
     {
-        Btn_Enter.gameObject.SetActive(true);
+        Btn_Enter.gameObject.SetActive(isShow);
     }
-    
+
+    public void SwitchRetreatBtn(bool isShow = true)
+    {
+        Btn_Retreat.gameObject.SetActive(isShow);
+    }
 }

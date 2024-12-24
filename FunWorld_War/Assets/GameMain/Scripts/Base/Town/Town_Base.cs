@@ -136,8 +136,12 @@ using Random = UnityEngine.Random;
             }
             else
             {
+                if (townBattleJudge.EnemySoliderCommandersContainPlayer())
+                {
+                    TownHUD.SwitchRetreatBtn(true);
+                }
                 //显示操作按钮UI
-                TownHUD.ShowOperateBtn();
+                TownHUD.SwitchEnterBtn();
             }
         }
 

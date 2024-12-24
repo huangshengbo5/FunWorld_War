@@ -97,19 +97,9 @@ public partial class Solider : BaseObject
     
     protected BaseObject targetObject;
     
-
     //士兵归属的城镇
     protected Town ownerTown;
-
-    private bool retreat;  //撤退
-
-    public bool Retreat
-    {
-        get => retreat;
-        set => retreat = value;
-    }
     
-
     public BaseObject TargetObject
     {
         get
@@ -138,12 +128,7 @@ public partial class Solider : BaseObject
     //造成伤害时间间隔信息
     private float AttackTimeStamp;
     private float AttackInterval = 1;
-
-    public Solider(bool retreat)
-    {
-        Retreat = retreat;
-    }
-
+    
     public void ChangeTargetObject(BaseObject targetTown)
     {
         targetObject = targetTown;
@@ -175,7 +160,16 @@ public partial class Solider : BaseObject
     {
         ChangeAnimatorState(state);
     }
-    
+
+    public void Retreat()
+    {
+        if (!IsDead())
+        {
+            behaviorTree.SetVariableValue("Retreat",true);
+
+            var variable = behaviorTree.GetVariable("Retreat");
+        }
+    }
 
     public void OnAttackHited()
     {

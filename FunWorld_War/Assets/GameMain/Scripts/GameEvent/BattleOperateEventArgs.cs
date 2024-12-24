@@ -40,6 +40,24 @@ public class BattleClickTargetTownEventArgs : GameEventArgs
     public override void Clear() { }
 }
 
+public class BattleClickTargetTownRetreatEventArgs : GameEventArgs
+{
+    public static readonly int EventId = typeof(BattleClickTargetTownRetreatEventArgs).GetHashCode();
+    
+    public static BattleClickTargetTownRetreatEventArgs Create(Town town)
+    {
+        BattleClickTargetTownRetreatEventArgs battleClickTargetTown = ReferencePool.Acquire<BattleClickTargetTownRetreatEventArgs>();
+        battleClickTargetTown.Town = town;
+        return battleClickTargetTown;
+    }
+
+    private Town town;
+    
+    public Town Town { get; set; }
+    
+    public override int Id { get {return EventId;} }
+    public override void Clear() { }
+}
 
 //玩家点击位置是非UI区域
 public class TouchClickNotUIEventArgs : GameEventArgs

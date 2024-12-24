@@ -93,6 +93,16 @@ public class SoliderCommander
         }
     }
 
+    //撤退
+    public void Retreat()
+    {
+        //执行士兵攻城
+        for (int i = 0; i < soliders.Count; i++)
+        {
+            soliders[i].Retreat();
+        }
+    }
+
     //入城
     public void EnterTown(BaseObject targetTown)
     {

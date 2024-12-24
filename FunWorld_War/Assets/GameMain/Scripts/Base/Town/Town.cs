@@ -55,11 +55,23 @@ public partial class Town : BaseObject
     {
         //GameEntry.Event.Subscribe(BattleSingleTownResultEventArgs.EventId,OnSingleTownResult); 
         GameEntry.Event.Subscribe(GameStartEventArgs.EventId,OnGameStart);
+        //GameEntry.Event.Subscribe(BattleClickTargetTownRetreatEventArgs.EventId,OnSoliderCommanderRetreat);
     }
 
     void OnGameStart(object sender, GameEventArgs e)
     {
         Init();
+    }
+
+    // void OnSoliderCommanderRetreat(object sender, GameEventArgs e)
+    // {
+    //     BattleClickTargetTownRetreatEventArgs args = e as BattleClickTargetTownRetreatEventArgs;
+    //             
+    // }
+
+    public void OnPlayerEnemySoliderCommanderRetreat()
+    {
+        townBattleJudge.PlayerSoliderCommanderRetreat();
     }
     
     //攻击敌方城池

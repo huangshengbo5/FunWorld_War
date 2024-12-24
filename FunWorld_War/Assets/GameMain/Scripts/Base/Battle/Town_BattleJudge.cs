@@ -19,6 +19,36 @@ public class Town_BattleJudge
         ownerTown = town;
         LeftSoliderCommanders = new Dictionary<CampType, List<SoliderCommander>>();
     }
+
+    public bool EnemySoliderCommandersContainPlayer()
+    {
+        if (ownerTown.Camp() == CampType.Player)
+        {
+            return false;
+        }
+        if (LeftSoliderCommanders.ContainsKey(CampType.Player))
+        {
+            return true;
+        }
+        return false;
+    }
+
+    public void PlayerSoliderCommanderRetreat()
+    {
+        var result = CheckBattleResult();
+        if (result.Item1 == false)
+        {
+            if (LeftSoliderCommanders.ContainsKey(CampType.Player))
+            {
+                var soliderCommanders = LeftSoliderCommanders[CampType.Player];
+                for (int i = 0; i < soliderCommanders.Count; i++)
+                {
+                    var soliderCommander = soliderCommanders[i];
+                    soliderCommander.Retreat();
+                }
+            }            
+        }
+    }
     
     //加入一场战斗
     public void JoinBattle(SoliderCommander soliderCommander)
@@ -75,6 +105,7 @@ public class Town_BattleJudge
     {
         return LeftSoliderCommanders.Count > 0;
     }
+    
 
     //检查战斗结果
     public Tuple<bool, CampType> CheckBattleResult()
