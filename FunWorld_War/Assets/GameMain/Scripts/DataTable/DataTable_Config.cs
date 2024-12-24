@@ -3,7 +3,6 @@ public static class DataTable_Config
     //当前项目需要加载的配置
     public static readonly string[] DataTableNames = new string[]
     {
-        "Avalue",
         "Camp",
         "Const",
         "Multilingual",
@@ -11,6 +10,6 @@ public static class DataTable_Config
         "Scene",
         "UIForm",
         "Trademoney",
-        "Attribute"
+        "Attribute",  //属性表
     };
 }

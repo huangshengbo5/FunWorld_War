@@ -5,7 +5,7 @@
 // Feedback: mailto:ellan@gameframework.cn
 //------------------------------------------------------------
 // 此文件由工具自动生成，请勿直接修改。
-// 生成时间：2024-12-23 19:53:16.148
+// 生成时间：2024-12-24 11:58:19.826
 //------------------------------------------------------------
 
 using GameFramework;
@@ -26,7 +26,7 @@ using UnityGameFramework.Runtime;
         private int m_Id = 0;
 
         /// <summary>
-        /// 获取//注释,attrid。
+        /// 获取属性id。
         /// </summary>
         public override int Id
         {
@@ -37,18 +37,36 @@ using UnityGameFramework.Runtime;
         }
 
         /// <summary>
-        /// 获取默认值。
+        /// 获取属性名字注释 属性类型1=固定值2=万分比。
         /// </summary>
-        public int defaultValue
+        public string ValueName
         {
             get;
             private set;
         }
 
         /// <summary>
-        /// 获取类型1=固定值，2=万分比。
+        /// 获取属性图标图标名字或路径。
         /// </summary>
         public int Type
+        {
+            get;
+            private set;
+        }
+
+        /// <summary>
+        /// 获取。
+        /// </summary>
+        public int ShowNameID
+        {
+            get;
+            private set;
+        }
+
+        /// <summary>
+        /// 获取。
+        /// </summary>
+        public int Icon
         {
             get;
             private set;
@@ -65,9 +83,11 @@ using UnityGameFramework.Runtime;
             int index = 0;
             index++;
             m_Id = int.Parse(columnStrings[index++]);
+            ValueName = columnStrings[index++];
             index++;
-            defaultValue = int.Parse(columnStrings[index++]);
             Type = int.Parse(columnStrings[index++]);
+            ShowNameID = int.Parse(columnStrings[index++]);
+            Icon = int.Parse(columnStrings[index++]);
 
             GeneratePropertyArray();
             return true;
@@ -80,8 +100,10 @@ using UnityGameFramework.Runtime;
                 using (BinaryReader binaryReader = new BinaryReader(memoryStream, Encoding.UTF8))
                 {
                     m_Id = binaryReader.Read7BitEncodedInt32();
-                    defaultValue = binaryReader.Read7BitEncodedInt32();
+                    ValueName = binaryReader.ReadString();
                     Type = binaryReader.Read7BitEncodedInt32();
+                    ShowNameID = binaryReader.Read7BitEncodedInt32();
+                    Icon = binaryReader.Read7BitEncodedInt32();
                 }
             }
 
