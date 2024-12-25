@@ -45,6 +45,7 @@ public class Town_BattleJudge
                 {
                     var soliderCommander = soliderCommanders[i];
                     soliderCommander.Retreat();
+                    LeaveBattle(soliderCommander);
                 }
             }            
         }

@@ -128,6 +128,8 @@ public partial class Solider : BaseObject
     //造成伤害时间间隔信息
     private float AttackTimeStamp;
     private float AttackInterval = 1;
+
+    private bool retreat;
     
     public void ChangeTargetObject(BaseObject targetTown)
     {
@@ -166,8 +168,12 @@ public partial class Solider : BaseObject
         if (!IsDead())
         {
             behaviorTree.SetVariableValue("Retreat",true);
-
             var variable = behaviorTree.GetVariable("Retreat");
+            retreat = true;
+            // WaitUntil(() =>
+            // {
+            //
+            // });
         }
     }
 
@@ -294,5 +300,4 @@ public partial class Solider : BaseObject
     {
         return OwnerSoliderCommander.SoliderFindTarget(this);
     }
-    
 }
