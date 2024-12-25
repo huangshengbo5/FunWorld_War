@@ -165,17 +165,33 @@ public partial class Solider : BaseObject
 
     public void Retreat()
     {
+        StartCoroutine(DelayRetreat());
+    }
+    
+    public IEnumerator  DelayRetreat()
+    {
         if (!IsDead())
         {
             behaviorTree.SetVariableValue("Retreat",true);
-            var variable = behaviorTree.GetVariable("Retreat");
+            var targetTrans = behaviorTree.GetVariable("TargetTrans");
             retreat = true;
-            // WaitUntil(() =>
-            // {
-            //
-            // });
+            yield return new WaitUntil(() =>
+            {
+                if (IsReachPosition((Transform)targetTrans.GetValue()))
+                {
+                       EnterTown();
+                       return true;
+                }
+                return false;
+            });
         }
     }
+
+    public bool IsReachPosition(Transform trans)
+    {
+        return Vector3.Distance(transform.position, trans.position) < AttackRedius;
+    }
+    
 
     public void OnAttackHited()
     {

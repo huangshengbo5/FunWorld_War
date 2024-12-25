@@ -28,7 +28,7 @@ public static class AssetUtility
 
     public static string GetSceneAsset(string assetName)
     {
-        return Utility.Text.Format("Assets/Scenes/{0}.unity", assetName);
+        return Utility.Text.Format("Assets/GameMain/Scenes/{0}.unity", assetName);
     }
 
     public static string GetMusicAsset(string assetName)
@@ -48,7 +48,7 @@ public static class AssetUtility
 
     public static string GetUIFormAsset(string assetName)
     {
-        return Utility.Text.Format("Assets/Resources/Prefab/UI/{0}.prefab", assetName);
+        return Utility.Text.Format("Assets/GameMain/Res/Prefab/UI/{0}.prefab", assetName);
     }
 
     public static string GetUISoundAsset(string assetName)
@@ -58,16 +58,16 @@ public static class AssetUtility
 
     public static string GetBehaviorAsset(string assetName)
     {
-        return Utility.Text.Format("Assets/Resources/BehaviorTree/{0}.asset", assetName);
+        return Utility.Text.Format("Assets/GameMain/Res/BehaviorTree/{0}.asset", assetName);
     }
 
     public static string GetTextureAsset(string assetName)
     {
-        return Utility.Text.Format("Assets/Res/UI/Texture/{0}.png", assetName);
+        return Utility.Text.Format("Assets/GameMain/Res/UI/Texture/{0}.png", assetName);
     }
     
     public static string GetModelAsset(string assetName)
     {
-        return Utility.Text.Format("Assets/Resources/Prefab/Solider/{0}.png", assetName);
+        return Utility.Text.Format("Assets/Resources/Prefab/Model/{0}.asset", assetName);
     }
 }
