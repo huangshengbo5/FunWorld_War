@@ -5,7 +5,7 @@
 // Feedback: mailto:ellan@gameframework.cn
 //------------------------------------------------------------
 // 此文件由工具自动生成，请勿直接修改。
-// 生成时间：2024-12-24 11:58:19.725
+// 生成时间：2024-12-25 18:52:43.401
 //------------------------------------------------------------
 
 using GameFramework;
@@ -19,7 +19,7 @@ using UnityGameFramework.Runtime;
 //namespace __DATA_TABLE_NAME_SPACE__
 //{
     /// <summary>
-    /// 阵营表。
+    /// 。
     /// </summary>
     public class DRCamp : DataRowBase
     {
@@ -180,7 +180,6 @@ using UnityGameFramework.Runtime;
             }
 
             int index = 0;
-            index++;
             m_Id = int.Parse(columnStrings[index++]);
             index++;
             CampID_1 = int.Parse(columnStrings[index++]);

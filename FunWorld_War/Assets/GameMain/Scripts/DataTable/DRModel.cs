@@ -5,7 +5,7 @@
 // Feedback: mailto:ellan@gameframework.cn
 //------------------------------------------------------------
 // 此文件由工具自动生成，请勿直接修改。
-// 生成时间：2024-12-25 18:52:43.441
+// 生成时间：2024-12-25 18:52:43.455
 //------------------------------------------------------------
 
 using GameFramework;
@@ -21,12 +21,12 @@ using UnityGameFramework.Runtime;
     /// <summary>
     /// 。
     /// </summary>
-    public class DRUIForm : DataRowBase
+    public class DRModel : DataRowBase
     {
         private int m_Id = 0;
 
         /// <summary>
-        /// 获取界面编号。
+        /// 获取。
         /// </summary>
         public override int Id
         {
@@ -37,36 +37,45 @@ using UnityGameFramework.Runtime;
         }
 
         /// <summary>
-        /// 获取资源名称。
+        /// 获取模型资源。
         /// </summary>
-        public string AssetName
+        public string model
         {
             get;
             private set;
         }
 
         /// <summary>
-        /// 获取界面组名称。
+        /// 获取待机动作。
         /// </summary>
-        public string UIGroupName
+        public string Stand
         {
             get;
             private set;
         }
 
         /// <summary>
-        /// 获取是否允许多个界面实例。
+        /// 获取奔跑动作。
         /// </summary>
-        public bool AllowMultiInstance
+        public string Running
         {
             get;
             private set;
         }
 
         /// <summary>
-        /// 获取是否暂停被其覆盖的界面。
+        /// 获取死亡动作。
         /// </summary>
-        public bool PauseCoveredUIForm
+        public string Death
+        {
+            get;
+            private set;
+        }
+
+        /// <summary>
+        /// 获取缩放。
+        /// </summary>
+        public string zoom
         {
             get;
             private set;
@@ -83,10 +92,11 @@ using UnityGameFramework.Runtime;
             int index = 0;
             m_Id = int.Parse(columnStrings[index++]);
             index++;
-            AssetName = columnStrings[index++];
-            UIGroupName = columnStrings[index++];
-            AllowMultiInstance = bool.Parse(columnStrings[index++]);
-            PauseCoveredUIForm = bool.Parse(columnStrings[index++]);
+            model = columnStrings[index++];
+            Stand = columnStrings[index++];
+            Running = columnStrings[index++];
+            Death = columnStrings[index++];
+            zoom = columnStrings[index++];
 
             GeneratePropertyArray();
             return true;
@@ -99,10 +109,11 @@ using UnityGameFramework.Runtime;
                 using (BinaryReader binaryReader = new BinaryReader(memoryStream, Encoding.UTF8))
                 {
                     m_Id = binaryReader.Read7BitEncodedInt32();
-                    AssetName = binaryReader.ReadString();
-                    UIGroupName = binaryReader.ReadString();
-                    AllowMultiInstance = binaryReader.ReadBoolean();
-                    PauseCoveredUIForm = binaryReader.ReadBoolean();
+                    model = binaryReader.ReadString();
+                    Stand = binaryReader.ReadString();
+                    Running = binaryReader.ReadString();
+                    Death = binaryReader.ReadString();
+                    zoom = binaryReader.ReadString();
                 }
             }
 

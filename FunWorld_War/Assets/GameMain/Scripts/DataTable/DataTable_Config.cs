@@ -11,5 +11,6 @@ public static class DataTable_Config
         "UIForm",
         "Trademoney",
         "Attribute",  //属性表
+        "Model",
     };
 }
