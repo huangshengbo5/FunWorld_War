@@ -12,5 +12,6 @@ public static class DataTable_Config
         "Trademoney",
         "Attribute",  //属性表
         "Model",
+        "Fortress",
     };
 }

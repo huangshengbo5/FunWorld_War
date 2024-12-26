@@ -45,7 +45,7 @@ public class ProcedurePreload : ProcedureBase
             if (!loadedFlag.Value)
                 return;
         //procedureOwner.SetData<VarInt32>("NextSceneId", GameEntry.Config.GetInt("Scene.Main"));
-        ChangeState<ProcedureMenu>(procedureOwner);
+        //ChangeState<ProcedureMenu>(procedureOwner);
     }
 
     private void PreloadResources()
