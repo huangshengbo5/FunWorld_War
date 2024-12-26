@@ -18,11 +18,11 @@ public class Spawner_Solider : MonoBehaviour
     {
         
         yield return new WaitForSeconds(1f);
-        foreach (var dataTableName in DataTable_Config.DataTableNames)
-        {
-            var dataTableAssetName = AssetUtility.GetDataTableAsset(dataTableName, true);
-            GameEntry.DataTable.LoadDataTable( dataTableName, dataTableAssetName,null);
-        }
+        // foreach (var dataTableName in DataTable_Config.DataTableNames)
+        // {
+        //     var dataTableAssetName = AssetUtility.GetDataTableAsset(dataTableName, true);
+        //     GameEntry.DataTable.LoadDataTable( dataTableName, dataTableAssetName,null);
+        // }
         
         var NpcConfigs = GameEntry.DataTable.GetDataTable<DRNPC>();
         NpcConfig = NpcConfigs.GetDataRow(Soldier_Id);

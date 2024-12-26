@@ -68,6 +68,6 @@ public static class AssetUtility
     
     public static string GetModelAsset(string assetName)
     {
-        return Utility.Text.Format("Assets/Resources/Prefab/Model/{0}.asset", assetName);
+        return Utility.Text.Format("Assets/GameMain/Res/Prefab/Model/{0}.prefab", assetName);
     }
 }
