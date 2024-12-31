@@ -68,6 +68,7 @@ public partial class Solider : BaseObject
 
     public SoliderHUD soliderHUD;
 
+
     public SoliderCommander OwnerSoliderCommander
     {
         get => ownerSoliderCommander;
@@ -153,8 +154,6 @@ public partial class Solider : BaseObject
         Attack_Enemy,  //攻击敌人
         Dead,          //死亡
     }
-
-
     
     public void ChangeTargetObject(BaseObject targetTown)
     {

@@ -5,7 +5,7 @@
 // Feedback: mailto:ellan@gameframework.cn
 //------------------------------------------------------------
 // 此文件由工具自动生成，请勿直接修改。
-// 生成时间：2024-12-26 15:18:28.730
+// 生成时间：2024-12-31 16:47:50.458
 //------------------------------------------------------------
 
 using GameFramework;
@@ -26,7 +26,7 @@ using UnityGameFramework.Runtime;
         private int m_Id = 0;
 
         /// <summary>
-        /// 获取注释,货币id。
+        /// 获取//注释,货币id。
         /// </summary>
         public override int Id
         {
@@ -48,7 +48,7 @@ using UnityGameFramework.Runtime;
         /// <summary>
         /// 获取图标。
         /// </summary>
-        public string Icon
+        public string icon
         {
             get;
             private set;
@@ -66,7 +66,7 @@ using UnityGameFramework.Runtime;
             m_Id = int.Parse(columnStrings[index++]);
             index++;
             NameID = int.Parse(columnStrings[index++]);
-            Icon = columnStrings[index++];
+            icon = columnStrings[index++];
 
             GeneratePropertyArray();
             return true;
@@ -80,7 +80,7 @@ using UnityGameFramework.Runtime;
                 {
                     m_Id = binaryReader.Read7BitEncodedInt32();
                     NameID = binaryReader.Read7BitEncodedInt32();
-                    Icon = binaryReader.ReadString();
+                    icon = binaryReader.ReadString();
                 }
             }
 
