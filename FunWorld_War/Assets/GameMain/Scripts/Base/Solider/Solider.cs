@@ -1,11 +1,65 @@
 using System.Collections;
 using BehaviorDesigner.Runtime;
+using BehaviorDesigner.Runtime.Tasks.Unity.UnityGameObject;
 using GameFramework.Resource;
+using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.AI;
 
+[RequireComponent(typeof(NavMeshAgent))]
+[RequireComponent(typeof(BehaviorTree))]
 public partial class Solider : BaseObject
 {
+    private CampType campType;
+
+    public CampType CampType
+    {
+        get => campType;
+        set => campType = value;
+    }
+
+    public State curState;   //当前的单位状态
+    
+    public int ViewRedius;   //视野半径
+    public int AttackRedius;  //攻击半径
+    
+    private Animator Animator;
+    
+    protected BaseObject targetObject;
+    
+    //士兵归属的城镇
+    protected Town ownerTown;
+    
+    public BaseObject TargetObject
+    {
+        get
+        {
+            return this.targetObject;
+        }
+    }
+
+    public Town OwnerTown
+    {
+        get
+        {
+            return this.ownerTown;
+        }
+        set
+        {
+            this.ownerTown = value;
+        }
+    }
+    
+    private NavMeshAgent navMeshAgent;
+    
+    //伤害数值
+    public int Damage;
+    
+    //造成伤害时间间隔信息
+    private float AttackTimeStamp;
+    private float AttackInterval = 1;
+
+    private bool retreat;
     private BehaviorTree behaviorTree;
 
     private bool isKill;
@@ -29,9 +83,29 @@ public partial class Solider : BaseObject
     {
         CurHp = MaxHp;
         InitBehaviorTree();
+        InitComponent();
         isKill = false;
         soliderHUD.Init(this);
         soliderHUD.UpdatgeHP(CurHp,MaxHp);
+    }
+    
+    //初始化组件信息
+    void InitComponent()
+    {
+        var model = this.transform.Find("Model");
+        var childNum = model.childCount;
+        if (childNum == 0 || childNum > 1)
+        {
+            Debug.LogError($"gameobject.name:{this.gameObject.name} Model Num is Error");
+        }
+        var ani = model.GetChild(0);
+        Animator = ani.transform.GetComponent<Animator>();
+        if (!Animator)
+        {
+            Animator = ani.transform.AddComponent<Animator>();
+        }
+
+        navMeshAgent = transform.GetComponent<NavMeshAgent>();
     }
 
     public void Init_SoliderCommander(SoliderCommander soliderCommander)
@@ -80,56 +154,7 @@ public partial class Solider : BaseObject
         Dead,          //死亡
     }
 
-    private CampType campType;
 
-    public CampType CampType
-    {
-        get => campType;
-        set => campType = value;
-    }
-
-    public State curState;   //当前的单位状态
-    
-    public int ViewRedius;   //视野半径
-    public int AttackRedius;  //攻击半径
-    
-    public Animator Animator;
-    
-    protected BaseObject targetObject;
-    
-    //士兵归属的城镇
-    protected Town ownerTown;
-    
-    public BaseObject TargetObject
-    {
-        get
-        {
-            return this.targetObject;
-        }
-    }
-
-    public Town OwnerTown
-    {
-        get
-        {
-            return this.ownerTown;
-        }
-        set
-        {
-            this.ownerTown = value;
-        }
-    }
-    
-    public NavMeshAgent navMeshAgent;
-    
-    //伤害数值
-    public int Damage;
-    
-    //造成伤害时间间隔信息
-    private float AttackTimeStamp;
-    private float AttackInterval = 1;
-
-    private bool retreat;
     
     public void ChangeTargetObject(BaseObject targetTown)
     {
