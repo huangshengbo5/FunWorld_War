@@ -5,7 +5,7 @@
 // Feedback: mailto:ellan@gameframework.cn
 //------------------------------------------------------------
 // 此文件由工具自动生成，请勿直接修改。
-// 生成时间：2024-12-31 16:47:50.458
+// 生成时间：2025-01-06 19:35:01.542
 //------------------------------------------------------------
 
 using GameFramework;
@@ -26,7 +26,7 @@ using UnityGameFramework.Runtime;
         private int m_Id = 0;
 
         /// <summary>
-        /// 获取//注释,货币id。
+        /// 获取注释,货币id。
         /// </summary>
         public override int Id
         {
