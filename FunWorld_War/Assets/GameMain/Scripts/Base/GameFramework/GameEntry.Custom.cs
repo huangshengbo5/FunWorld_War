@@ -11,14 +11,13 @@ using UnityGameFramework.Runtime;
 /// </summary>
 public partial class GameEntry : MonoBehaviour
 {
-    
     public static ItemComponent Item
     {
         get;
         private set;
     }
 
-    
+    public static DTManager DTManager;
     public static TouchComponent Touch { get; private set; }
     private  void InitCustomComponents()
     {
@@ -27,6 +26,7 @@ public partial class GameEntry : MonoBehaviour
 #else
         Touch = gameObject.GetOrAddComponent<TouchComponent_Mobile>().Instance();
 #endif
+        DTManager = new DTManager();
     }
 
     private static void InitCustomDebuggers()

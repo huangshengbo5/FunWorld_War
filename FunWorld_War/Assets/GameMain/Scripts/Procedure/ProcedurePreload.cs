@@ -60,9 +60,8 @@ public class ProcedurePreload : ProcedureBase
         foreach (var dataTableName in DataTable_Config.DataTableNames)
             LoadDataTable(dataTableName);
 
-        //初始化配置处理器
-        DTAttributeManager dtAttributeManager = new DTAttributeManager();
-        dtAttributeManager.Initialize(GameEntry.DataTable.GetDataTable<DRAttribute>());
+        //初始化所有静态配置管理器
+        GameEntry.DTManager.InitAllDTManager();
         
         // // Preload dictionaries
         // LoadDictionary("Default");

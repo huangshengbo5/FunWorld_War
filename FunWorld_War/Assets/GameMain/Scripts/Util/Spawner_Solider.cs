@@ -1,8 +1,6 @@
-using System;
 using System.Collections;
 using GameFramework.Resource;
 using UnityEngine;
-using UnityGameFramework.Runtime;
 
 public class Spawner_Solider : MonoBehaviour
 {
@@ -16,14 +14,7 @@ public class Spawner_Solider : MonoBehaviour
 
     IEnumerator DelayLoadDataTable()
     {
-        
         yield return new WaitForSeconds(1f);
-        // foreach (var dataTableName in DataTable_Config.DataTableNames)
-        // {
-        //     var dataTableAssetName = AssetUtility.GetDataTableAsset(dataTableName, true);
-        //     GameEntry.DataTable.LoadDataTable( dataTableName, dataTableAssetName,null);
-        // }
-        
         var NpcConfigs = GameEntry.DataTable.GetDataTable<DRNPC>();
         NpcConfig = NpcConfigs.GetDataRow(Soldier_Id);
         var ModelConfigs = GameEntry.DataTable.GetDataTable<DRModel>();

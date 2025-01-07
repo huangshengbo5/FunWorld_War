@@ -1,6 +1,3 @@
-using GameFramework.DataTable;
-
-
 //属性类型
 public enum  AttrType
 {
@@ -18,12 +15,11 @@ public enum AttrKey
     Hp_ExtraPer  = 2002,
 }
 
-public class DTAttributeManager
+public class DTAttributeManager : DTBaseManager<DRAttribute>
 {
-    private IDataTable<DRAttribute> attributes;
-    public void Initialize(IDataTable<DRAttribute> dataRow)
+    public override void Initialize()
     {
-        attributes = dataRow;
+        attributes = GameEntry.DataTable.GetDataTable<DRAttribute>();
     }
 
     public AttrType GetAttrType(int id)
