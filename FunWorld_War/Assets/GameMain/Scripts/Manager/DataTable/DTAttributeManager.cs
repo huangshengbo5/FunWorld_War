@@ -19,17 +19,17 @@ public class DTAttributeManager : DTBaseManager<DRAttribute>
 {
     public override void Initialize()
     {
-        attributes = GameEntry.DataTable.GetDataTable<DRAttribute>();
+        DataTable = GameEntry.DataTable.GetDataTable<DRAttribute>();
     }
 
     public AttrType GetAttrType(int id)
     {
-        return (AttrType)attributes.GetDataRow(id).Type;
+        return (AttrType)DataTable.GetDataRow(id).Type;
     }
 
     public AttrType GetAttrType(string attrName)
     {
-        var data = attributes.GetAllDataRows();
+        var data = DataTable.GetAllDataRows();
         foreach (var dataItem in data)
         {
             if (dataItem.ValueName == attrName)

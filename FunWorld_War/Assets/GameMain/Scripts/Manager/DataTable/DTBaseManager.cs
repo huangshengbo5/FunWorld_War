@@ -3,7 +3,7 @@ using UnityGameFramework.Runtime;
 
 public abstract class DTBaseManager<T> where T : DataRowBase 
 {
-    protected IDataTable<T> attributes;
+    protected IDataTable<T> DataTable;
     
     public virtual void Initialize()
     {

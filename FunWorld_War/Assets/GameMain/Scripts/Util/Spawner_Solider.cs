@@ -29,13 +29,14 @@ public class Spawner_Solider : MonoBehaviour
     protected GameObject CreateSolider(GameObject ObjSolider)
     {
         var solider = (GameObject)Instantiate(ObjSolider);
-        solider.name = string.Format("Solider_{0}",Soldier_Id.ToString()) ;
+        solider.name = string.Format("Solider_{0}",Soldier_Id.ToString());
         var soliderTans = solider.GetComponent<Transform>();
         soliderTans.position = transform.position;
         soliderTans.localScale = Vector3.one;
         soliderTans.rotation = Quaternion.identity;
         var soliderCom = solider.GetComponent<Solider>();
         soliderCom.OwnerTown = null;
+        soliderCom.SoliderId = Soldier_Id;
         return solider;
     }
 }

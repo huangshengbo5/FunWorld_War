@@ -10,6 +10,14 @@ using UnityEngine.AI;
 [RequireComponent(typeof(BehaviorTree))]
 public partial class Solider : BaseObject
 {
+    private int soliderId;
+
+    public int SoliderId
+    {
+        get => soliderId;
+        set => soliderId = value;
+    }
+    
     private CampType campType;
 
     public CampType CampType

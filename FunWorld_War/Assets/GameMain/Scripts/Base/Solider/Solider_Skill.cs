@@ -5,8 +5,10 @@ public partial class Solider
     public void Init_Attribute()
     {
         Attribute = new Attribute();
+
+        //var allAvalue = GameEntry.DTManager.DTNPCManager.GetAllAvalue();
         var npc = GameEntry.DataTable.GetDataTable<DRNPC>();
-        //var npcConfig = npc.GetDataRow();
+        //var npcConfig = GameEntry.DTManager.DTNPCManager
     }
 
     public void Add_Attribute()
