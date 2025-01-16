@@ -1,4 +1,4 @@
-// Animancer // https://kybernetik.com.au/animancer // Copyright 2020 Kybernetik //
+// Animancer // https://kybernetik.com.au/animancer // Copyright 2018-2023 Kybernetik //
 
 using System;
 using System.Collections.Generic;
@@ -24,7 +24,8 @@ namespace Animancer
         {
 #if UNITY_ASSERTIONS
             if (clip.legacy)
-                throw new ArgumentException($"Legacy clip '{clip.name}' cannot be used by Animancer." +
+                throw new ArgumentException(
+                    $"Legacy clip '{clip.name}' cannot be used by Animancer." +
                     " Set the legacy property to false before using this clip." +
                     " If it was imported as part of a model then the model's Rig type must be changed to Humanoid or Generic." +
                     " Otherwise you can use the 'Toggle Legacy' function in the clip's context menu" +
@@ -41,7 +42,8 @@ namespace Animancer
         {
 #if UNITY_ASSERTIONS
             if (node.Root != root)
-                throw new ArgumentException($"{nameof(AnimancerNode)}.{nameof(AnimancerNode.Root)} mismatch:" +
+                throw new ArgumentException(
+                    $"{nameof(AnimancerNode)}.{nameof(AnimancerNode.Root)} mismatch:" +
                     $" cannot use a node in an {nameof(AnimancerPlayable)} that is not its {nameof(AnimancerNode.Root)}: " +
                     node.GetDescription());
 #endif
@@ -49,7 +51,7 @@ namespace Animancer
 
         /************************************************************************************************************************/
 
-        /// <summary>[Assert-Conditional] Throws if the state's <see cref="Playable"/> is invalid.</summary>
+        /// <summary>[Assert-Conditional] Throws if the `node`'s <see cref="Playable"/> is invalid.</summary>
         /// <exception cref="InvalidOperationException"/>
         [System.Diagnostics.Conditional(Strings.Assertions)]
         public static void AssertPlayable(AnimancerNode node)
@@ -58,16 +60,29 @@ namespace Animancer
             if (node._Playable.IsValid())
                 return;
 
+            var description = node.ToString();
+
+            var stackTrace = AnimancerNode.GetConstructorStackTrace(node);
+            if (stackTrace != null)
+                description += "\n\n" + stackTrace;
+
+            if (node is AnimancerState state)
+                state.Destroy();
+
             if (node.Root == null)
-                throw new InvalidOperationException($"{nameof(AnimancerNode)}.{nameof(AnimancerNode.Root)} hasn't been set so it's" +
+                throw new InvalidOperationException(
+                    $"{nameof(AnimancerNode)}.{nameof(AnimancerNode.Root)} hasn't been set so its" +
                     $" {nameof(Playable)} hasn't been created. It can be set by playing the state" +
                     $" or calling {nameof(AnimancerState.SetRoot)} on it directly." +
                     $" {nameof(AnimancerState.SetParent)} would also work if the parent has a {nameof(AnimancerNode.Root)}." +
-                    $"\nState: {node}");
+                    $"\n• State: {description}");
             else
-                throw new InvalidOperationException($"{nameof(AnimancerNode)}.{nameof(IPlayableWrapper.Playable)} has not been created." +
-                    $" {nameof(AnimancerNode.CreatePlayable)} likely needs to be called on it before performing this operation." +
-                    $"\nState: {node}");
+                throw new InvalidOperationException(
+                    $"{nameof(AnimancerNode)}.{nameof(IPlayableWrapper.Playable)}" +
+                    $" has either been destroyed or was never created." +
+                    $" {nameof(AnimancerNode.CreatePlayable)} likely needs" +
+                    $" to be called on it before performing this operation." +
+                    $"\n• State: {description}");
 #endif
         }
 
@@ -82,25 +97,26 @@ namespace Animancer
         /// The <see cref="AnimancerNode.Index"/> is larger than the number of `states`.
         /// </exception>
         [System.Diagnostics.Conditional(Strings.Assertions)]
-        public static void AssertCanRemoveChild(AnimancerState state, IList<AnimancerState> states)
+        public static void AssertCanRemoveChild(AnimancerState state, IList<AnimancerState> childStates, int childCount)
         {
 #if UNITY_ASSERTIONS
             var index = state.Index;
 
             if (index < 0)
                 throw new InvalidOperationException(
-                    "Cannot remove a child state that did not have an Index assigned");
+                    $"Cannot remove a child state that did not have an {nameof(state.Index)} assigned");
 
-            if (index > states.Count)
+            if (index > childCount)
                 throw new IndexOutOfRangeException(
-                    "AnimancerState.Index (" + state.Index + ") is outside the collection of states (count " + states.Count + ")");
+                    $"{nameof(AnimancerState)}.{nameof(state.Index)} ({state.Index})" +
+                    $" is outside the collection of states (count {childCount})");
 
-            if (states[state.Index] != state)
+            if (childStates[state.Index] != state)
                 throw new InvalidOperationException(
-                    "Cannot remove a child state that was not actually connected to its port on " + state.Parent + ":" +
-                    "\n    Port: " + state.Index +
-                    "\n    Connected Child: " + AnimancerUtilities.ToStringOrNull(states[state.Index]) +
-                    "\n    Disconnecting Child: " + AnimancerUtilities.ToStringOrNull(state));
+                    $"Cannot remove a child state that was not actually connected to its port on {state.Parent}:" +
+                    $"\n• Port: {state.Index}" +
+                    $"\n• Connected Child: {AnimancerUtilities.ToStringOrNull(childStates[state.Index])}" +
+                    $"\n• Disconnecting Child: {AnimancerUtilities.ToStringOrNull(state)}");
 #endif
         }
 

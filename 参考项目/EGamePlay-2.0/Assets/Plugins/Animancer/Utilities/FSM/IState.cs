@@ -1,5 +1,6 @@
-// Animancer // https://kybernetik.com.au/animancer // Copyright 2020 Kybernetik //
+// Animancer // https://kybernetik.com.au/animancer // Copyright 2018-2023 Kybernetik //
 
+using System;
 using UnityEngine;
 
 namespace Animancer.FSM
@@ -16,19 +17,19 @@ namespace Animancer.FSM
     {
         /// <summary>Can this state be entered?</summary>
         /// <remarks>
-        /// Called by <see cref="StateMachine{TState}.CanSetState"/>, <see cref="StateMachine{TState}.TrySetState"/>
+        /// Checked by <see cref="StateMachine{TState}.CanSetState"/>, <see cref="StateMachine{TState}.TrySetState"/>
         /// and <see cref="StateMachine{TState}.TryResetState"/>.
         /// <para></para>
-        /// Not called by <see cref="StateMachine{TState}.ForceSetState"/>.
+        /// Not checked by <see cref="StateMachine{TState}.ForceSetState"/>.
         /// </remarks>
         bool CanEnterState { get; }
 
         /// <summary>Can this state be exited?</summary>
         /// <remarks>
-        /// Called by <see cref="StateMachine{TState}.CanSetState"/>, <see cref="StateMachine{TState}.TrySetState"/>
+        /// Checked by <see cref="StateMachine{TState}.CanSetState"/>, <see cref="StateMachine{TState}.TrySetState"/>
         /// and <see cref="StateMachine{TState}.TryResetState"/>.
         /// <para></para>
-        /// Not called by <see cref="StateMachine{TState}.ForceSetState"/>.
+        /// Not checked by <see cref="StateMachine{TState}.ForceSetState"/>.
         /// </remarks>
         bool CanExitState { get; }
 
@@ -53,7 +54,7 @@ namespace Animancer.FSM
     /// <remarks>
     /// The <see cref="StateExtensions"/> class contains various extension methods for this interface.
     /// <para></para>
-    /// Documentation: <see href="https://kybernetik.com.au/animancer/docs/manual/fsm">Finite State Machines</see>
+    /// Documentation: <see href="https://kybernetik.com.au/animancer/docs/manual/fsm/state-types#owned-states">Owned States</see>
     /// </remarks>
     /// https://kybernetik.com.au/animancer/api/Animancer.FSM/IOwnedState_1
     public interface IOwnedState<TState> : IState where TState : class, IState
@@ -66,7 +67,7 @@ namespace Animancer.FSM
 
     /// <summary>An empty <see cref="IState"/> that implements all the required methods as <c>virtual</c>.</summary>
     /// <remarks>
-    /// Documentation: <see href="https://kybernetik.com.au/animancer/docs/manual/fsm">Finite State Machines</see>
+    /// Documentation: <see href="https://kybernetik.com.au/animancer/docs/manual/fsm/state-types">State Types</see>
     /// </remarks>
     /// https://kybernetik.com.au/animancer/api/Animancer.FSM/State
     /// 
@@ -99,35 +100,34 @@ namespace Animancer.FSM
     /// Documentation: <see href="https://kybernetik.com.au/animancer/docs/manual/fsm">Finite State Machines</see>
     /// </remarks>
     /// 
-    /// <example>
-    /// <code>
-    /// public class Creature : MonoBehaviour
+    /// <example><code>
+    /// public class Character : MonoBehaviour
     /// {
-    ///     public StateMachine&lt;CreatureState&gt; StateMachine { get; private set; }
+    ///     public StateMachine&lt;CharacterState&gt; StateMachine { get; private set; }
     /// }
     /// 
-    /// public class CreatureState : StateBehaviour, IOwnedState&lt;CreatureState&gt;
+    /// public class CharacterState : StateBehaviour, IOwnedState&lt;CharacterState&gt;
     /// {
     ///     [SerializeField]
-    ///     private Creature _Creature;
-    ///     public Creature Creature =&gt; _Creature;
+    ///     private Character _Character;
+    ///     public Character Character =&gt; _Character;
     ///     
-    ///     public StateMachine&lt;CreatureState&gt; OwnerStateMachine =&gt; _Creature.StateMachine;
+    ///     public StateMachine&lt;CharacterState&gt; OwnerStateMachine =&gt; _Character.StateMachine;
     /// }
     /// 
-    /// public class CreatureBrain : MonoBehaviour
+    /// public class CharacterBrain : MonoBehaviour
     /// {
-    ///     [SerializeField] private Creature _Creature;
-    ///     [SerializeField] private CreatureState _Jump;
+    ///     [SerializeField] private Character _Character;
+    ///     [SerializeField] private CharacterState _Jump;
     ///     
     ///     private void Update()
     ///     {
     ///         if (Input.GetKeyDown(KeyCode.Space))
     ///         {
     ///             // Normally you would need to refer to both the state machine and the state:
-    ///             _Creature.StateMachine.TrySetState(_Jump);
+    ///             _Character.StateMachine.TrySetState(_Jump);
     ///             
-    ///             // But since CreatureState implements IOwnedState you can use these extension methods:
+    ///             // But since CharacterState implements IOwnedState you can use these extension methods:
     ///             _Jump.TryEnterState();
     ///         }
     ///     }
@@ -144,12 +144,12 @@ namespace Animancer.FSM
     /// <para></para>
     /// For example, you might want to access members of a derived state class like this <c>SetTarget</c> method:
     /// <para></para><code>
-    /// public class AttackState : CreatureState
+    /// public class AttackState : CharacterState
     /// {
     ///     public void SetTarget(Transform target) { }
     /// }
     /// 
-    /// public class CreatureBrain : MonoBehaviour
+    /// public class CharacterBrain : MonoBehaviour
     /// {
     ///     [SerializeField] private AttackState _Attack;
     ///     
@@ -159,13 +159,13 @@ namespace Animancer.FSM
     ///         {
     ///             _Attack.SetTarget(...)
     ///             // Can't do _Attack.TryEnterState();
-    ///             _Attack.TryEnterState&lt;CreatureState&gt;();
+    ///             _Attack.TryEnterState&lt;CharacterState&gt;();
     ///         }
     ///     }
     /// }
     /// </code>
     /// Unlike the <c>_Jump</c> example, the <c>_Attack</c> field is an <c>AttackState</c> rather than the base
-    /// <c>CreatureState</c> so we can call <c>_Attack.SetTarget(...)</c> but that causes problems with these extension
+    /// <c>CharacterState</c> so we can call <c>_Attack.SetTarget(...)</c> but that causes problems with these extension
     /// methods.
     /// <para></para>
     /// Calling the method without specifying its generic argument automatically uses the variable's type as the
@@ -174,18 +174,16 @@ namespace Animancer.FSM
     /// _Attack.TryEnterState();
     /// _Attack.TryEnterState&lt;AttackState&gt;();
     /// </code>
-    /// <para></para>
     /// The problem is that <c>AttackState</c> inherits the implementation of <c>IOwnedState</c> from the base
-    /// <c>CreatureState</c> class. But since that implementation is <c>IOwnedState&lt;CreatureState&gt;</c>, rather
+    /// <c>CharacterState</c> class. But since that implementation is <c>IOwnedState&lt;CharacterState&gt;</c>, rather
     /// than <c>IOwnedState&lt;AttackState&gt;</c> that means <c>TryEnterState&lt;AttackState&gt;</c> does not satisfy
     /// that method's generic constraints: <c>where TState : class, IOwnedState&lt;TState&gt;</c>
     /// <para></para>
     /// That is why you simply need to specify the base class which implements <c>IOwnedState</c> as the generic
     /// argument to prevent it from inferring the wrong type:
     /// <para></para><code>
-    /// _Attack.TryEnterState&lt;CreatureState&gt;();
-    /// </code>  
-    /// </example>
+    /// _Attack.TryEnterState&lt;CharacterState&gt;();
+    /// </code></example>
     /// https://kybernetik.com.au/animancer/api/Animancer.FSM/StateExtensions
     [HelpURL(APIDocumentationURL + nameof(StateExtensions))]
     public static class StateExtensions
@@ -197,19 +195,19 @@ namespace Animancer.FSM
 
         /************************************************************************************************************************/
 
-        /// <summary>Returns the <see cref="StateChange{TState}.PreviousState"/>.</summary>
+        /// <summary>[Animancer Extension] Returns the <see cref="StateChange{TState}.PreviousState"/>.</summary>
         public static TState GetPreviousState<TState>(this TState state)
             where TState : class, IState
             => StateChange<TState>.PreviousState;
 
-        /// <summary>Returns the <see cref="StateChange{TState}.NextState"/>.</summary>
+        /// <summary>[Animancer Extension] Returns the <see cref="StateChange{TState}.NextState"/>.</summary>
         public static TState GetNextState<TState>(this TState state)
             where TState : class, IState
             => StateChange<TState>.NextState;
 
         /************************************************************************************************************************/
 
-        /// <summary>
+        /// <summary>[Animancer Extension]
         /// Checks if the specified `state` is the <see cref="StateMachine{TState}.CurrentState"/> in its
         /// <see cref="IOwnedState{TState}.OwnerStateMachine"/>.
         /// </summary>
@@ -219,7 +217,7 @@ namespace Animancer.FSM
 
         /************************************************************************************************************************/
 
-        /// <summary>
+        /// <summary>[Animancer Extension]
         /// Attempts to enter the specified `state` and returns true if successful.
         /// <para></para>
         /// This method returns true immediately if the specified `state` is already the
@@ -232,7 +230,7 @@ namespace Animancer.FSM
 
         /************************************************************************************************************************/
 
-        /// <summary>
+        /// <summary>[Animancer Extension]
         /// Attempts to enter the specified `state` and returns true if successful.
         /// <para></para>
         /// This method does not check if the `state` is already the <see cref="StateMachine{TState}.CurrentState"/>.
@@ -244,7 +242,7 @@ namespace Animancer.FSM
 
         /************************************************************************************************************************/
 
-        /// <summary>
+        /// <summary>[Animancer Extension]
         /// Calls <see cref="IState.OnExitState"/> on the <see cref="StateMachine{TState}.CurrentState"/> then
         /// changes to the specified `state` and calls <see cref="IState.OnEnterState"/> on it.
         /// <para></para>
@@ -298,5 +296,123 @@ namespace Animancer.FSM
         ///************************************************************************************************************************/
         //#endregion
         ///************************************************************************************************************************/
+
+#if UNITY_ASSERTIONS
+        /// <summary>[Internal] Returns an error message explaining that the wrong type of change is being accessed.</summary>
+        internal static string GetChangeError(Type stateType, Type machineType, string changeType = "State")
+        {
+            Type previousType = null;
+            Type baseStateType = null;
+            System.Collections.Generic.HashSet<Type> activeChangeTypes = null;
+
+            var stackTrace = new System.Diagnostics.StackTrace(1, false).GetFrames();
+            for (int i = 0; i < stackTrace.Length; i++)
+            {
+                var type = stackTrace[i].GetMethod().DeclaringType;
+                if (type != previousType &&
+                    type.IsGenericType &&
+                    type.GetGenericTypeDefinition() == machineType)
+                {
+                    var argument = type.GetGenericArguments()[0];
+                    if (argument.IsAssignableFrom(stateType))
+                    {
+                        baseStateType = argument;
+                        break;
+                    }
+                    else
+                    {
+                        if (activeChangeTypes == null)
+                            activeChangeTypes = new System.Collections.Generic.HashSet<Type>();
+
+                        if (!activeChangeTypes.Contains(argument))
+                            activeChangeTypes.Add(argument);
+                    }
+                }
+
+                previousType = type;
+            }
+
+            var text = new System.Text.StringBuilder()
+                .Append("Attempted to access ")
+                .Append(changeType)
+                .Append("Change<")
+                .Append(stateType.FullName)
+                .Append($"> but no {nameof(StateMachine<IState>)} of that type is currently changing its ")
+                .Append(changeType)
+                .AppendLine(".");
+
+            if (baseStateType != null)
+            {
+                text.Append(" - ")
+                    .Append(changeType)
+                    .Append(" changes must be accessed using the base ")
+                    .Append(changeType)
+                    .Append(" type, which is ")
+                    .Append(changeType)
+                    .Append("Change<")
+                    .Append(baseStateType.FullName)
+                    .AppendLine("> in this case.");
+
+                var caller = stackTrace[1].GetMethod();
+                if (caller.DeclaringType == typeof(StateExtensions))
+                {
+                    var propertyName = stackTrace[0].GetMethod().Name;
+                    propertyName = propertyName.Substring(4, propertyName.Length - 4);// Remove the "get_".
+
+                    text.Append(" - This may be caused by the compiler incorrectly inferring the generic argument of the Get")
+                        .Append(propertyName)
+                        .Append(" method, in which case it must be manually specified like so: state.Get")
+                        .Append(propertyName)
+                        .Append('<')
+                        .Append(baseStateType.FullName)
+                        .AppendLine(">()");
+                }
+            }
+            else
+            {
+                if (activeChangeTypes == null)
+                {
+                    text.Append(" - No other ")
+                        .Append(changeType)
+                        .AppendLine(" changes are currently occurring either.");
+                }
+                else
+                {
+                    if (activeChangeTypes.Count == 1)
+                    {
+                        text.Append(" - There is 1 ")
+                            .Append(changeType)
+                            .AppendLine(" change currently occurring:");
+                    }
+                    else
+                    {
+                        text.Append(" - There are ")
+                            .Append(activeChangeTypes.Count)
+                            .Append(' ')
+                            .Append(changeType)
+                            .AppendLine(" changes currently occurring:");
+                    }
+
+                    foreach (var type in activeChangeTypes)
+                    {
+                        text.Append("     - ")
+                            .AppendLine(type.FullName);
+                    }
+                }
+            }
+
+            text.Append(" - ")
+                .Append(changeType)
+                .Append("Change<")
+                .Append(stateType.FullName)
+                .AppendLine($">.{nameof(StateChange<IState>.IsActive)} can be used to check if a change of that type is currently occurring.")
+                .AppendLine(" - See the documentation for more information: " +
+                    "https://kybernetik.com.au/animancer/docs/manual/fsm/changing-states");
+
+            return text.ToString();
+        }
+#endif
+
+        /************************************************************************************************************************/
     }
 }

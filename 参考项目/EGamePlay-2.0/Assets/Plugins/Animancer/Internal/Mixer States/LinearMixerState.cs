@@ -1,4 +1,4 @@
-// Animancer // https://kybernetik.com.au/animancer // Copyright 2020 Kybernetik //
+// Animancer // https://kybernetik.com.au/animancer // Copyright 2018-2023 Kybernetik //
 
 using System;
 using System.Text;
@@ -20,8 +20,13 @@ namespace Animancer
     /// </remarks>
     /// https://kybernetik.com.au/animancer/api/Animancer/LinearMixerState
     /// 
-    public class LinearMixerState : MixerState<float>
+    public class LinearMixerState : MixerState<float>, ICopyable<LinearMixerState>
     {
+        /************************************************************************************************************************/
+
+        /// <summary>An <see cref="ITransition{TState}"/> that creates a <see cref="LinearMixerState"/>.</summary>
+        public new interface ITransition : ITransition<LinearMixerState> { }
+
         /************************************************************************************************************************/
 
         private bool _ExtrapolateSpeed = true;
@@ -35,6 +40,9 @@ namespace Animancer
             get => _ExtrapolateSpeed;
             set
             {
+                if (_ExtrapolateSpeed == value)
+                    return;
+
                 _ExtrapolateSpeed = value;
 
                 if (!_Playable.IsValid())
@@ -56,56 +64,29 @@ namespace Animancer
 
         /************************************************************************************************************************/
 
-        /// <summary>
-        /// Initialises the <see cref="AnimationMixerPlayable"/> and <see cref="ManualMixerState._States"/> with one
-        /// state per clip and assigns thresholds evenly spaced between the specified min and max (inclusive).
-        /// </summary>
-        public void Initialise(AnimationClip[] clips, float minThreshold = 0, float maxThreshold = 1)
-        {
-#if UNITY_ASSERTIONS
-            if (minThreshold >= maxThreshold)
-                throw new ArgumentException($"{nameof(minThreshold)} must be less than {nameof(maxThreshold)}");
-#endif
+        /// <inheritdoc/>
+        public override string GetParameterError(float value)
+            => value.IsFinite() ? null : Strings.MustBeFinite;
 
-            base.Initialise(clips);
-            AssignLinearThresholds(minThreshold, maxThreshold);
+        /************************************************************************************************************************/
+
+        /// <inheritdoc/>
+        public override AnimancerState Clone(AnimancerPlayable root)
+        {
+            var clone = new LinearMixerState();
+            clone.SetNewCloneRoot(root);
+            ((ICopyable<LinearMixerState>)clone).CopyFrom(this);
+            return clone;
         }
 
         /************************************************************************************************************************/
 
-        /// <summary>
-        /// Initialises the <see cref="AnimationMixerPlayable"/> with two ports and connects two states to them for
-        /// the specified clips at the specified thresholds (default 0 and 1).
-        /// </summary>
-        public void Initialise(AnimationClip clip0, AnimationClip clip1,
-            float threshold0 = 0, float threshold1 = 1)
+        /// <inheritdoc/>
+        void ICopyable<LinearMixerState>.CopyFrom(LinearMixerState copyFrom)
         {
-            Initialise(2);
-            CreateChild(0, clip0);
-            CreateChild(1, clip1);
-            SetThresholds(threshold0, threshold1);
-#if UNITY_ASSERTIONS
-            AssertThresholdsSorted();
-#endif
-        }
+            _ExtrapolateSpeed = copyFrom._ExtrapolateSpeed;
 
-        /************************************************************************************************************************/
-
-        /// <summary>
-        /// Initialises the <see cref="AnimationMixerPlayable"/> with three ports and connects three states to them for
-        /// the specified clips at the specified thresholds (default -1, 0, and 1).
-        /// </summary>
-        public void Initialise(AnimationClip clip0, AnimationClip clip1, AnimationClip clip2,
-            float threshold0 = -1, float threshold1 = 0, float threshold2 = 1)
-        {
-            Initialise(3);
-            CreateChild(0, clip0);
-            CreateChild(1, clip1);
-            CreateChild(2, clip2);
-            SetThresholds(threshold0, threshold1, threshold2);
-#if UNITY_ASSERTIONS
-            AssertThresholdsSorted();
-#endif
+            ((ICopyable<MixerState<float>>)this).CopyFrom(copyFrom);
         }
 
         /************************************************************************************************************************/
@@ -135,7 +116,7 @@ namespace Animancer
         /// any duplicates.
         /// </summary>
         /// <exception cref="ArgumentException"/>
-        /// <exception cref="InvalidOperationException">The thresholds have not been initialised.</exception>
+        /// <exception cref="InvalidOperationException">The thresholds have not been initialized.</exception>
         public void AssertThresholdsSorted()
         {
 #if UNITY_ASSERTIONS
@@ -143,14 +124,14 @@ namespace Animancer
 #endif
 
             if (!HasThresholds)
-                throw new InvalidOperationException("Thresholds have not been initialised");
+                throw new InvalidOperationException("Thresholds have not been initialized");
 
             var previous = float.NegativeInfinity;
 
             var childCount = ChildCount;
             for (int i = 0; i < childCount; i++)
             {
-                var state = GetChild(i);
+                var state = ChildStates[i];
                 if (state == null)
                     continue;
 
@@ -158,15 +139,17 @@ namespace Animancer
                 if (next > previous)
                     previous = next;
                 else
-                    throw new ArgumentException("Thresholds are out of order." +
-                        " They must be sorted from lowest to highest with no equal values.");
+                    throw new ArgumentException(
+                        (next == previous ? "Mixer has multiple identical thresholds." : "Mixer has thresholds out of order.") +
+                        " They must be sorted from lowest to highest with no equal values." +
+                        "\n" + GetDescription());
             }
         }
 
         /************************************************************************************************************************/
 
         /// <summary>
-        /// Recalculates the weights of all <see cref="ManualMixerState._States"/> based on the current value of the
+        /// Recalculates the weights of all <see cref="ManualMixerState.ChildStates"/> based on the
         /// <see cref="MixerState{TParameter}.Parameter"/> and the thresholds.
         /// </summary>
         protected override void ForceRecalculateWeights()
@@ -181,45 +164,49 @@ namespace Animancer
             // Go through all states, figure out how much weight to give those with thresholds adjacent to the
             // current parameter value using linear interpolation, and set all others to 0 weight.
 
-            var index = 0;
-            var previousState = GetNextState(ref index);
-            if (previousState == null)
+            var childCount = ChildCount;
+            if (childCount == 0)
                 goto ResetExtrapolatedSpeed;
+
+            var index = 0;
+            var previousState = ChildStates[index];
 
             var parameter = Parameter;
             var previousThreshold = GetThreshold(index);
 
             if (parameter <= previousThreshold)
             {
-                previousState.Weight = 1;
                 DisableRemainingStates(index);
-                goto ResetExtrapolatedSpeed;
-            }
 
-            var childCount = ChildCount;
-            while (++index < childCount)
-            {
-                var nextState = GetNextState(ref index);
-                if (nextState == null)
-                    break;
-
-                var nextThreshold = GetThreshold(index);
-
-                if (parameter > previousThreshold && parameter <= nextThreshold)
+                if (previousThreshold >= 0)
                 {
-                    var t = (parameter - previousThreshold) / (nextThreshold - previousThreshold);
-                    previousState.Weight = 1 - t;
-                    nextState.Weight = t;
-                    DisableRemainingStates(index);
+                    previousState.Weight = 1;
                     goto ResetExtrapolatedSpeed;
                 }
-                else
+            }
+            else
+            {
+                while (++index < childCount)
                 {
-                    previousState.Weight = 0;
-                }
+                    var nextState = ChildStates[index];
+                    var nextThreshold = GetThreshold(index);
 
-                previousState = nextState;
-                previousThreshold = nextThreshold;
+                    if (parameter > previousThreshold && parameter <= nextThreshold)
+                    {
+                        var t = (parameter - previousThreshold) / (nextThreshold - previousThreshold);
+                        previousState.Weight = 1 - t;
+                        nextState.Weight = t;
+                        DisableRemainingStates(index);
+                        goto ResetExtrapolatedSpeed;
+                    }
+                    else
+                    {
+                        previousState.Weight = 0;
+                    }
+
+                    previousState = nextState;
+                    previousThreshold = nextThreshold;
+                }
             }
 
             previousState.Weight = 1;
@@ -228,6 +215,7 @@ namespace Animancer
                 _Playable.SetSpeed(Speed * (parameter / previousThreshold));
 
             return;
+
             ResetExtrapolatedSpeed:
             if (ExtrapolateSpeed && _Playable.IsValid())
                 _Playable.SetSpeed(Speed);
@@ -238,8 +226,12 @@ namespace Animancer
         /// <summary>
         /// Assigns the thresholds to be evenly spaced between the specified min and max (inclusive).
         /// </summary>
-        public void AssignLinearThresholds(float min = 0, float max = 1)
+        public LinearMixerState AssignLinearThresholds(float min = 0, float max = 1)
         {
+#if UNITY_ASSERTIONS
+            if (min >= max)
+                throw new ArgumentException($"{nameof(min)} must be less than {nameof(max)}");
+#endif
             var childCount = ChildCount;
 
             var thresholds = new float[childCount];
@@ -255,18 +247,20 @@ namespace Animancer
             }
 
             SetThresholds(thresholds);
+
+            return this;
         }
 
         /************************************************************************************************************************/
 
         /// <inheritdoc/>
-        protected override void AppendDetails(StringBuilder text, string delimiter)
+        protected override void AppendDetails(StringBuilder text, string separator)
         {
-            text.Append(delimiter)
+            text.Append(separator)
                 .Append($"{nameof(ExtrapolateSpeed)}: ")
                 .Append(ExtrapolateSpeed);
 
-            base.AppendDetails(text, delimiter);
+            base.AppendDetails(text, separator);
         }
 
         /************************************************************************************************************************/
@@ -297,15 +291,7 @@ namespace Animancer
 
         /************************************************************************************************************************/
 
-        /// <summary>[Editor-Only] Draws the Inspector GUI for an <see cref="ControllerState"/>.</summary>
-        /// <remarks>
-        /// Unfortunately the tool used to generate this documentation does not currently support nested types with
-        /// identical names, so only one <c>Drawer</c> class will actually have a documentation page.
-        /// <para></para>
-        /// Documentation: <see href="https://kybernetik.com.au/animancer/docs/manual/transitions">Transitions</see>
-        /// <para></para>
-        /// Documentation: <see href="https://kybernetik.com.au/animancer/docs/manual/blending/mixers">Mixers</see>
-        /// </remarks>
+        /// <inheritdoc/>
         public class Drawer : Drawer<LinearMixerState>
         {
             /************************************************************************************************************************/
@@ -334,252 +320,6 @@ namespace Animancer
 
         /************************************************************************************************************************/
 #endif
-        /************************************************************************************************************************/
-        #endregion
-        /************************************************************************************************************************/
-        #region Transition
-        /************************************************************************************************************************/
-
-        /// <summary>
-        /// A serializable <see cref="ITransition"/> which can create a <see cref="LinearMixerState"/> when
-        /// passed into <see cref="AnimancerPlayable.Play(ITransition)"/>.
-        /// </summary>
-        /// <remarks>
-        /// Unfortunately the tool used to generate this documentation does not currently support nested types with
-        /// identical names, so only one <c>Transition</c> class will actually have a documentation page.
-        /// <para></para>
-        /// Documentation: <see href="https://kybernetik.com.au/animancer/docs/manual/transitions">Transitions</see>
-        /// <para></para>
-        /// Documentation: <see href="https://kybernetik.com.au/animancer/docs/manual/blending/mixers">Mixers</see>
-        /// </remarks>
-        /// https://kybernetik.com.au/animancer/api/Animancer/Transition
-        /// 
-        [Serializable]
-        public new class Transition : Transition<LinearMixerState, float>
-        {
-            /************************************************************************************************************************/
-
-            [SerializeField]
-            [Tooltip("Should setting the Parameter above the highest threshold increase the Speed of the mixer proportionally?")]
-            private bool _ExtrapolateSpeed = true;
-
-            /// <summary>[<see cref="SerializeField"/>]
-            /// Should setting the <see cref="MixerState{TParameter}.Parameter"/> above the highest threshold increase the
-            /// <see cref="AnimancerNode.Speed"/> of the mixer proportionally?
-            /// </summary>
-            public ref bool ExtrapolateSpeed => ref _ExtrapolateSpeed;
-
-            /************************************************************************************************************************/
-
-            /// <summary>
-            /// Creates and returns a new <see cref="LinearMixerState"/>.
-            /// <para></para>
-            /// Note that using methods like <see cref="AnimancerPlayable.Play(ITransition)"/> will also call
-            /// <see cref="ITransition.Apply"/>, so if you call this method manually you may want to call that method
-            /// as well. Or you can just use <see cref="AnimancerUtilities.CreateStateAndApply"/>.
-            /// <para></para>
-            /// This method also assigns it as the <see cref="AnimancerState.Transition{TState}.State"/>.
-            /// </summary>
-            public override LinearMixerState CreateState()
-            {
-                State = new LinearMixerState();
-                InitialiseState();
-                return State;
-            }
-
-            /************************************************************************************************************************/
-
-            /// <inheritdoc/>
-            public override void Apply(AnimancerState state)
-            {
-                base.Apply(state);
-                State.ExtrapolateSpeed = _ExtrapolateSpeed;
-            }
-
-            /************************************************************************************************************************/
-
-            /// <summary>
-            /// Sorts all states so that their thresholds go from lowest to highest.
-            /// <para></para>
-            /// This method uses Bubble Sort which is inefficient for large numbers of states.
-            /// </summary>
-            public void SortByThresholds()
-            {
-                var thresholdCount = Thresholds.Length;
-                if (thresholdCount <= 1)
-                    return;
-
-                var speedCount = Speeds.Length;
-                var syncCount = SynchroniseChildren.Length;
-
-                var previousThreshold = Thresholds[0];
-
-                for (int i = 1; i < thresholdCount; i++)
-                {
-                    var threshold = Thresholds[i];
-                    if (threshold >= previousThreshold)
-                    {
-                        previousThreshold = threshold;
-                        continue;
-                    }
-
-                    Thresholds.Swap(i, i - 1);
-                    States.Swap(i, i - 1);
-
-                    if (i < speedCount)
-                        Speeds.Swap(i, i - 1);
-
-                    if (i == syncCount && !SynchroniseChildren[i - 1])
-                    {
-                        var sync = SynchroniseChildren;
-                        Array.Resize(ref sync, ++syncCount);
-                        sync[i - 1] = true;
-                        sync[i] = false;
-                        SynchroniseChildren = sync;
-                    }
-                    else if (i < syncCount)
-                    {
-                        SynchroniseChildren.Swap(i, i - 1);
-                    }
-
-                    if (i == 1)
-                    {
-                        i = 0;
-                        previousThreshold = float.NegativeInfinity;
-                    }
-                    else
-                    {
-                        i -= 2;
-                        previousThreshold = Thresholds[i];
-                    }
-                }
-            }
-
-            /************************************************************************************************************************/
-            #region Drawer
-#if UNITY_EDITOR
-            /************************************************************************************************************************/
-
-            /// <summary>[Editor-Only] Draws the Inspector GUI for a <see cref="Transition"/>.</summary>
-            /// <remarks>
-            /// Unfortunately the tool used to generate this documentation does not currently support nested types with
-            /// identical names, so only one <c>Drawer</c> class will actually have a documentation page.
-            /// <para></para>
-            /// Documentation: <see href="https://kybernetik.com.au/animancer/docs/manual/transitions">Transitions</see>
-            /// <para></para>
-            /// Documentation: <see href="https://kybernetik.com.au/animancer/docs/manual/blending/mixers">Mixers</see>
-            /// </remarks>
-            [UnityEditor.CustomPropertyDrawer(typeof(Transition), true)]
-            public class Drawer : TransitionDrawer
-            {
-                /************************************************************************************************************************/
-
-                private static GUIContent _SortingErrorContent;
-
-                /// <inheritdoc/>
-                protected override void DoThresholdGUI(Rect area, int index)
-                {
-                    var color = GUI.color;
-
-                    if (index > 0)
-                    {
-                        var previousThreshold = CurrentThresholds.GetArrayElementAtIndex(index - 1);
-                        var currentThreshold = CurrentThresholds.GetArrayElementAtIndex(index);
-                        if (previousThreshold.floatValue >= currentThreshold.floatValue)
-                        {
-                            if (_SortingErrorContent == null)
-                            {
-                                _SortingErrorContent = UnityEditor.EditorGUIUtility.IconContent("console.erroricon.sml");
-
-                                _SortingErrorContent.tooltip =
-                                    "Linear Mixer Thresholds must always be sorted in ascending order (click to sort)";
-                            }
-
-                            var style = ObjectPool.GetCachedResult(() => new GUIStyle(GUI.skin.label)
-                            {
-                                padding = new RectOffset(),
-                            });
-
-                            var iconArea = Editor.AnimancerGUI.StealFromRight(ref area, area.height, Editor.AnimancerGUI.StandardSpacing);
-                            if (GUI.Button(iconArea, _SortingErrorContent, style))
-                            {
-                                Editor.Serialization.RecordUndo(Context.Property);
-                                ((Transition)Context.Transition).SortByThresholds();
-                            }
-
-                            GUI.color = Editor.AnimancerGUI.ErrorFieldColor;
-                        }
-                    }
-
-                    base.DoThresholdGUI(area, index);
-
-                    GUI.color = color;
-                }
-
-                /************************************************************************************************************************/
-
-                /// <inheritdoc/>
-                protected override void AddThresholdFunctionsToMenu(UnityEditor.GenericMenu menu)
-                {
-                    AddPropertyModifierFunction(menu, "Evenly Spaced", (_) =>
-                    {
-                        var count = CurrentThresholds.arraySize;
-                        if (count <= 1)
-                            return;
-
-                        var first = CurrentThresholds.GetArrayElementAtIndex(0).floatValue;
-                        var last = CurrentThresholds.GetArrayElementAtIndex(count - 1).floatValue;
-                        for (int i = 0; i < count; i++)
-                        {
-                            CurrentThresholds.GetArrayElementAtIndex(i).floatValue = Mathf.Lerp(first, last, i / (float)(count - 1));
-                        }
-                    });
-
-                    AddCalculateThresholdsFunction(menu, "From Speed",
-                        (state, threshold) => AnimancerUtilities.TryGetAverageVelocity(state, out var velocity) ? velocity.magnitude : float.NaN);
-                    AddCalculateThresholdsFunction(menu, "From Velocity X",
-                        (state, threshold) => AnimancerUtilities.TryGetAverageVelocity(state, out var velocity) ? velocity.x : float.NaN);
-                    AddCalculateThresholdsFunction(menu, "From Velocity Y",
-                        (state, threshold) => AnimancerUtilities.TryGetAverageVelocity(state, out var velocity) ? velocity.y : float.NaN);
-                    AddCalculateThresholdsFunction(menu, "From Velocity Z",
-                        (state, threshold) => AnimancerUtilities.TryGetAverageVelocity(state, out var velocity) ? velocity.z : float.NaN);
-                    AddCalculateThresholdsFunction(menu, "From Angular Speed (Rad)",
-                        (state, threshold) => AnimancerUtilities.TryGetAverageAngularSpeed(state, out var speed) ? speed : float.NaN);
-                    AddCalculateThresholdsFunction(menu, "From Angular Speed (Deg)",
-                        (state, threshold) => AnimancerUtilities.TryGetAverageAngularSpeed(state, out var speed) ? speed * Mathf.Rad2Deg : float.NaN);
-                }
-
-                /************************************************************************************************************************/
-
-                private void AddCalculateThresholdsFunction(UnityEditor.GenericMenu menu, string label,
-                    Func<Object, float, float> calculateThreshold)
-                {
-                    AddPropertyModifierFunction(menu, label, (property) =>
-                    {
-                        var count = CurrentStates.arraySize;
-                        for (int i = 0; i < count; i++)
-                        {
-                            var state = CurrentStates.GetArrayElementAtIndex(i).objectReferenceValue;
-                            if (state == null)
-                                continue;
-
-                            var threshold = CurrentThresholds.GetArrayElementAtIndex(i);
-                            var value = calculateThreshold(state, threshold.floatValue);
-                            if (!float.IsNaN(value))
-                                threshold.floatValue = value;
-                        }
-                    });
-                }
-
-                /************************************************************************************************************************/
-            }
-
-            /************************************************************************************************************************/
-#endif
-            #endregion
-            /************************************************************************************************************************/
-        }
-
         /************************************************************************************************************************/
         #endregion
         /************************************************************************************************************************/

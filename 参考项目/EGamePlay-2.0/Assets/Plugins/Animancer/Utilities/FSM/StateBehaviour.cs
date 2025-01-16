@@ -1,4 +1,4 @@
-// Animancer // https://kybernetik.com.au/animancer // Copyright 2020 Kybernetik //
+// Animancer // https://kybernetik.com.au/animancer // Copyright 2018-2023 Kybernetik //
 
 using UnityEngine;
 
@@ -6,7 +6,7 @@ namespace Animancer.FSM
 {
     /// <summary>Base class for <see cref="MonoBehaviour"/> states to be used in a <see cref="StateMachine{TState}"/>.</summary>
     /// <remarks>
-    /// Documentation: <see href="https://kybernetik.com.au/animancer/docs/manual/fsm">Finite State Machines</see>
+    /// Documentation: <see href="https://kybernetik.com.au/animancer/docs/manual/fsm/state-types">State Types</see>
     /// </remarks>
     /// https://kybernetik.com.au/animancer/api/Animancer.FSM/StateBehaviour
     /// 
@@ -36,8 +36,15 @@ namespace Animancer.FSM
         {
 #if UNITY_ASSERTIONS
             if (enabled)
-                Debug.LogError($"{this} was already enabled when entering its state", this);
+                Debug.LogError($"{nameof(StateBehaviour)} was already enabled before {nameof(OnEnterState)}: {this}", this);
 #endif
+#if UNITY_EDITOR
+            // Unity doesn't constantly repaint the Inspector if all the components are collapsed.
+            // So we can simply force it here to ensure that it shows the correct state being enabled.
+            else
+                UnityEditorInternal.InternalEditorUtility.RepaintAllViews();
+#endif
+
             enabled = true;
         }
 
@@ -53,7 +60,7 @@ namespace Animancer.FSM
 
 #if UNITY_ASSERTIONS
             if (!enabled)
-                Debug.LogError($"{this} was already disabled when exiting its state", this);
+                Debug.LogError($"{nameof(StateBehaviour)} was already disabled before {nameof(OnExitState)}: {this}", this);
 #endif
 
             enabled = false;
@@ -63,10 +70,7 @@ namespace Animancer.FSM
 
 #if UNITY_EDITOR
         /// <summary>[Editor-Only] States start disabled and only the current state gets enabled at runtime.</summary>
-        /// <remarks>
-        /// Called by the Unity Editor in Edit Mode whenever an instance of this script is loaded or a value is changed
-        /// in the Inspector.
-        /// </remarks>
+        /// <remarks>Called in Edit Mode whenever this script is loaded or a value is changed in the Inspector.</remarks>
         protected virtual void OnValidate()
         {
             if (UnityEditor.EditorApplication.isPlayingOrWillChangePlaymode)

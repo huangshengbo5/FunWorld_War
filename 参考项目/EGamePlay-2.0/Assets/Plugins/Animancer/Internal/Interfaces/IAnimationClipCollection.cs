@@ -1,4 +1,4 @@
-// Animancer // https://kybernetik.com.au/animancer // Copyright 2020 Kybernetik //
+// Animancer // https://kybernetik.com.au/animancer // Copyright 2018-2023 Kybernetik //
 
 using System;
 using System.Collections;
@@ -32,6 +32,7 @@ namespace Animancer
 
     /************************************************************************************************************************/
 
+    /// https://kybernetik.com.au/animancer/api/Animancer/AnimancerUtilities
     public static partial class AnimancerUtilities
     {
         /************************************************************************************************************************/
@@ -50,13 +51,13 @@ namespace Animancer
         /// <summary>[Animancer Extension]
         /// Calls <see cref="Gather(ICollection{AnimationClip}, AnimationClip)"/> for each of the `newClips`.
         /// </summary>
-        public static void Gather(this ICollection<AnimationClip> clips, IList<AnimationClip> newClips)
+        public static void Gather(this ICollection<AnimationClip> clips, IList<AnimationClip> gatherFrom)
         {
-            if (newClips == null)
+            if (gatherFrom == null)
                 return;
 
-            for (int i = newClips.Count - 1; i >= 0; i--)
-                clips.Gather(newClips[i]);
+            for (int i = gatherFrom.Count - 1; i >= 0; i--)
+                clips.Gather(gatherFrom[i]);
         }
 
         /************************************************************************************************************************/
@@ -64,18 +65,16 @@ namespace Animancer
         /// <summary>[Animancer Extension]
         /// Calls <see cref="Gather(ICollection{AnimationClip}, AnimationClip)"/> for each of the `newClips`.
         /// </summary>
-        public static void Gather(this ICollection<AnimationClip> clips, IEnumerable<AnimationClip> newClips)
+        public static void Gather(this ICollection<AnimationClip> clips, IEnumerable<AnimationClip> gatherFrom)
         {
-            if (newClips == null)
+            if (gatherFrom == null)
                 return;
 
-            foreach (var clip in newClips)
+            foreach (var clip in gatherFrom)
                 clips.Gather(clip);
         }
 
         /************************************************************************************************************************/
-
-        private static Editor.ConversionCache<Type, MethodInfo> _TypeToGetRootTracks;
 
         /// <summary>[Animancer Extension]
         /// Calls <see cref="Gather(ICollection{AnimationClip}, AnimationClip)"/> for each clip in the `asset`.
@@ -87,75 +86,24 @@ namespace Animancer
 
             // We want to get the tracks out of a TimelineAsset without actually referencing that class directly
             // because it comes from an optional package and Animancer does not need to depend on that package.
-            if (_TypeToGetRootTracks == null)
-            {
-                _TypeToGetRootTracks = new Editor.ConversionCache<Type, MethodInfo>((type) =>
-                {
-                    var method = type.GetMethod("GetRootTracks");
-                    if (method != null &&
-                        typeof(IEnumerable).IsAssignableFrom(method.ReturnType) &&
-                        method.GetParameters().Length == 0)
-                        return method;
-                    else
-                        return null;
-                });
-            }
 
-            var getRootTracks = _TypeToGetRootTracks.Convert(asset.GetType());
-            if (getRootTracks != null)
+            var method = asset.GetType().GetMethod("GetRootTracks");
+            if (method != null &&
+                typeof(IEnumerable).IsAssignableFrom(method.ReturnType) &&
+                method.GetParameters().Length == 0)
             {
-                var rootTracks = getRootTracks.Invoke(asset, null);
-                GatherAnimationClips(rootTracks as IEnumerable, clips);
+                var rootTracks = method.Invoke(asset, null);
+                GatherFromTracks(clips, rootTracks as IEnumerable);
             }
         }
 
         /************************************************************************************************************************/
 
-        private static Editor.ConversionCache<Type, MethodInfo>
-            _TrackAssetToGetClips,
-            _TrackAssetToGetChildTracks,
-            _TimelineClipToAnimationClip;
-
         /// <summary>Gathers all the animations in the `tracks`.</summary>
-        private static void GatherAnimationClips(IEnumerable tracks, ICollection<AnimationClip> clips)
+        private static void GatherFromTracks(ICollection<AnimationClip> clips, IEnumerable tracks)
         {
             if (tracks == null)
                 return;
-
-            if (_TrackAssetToGetClips == null)
-            {
-                _TrackAssetToGetClips = new Editor.ConversionCache<Type, MethodInfo>((type) =>
-                {
-                    var method = type.GetMethod("GetClips");
-                    if (method != null &&
-                        typeof(IEnumerable).IsAssignableFrom(method.ReturnType) &&
-                        method.GetParameters().Length == 0)
-                        return method;
-                    else
-                        return null;
-                });
-
-                _TimelineClipToAnimationClip = new Editor.ConversionCache<Type, MethodInfo>((type) =>
-                {
-                    var property = type.GetProperty("animationClip");
-                    if (property != null &&
-                        property.PropertyType == typeof(AnimationClip))
-                        return property.GetGetMethod();
-                    else
-                        return null;
-                });
-
-                _TrackAssetToGetChildTracks = new Editor.ConversionCache<Type, MethodInfo>((type) =>
-                {
-                    var method = type.GetMethod("GetChildTracks");
-                    if (method != null &&
-                        typeof(IEnumerable).IsAssignableFrom(method.ReturnType) &&
-                        method.GetParameters().Length == 0)
-                        return method;
-                    else
-                        return null;
-                });
-            }
 
             foreach (var track in tracks)
             {
@@ -164,26 +112,34 @@ namespace Animancer
 
                 var trackType = track.GetType();
 
-                var getClips = _TrackAssetToGetClips.Convert(trackType);
-                if (getClips != null)
+                var getClips = trackType.GetMethod("GetClips");
+                if (getClips != null &&
+                    typeof(IEnumerable).IsAssignableFrom(getClips.ReturnType) &&
+                    getClips.GetParameters().Length == 0)
                 {
                     var trackClips = getClips.Invoke(track, null) as IEnumerable;
                     if (trackClips != null)
                     {
                         foreach (var clip in trackClips)
                         {
-                            var getClip = _TimelineClipToAnimationClip.Convert(clip.GetType());
-                            if (getClip != null)
+                            var animationClip = clip.GetType().GetProperty("animationClip");
+                            if (animationClip != null &&
+                                animationClip.PropertyType == typeof(AnimationClip))
+                            {
+                                var getClip = animationClip.GetGetMethod();
                                 clips.Gather(getClip.Invoke(clip, null) as AnimationClip);
+                            }
                         }
                     }
                 }
 
-                var getChildTracks = _TrackAssetToGetChildTracks.Convert(trackType);
-                if (getChildTracks != null)
+                var getChildTracks = trackType.GetMethod("GetChildTracks");
+                if (getChildTracks != null &&
+                    typeof(IEnumerable).IsAssignableFrom(getChildTracks.ReturnType) &&
+                    getChildTracks.GetParameters().Length == 0)
                 {
                     var childTracks = getChildTracks.Invoke(track, null);
-                    GatherAnimationClips(childTracks as IEnumerable, clips);
+                    GatherFromTracks(clips, childTracks as IEnumerable);
                 }
             }
         }
@@ -201,8 +157,20 @@ namespace Animancer
 
             var list = ObjectPool.AcquireList<AnimationClip>();
             source.GetAnimationClips(list);
-            clips.Gather((IEnumerable<AnimationClip>)list);
+            clips.Gather(list);
             ObjectPool.Release(list);
+        }
+
+        /************************************************************************************************************************/
+
+        /// <summary>[Animancer Extension]
+        /// Calls <see cref="GatherFromSource(ICollection{AnimationClip}, object)"/> for each item in the `source`.
+        /// </summary>
+        public static void GatherFromSource(this ICollection<AnimationClip> clips, IEnumerable source)
+        {
+            if (source != null)
+                foreach (var item in source)
+                    clips.GatherFromSource(item);
         }
 
         /************************************************************************************************************************/
@@ -213,21 +181,27 @@ namespace Animancer
         /// </summary>
         public static bool GatherFromSource(this ICollection<AnimationClip> clips, object source)
         {
-            if (source is AnimationClip clip)
+            if (TryGetWrappedObject(source, out AnimationClip clip))
             {
                 clips.Gather(clip);
                 return true;
             }
 
-            if (source is IAnimationClipCollection collectionSource)
+            if (TryGetWrappedObject(source, out IAnimationClipCollection collectionSource))
             {
                 collectionSource.GatherAnimationClips(clips);
                 return true;
             }
 
-            if (source is IAnimationClipSource listSource)
+            if (TryGetWrappedObject(source, out IAnimationClipSource listSource))
             {
                 clips.GatherFromSource(listSource);
+                return true;
+            }
+
+            if (TryGetWrappedObject(source, out IEnumerable enumerable))
+            {
+                clips.GatherFromSource(enumerable);
                 return true;
             }
 
@@ -236,16 +210,38 @@ namespace Animancer
 
         /************************************************************************************************************************/
 
-        /// <summary>[Animancer Extension]
-        /// Calls <see cref="GatherFromSource(ICollection{AnimationClip}, object)"/> for each of the `sources`.
+        /// <summary>
+        /// Attempts to get the <see cref="AnimationClip.frameRate"/> from the `clipSource` and returns true if
+        /// successful. If it has multiple animations with different rates, this method returns false.
         /// </summary>
-        public static void GatherFromSources(this ICollection<AnimationClip> clips, IList sources)
+        public static bool TryGetFrameRate(object clipSource, out float frameRate)
         {
-            if (sources == null)
-                return;
+            using (ObjectPool.Disposable.AcquireSet<AnimationClip>(out var clips))
+            {
+                clips.GatherFromSource(clipSource);
+                if (clips.Count == 0)
+                {
+                    frameRate = float.NaN;
+                    return false;
+                }
 
-            foreach (var source in sources)
-                clips.GatherFromSource(source);
+                frameRate = float.NaN;
+
+                foreach (var clip in clips)
+                {
+                    if (float.IsNaN(frameRate))
+                    {
+                        frameRate = clip.frameRate;
+                    }
+                    else if (frameRate != clip.frameRate)
+                    {
+                        frameRate = float.NaN;
+                        return false;
+                    }
+                }
+
+                return frameRate > 0;
+            }
         }
 
         /************************************************************************************************************************/

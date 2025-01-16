@@ -1,4 +1,4 @@
-// Animancer // https://kybernetik.com.au/animancer // Copyright 2020 Kybernetik //
+// Animancer // https://kybernetik.com.au/animancer // Copyright 2018-2023 Kybernetik //
 
 using UnityEngine;
 
@@ -13,8 +13,14 @@ namespace Animancer
         /// <summary>Modify the current fade to use the specified `curve` to calculate the weight.</summary>
         /// <example>See <see cref="CustomFade"/>.</example>
         /// <remarks>The `curve` should follow the <see cref="OptionalWarning.CustomFadeBounds"/> guideline.</remarks>
+        public static void Apply(AnimancerComponent animancer, AnimationCurve curve)
+            => Apply(animancer.States.Current, curve);
+
+        /// <summary>Modify the current fade to use the specified `curve` to calculate the weight.</summary>
+        /// <example>See <see cref="CustomFade"/>.</example>
+        /// <remarks>The `curve` should follow the <see cref="OptionalWarning.CustomFadeBounds"/> guideline.</remarks>
         public static void Apply(AnimancerPlayable animancer, AnimationCurve curve)
-            => Curve.Acquire(curve).Apply(animancer);
+            => Apply(animancer.States.Current, curve);
 
         /// <summary>Modify the current fade to use the specified `curve` to calculate the weight.</summary>
         /// <example>See <see cref="CustomFade"/>.</example>
@@ -22,10 +28,17 @@ namespace Animancer
         public static void Apply(AnimancerState state, AnimationCurve curve)
             => Curve.Acquire(curve).Apply(state);
 
+        /// <summary>Modify the current fade to use the specified `curve` to calculate the weight.</summary>
+        /// <example>See <see cref="CustomFade"/>.</example>
+        /// <remarks>The `curve` should follow the <see cref="OptionalWarning.CustomFadeBounds"/> guideline.</remarks>
+        public static void Apply(AnimancerNode node, AnimationCurve curve)
+            => Curve.Acquire(curve).Apply(node);
+
         /************************************************************************************************************************/
 
-        /// <summary>A <see cref="CustomFade"/> which uses a delegate to calculate the weight.</summary>
-        private sealed class Curve : CustomFade
+        /// <summary>A <see cref="CustomFade"/> which uses an <see cref="AnimationCurve"/> to calculate the weight.</summary>
+        /// <example>See <see cref="CustomFade"/>.</example>
+        private class Curve : CustomFade
         {
             /************************************************************************************************************************/
 

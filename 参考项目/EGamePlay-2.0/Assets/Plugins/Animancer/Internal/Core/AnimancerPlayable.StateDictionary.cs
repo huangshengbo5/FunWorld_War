@@ -1,4 +1,4 @@
-// Animancer // https://kybernetik.com.au/animancer // Copyright 2020 Kybernetik //
+// Animancer // https://kybernetik.com.au/animancer // Copyright 2018-2023 Kybernetik //
 
 using System;
 using System.Collections;
@@ -17,7 +17,7 @@ namespace Animancer
         /// </remarks>
         /// https://kybernetik.com.au/animancer/api/Animancer/StateDictionary
         /// 
-        public sealed class StateDictionary : IEnumerable<KeyValuePair<object, AnimancerState>>, IAnimationClipCollection
+        public class StateDictionary : IEnumerable<AnimancerState>, IAnimationClipCollection
         {
             /************************************************************************************************************************/
 
@@ -26,21 +26,20 @@ namespace Animancer
 
             /************************************************************************************************************************/
 
-            /// <summary>
-            /// Determines the <see cref="IEqualityComparer{T}"/> used by every new <see cref="StateDictionary"/> when
-            /// it is created. Changing this value will not affect existing instances.
-            /// <list type="bullet">
-            /// <item>The default is false, which will use a <see cref="FastComparer"/>.</item>
-            /// <item>Setting it to true will use a <see cref="FastReferenceComparer"/>, which is faster but does not
-            /// work for value types such as enums because it uses <see cref="object.ReferenceEquals"/>.</item>
-            /// </list>
-            /// </summary>
-            public static bool ReferenceKeysOnly { get; set; }
+            /// <summary>The <see cref="IEqualityComparer{T}"/> used by every new <see cref="StateDictionary"/>.</summary>
+            /// <remarks>
+            /// By default, this will use <see cref="FastComparer.Instance"/>.
+            /// <para></para>
+            /// Setting it to <see cref="FastReferenceComparer.Instance"/> would make it slightly faster, but would
+            /// not work for value types such as enums.
+            /// <para></para>
+            /// Changing this value will not affect existing instances.
+            /// </remarks>
+            public static IEqualityComparer<object> EqualityComparer { get; set; } = FastComparer.Instance;
 
             /// <summary><see cref="AnimancerState.Key"/> mapped to <see cref="AnimancerState"/>.</summary>
             private readonly Dictionary<object, AnimancerState>
-                States = new Dictionary<object, AnimancerState>(
-                    ReferenceKeysOnly ? (IEqualityComparer<object>)FastReferenceComparer.Instance : FastComparer.Instance);
+                States = new Dictionary<object, AnimancerState>(EqualityComparer);
 
             /************************************************************************************************************************/
 
@@ -56,48 +55,40 @@ namespace Animancer
             #region Create
             /************************************************************************************************************************/
 
-            /// <summary>
-            /// Creates and returns a new <see cref="ClipState"/> to play the `clip`.
-            /// <para></para>
-            /// To create a state on a different layer, call <c>animancer.Layers[x].CreateState(clip)</c> instead.
-            /// </summary>
+            /// <summary>Creates and returns a new <see cref="ClipState"/> to play the `clip`.</summary>
             /// <remarks>
+            /// To create a state on a specific layer, use <c>animancer.Layers[x].CreateState(clip)</c> instead.
+            /// <para></para>
             /// <see cref="GetKey"/> is used to determine the <see cref="AnimancerState.Key"/>.
             /// </remarks>
-            public ClipState Create(AnimationClip clip) => Root.Layers[0].CreateState(clip);
+            public ClipState Create(AnimationClip clip)
+                => Create(Root.GetKey(clip), clip);
 
             /// <summary>
             /// Creates and returns a new <see cref="ClipState"/> to play the `clip` and registers it with the `key`.
-            /// <para></para>
-            /// To create a state on a different layer, call <c>animancer.Layers[x].CreateState(key, clip)</c> instead.
             /// </summary>
-            public ClipState Create(object key, AnimationClip clip) => Root.Layers[0].CreateState(key, clip);
-
-            /// <summary>
-            /// Creates and returns a new <typeparamref name="T"/>.
-            /// <para></para>
-            /// To create it on a different layer, call <c>animancer.Layers[x].CreateState&lt;T&gt;()</c> instead.
-            /// </summary>
-            public T Create<T>() where T : AnimancerState, new() => Root.Layers[0].CreateState<T>();
+            /// <remarks>
+            /// To create a state on a specific layer, use <c>animancer.Layers[x].CreateState(key, clip)</c> instead.
+            /// </remarks>
+            public ClipState Create(object key, AnimationClip clip)
+            {
+                var state = new ClipState(clip);
+                state.SetRoot(Root);
+                state._Key = key;
+                Register(state);
+                return state;
+            }
 
             /************************************************************************************************************************/
 
-            /// <summary>
-            /// Calls <see cref="GetOrCreate(AnimationClip, bool)"/> for each of the specified clips.
-            /// <para></para>
-            /// If you only want to create a single state, use <see cref="AnimancerLayer.CreateState(AnimationClip)"/>.
-            /// </summary>
+            /// <summary>Calls <see cref="GetOrCreate(AnimationClip, bool)"/> for each of the specified clips.</summary>
             public void CreateIfNew(AnimationClip clip0, AnimationClip clip1)
             {
                 GetOrCreate(clip0);
                 GetOrCreate(clip1);
             }
 
-            /// <summary>
-            /// Calls <see cref="GetOrCreate(AnimationClip, bool)"/> for each of the specified clips.
-            /// <para></para>
-            /// If you only want to create a single state, use <see cref="AnimancerLayer.CreateState(AnimationClip)"/>.
-            /// </summary>
+            /// <summary>Calls <see cref="GetOrCreate(AnimationClip, bool)"/> for each of the specified clips.</summary>
             public void CreateIfNew(AnimationClip clip0, AnimationClip clip1, AnimationClip clip2)
             {
                 GetOrCreate(clip0);
@@ -105,11 +96,7 @@ namespace Animancer
                 GetOrCreate(clip2);
             }
 
-            /// <summary>
-            /// Calls <see cref="GetOrCreate(AnimationClip, bool)"/> for each of the specified clips.
-            /// <para></para>
-            /// If you only want to create a single state, use <see cref="AnimancerLayer.CreateState(AnimationClip)"/>.
-            /// </summary>
+            /// <summary>Calls <see cref="GetOrCreate(AnimationClip, bool)"/> for each of the specified clips.</summary>
             public void CreateIfNew(AnimationClip clip0, AnimationClip clip1, AnimationClip clip2, AnimationClip clip3)
             {
                 GetOrCreate(clip0);
@@ -118,11 +105,7 @@ namespace Animancer
                 GetOrCreate(clip3);
             }
 
-            /// <summary>
-            /// Calls <see cref="GetOrCreate(AnimationClip, bool)"/> for each of the specified `clips`.
-            /// <para></para>
-            /// If you only want to create a single state, use <see cref="AnimancerLayer.CreateState(AnimationClip)"/>.
-            /// </summary>
+            /// <summary>Calls <see cref="GetOrCreate(AnimationClip, bool)"/> for each of the specified `clips`.</summary>
             public void CreateIfNew(params AnimationClip[] clips)
             {
                 if (clips == null)
@@ -183,7 +166,7 @@ namespace Animancer
                     return false;
                 }
 
-                return States.TryGetValue(Root.GetKey(clip), out state);
+                return TryGet(Root.GetKey(clip), out state);
             }
 
             /// <summary>
@@ -198,14 +181,23 @@ namespace Animancer
                     return false;
                 }
 
-                return States.TryGetValue(hasKey.Key, out state);
+                return TryGet(hasKey.Key, out state);
             }
 
             /// <summary>
-            /// If a state is registered with the `key`, this method outputs it as the `state` and returns true. Otherwise
+            /// If a `state` is registered with the `key`, this method outputs it and returns true. Otherwise the
             /// `state` is set to null and this method returns false.
             /// </summary>
-            public bool TryGet(object key, out AnimancerState state) => States.TryGetValue(key, out state);
+            public bool TryGet(object key, out AnimancerState state)
+            {
+                if (key == null)
+                {
+                    state = null;
+                    return false;
+                }
+
+                return States.TryGetValue(key, out state);
+            }
 
             /************************************************************************************************************************/
 
@@ -216,7 +208,7 @@ namespace Animancer
             /// If the state already exists but has the wrong <see cref="AnimancerState.Clip"/>, the `allowSetClip`
             /// parameter determines what will happen. False causes it to throw an <see cref="ArgumentException"/> while
             /// true allows it to change the <see cref="AnimancerState.Clip"/>. Note that the change is somewhat costly to
-            /// performance to use with caution.
+            /// performance so use with caution.
             /// </summary>
             /// <exception cref="ArgumentException"/>
             public AnimancerState GetOrCreate(AnimationClip clip, bool allowSetClip = false)
@@ -230,12 +222,12 @@ namespace Animancer
             public AnimancerState GetOrCreate(ITransition transition)
             {
                 var key = transition.Key;
-
-                if (!States.TryGetValue(key, out var state))
+                if (!TryGet(key, out var state))
                 {
                     state = transition.CreateState();
                     state.SetRoot(Root);
-                    Register(key, state);
+                    state._Key = key;
+                    Register(state);
                 }
 
                 return state;
@@ -250,14 +242,10 @@ namespace Animancer
             /// performance to use with caution.
             /// </summary>
             /// <exception cref="ArgumentException"/>
-            /// <exception cref="ArgumentNullException">The `key` is null.</exception>
             /// <remarks>See also: <see cref="AnimancerLayer.GetOrCreateState(object, AnimationClip, bool)"/></remarks>
             public AnimancerState GetOrCreate(object key, AnimationClip clip, bool allowSetClip = false)
             {
-                if (key == null)
-                    throw new ArgumentNullException(nameof(key));
-
-                if (States.TryGetValue(key, out var state))
+                if (TryGet(key, out var state))
                 {
                     // If a state exists with the 'key' but has the wrong clip, either change it or complain.
                     if (!ReferenceEquals(state.Clip, clip))
@@ -274,7 +262,7 @@ namespace Animancer
                 }
                 else
                 {
-                    state = Root.Layers[0].CreateState(key, clip);
+                    state = Create(key, clip);
                 }
 
                 return state;
@@ -285,18 +273,21 @@ namespace Animancer
             /// <summary>Returns an error message explaining that a state already exists with the specified `key`.</summary>
             public static string GetClipMismatchError(object key, AnimationClip oldClip, AnimationClip newClip)
                 => $"A state already exists using the specified '{nameof(key)}', but has a different {nameof(AnimationClip)}:" +
-                $"\n - Key: {key}" +
-                $"\n - Old Clip: {oldClip}" +
-                $"\n - New Clip: {newClip}";
+                $"\n• Key: {key}" +
+                $"\n• Old Clip: {oldClip}" +
+                $"\n• New Clip: {newClip}";
 
             /************************************************************************************************************************/
 
             /// <summary>[Internal]
-            /// Registers the `state` in this dictionary so the `key` can be used to get it later on using
-            /// <see cref="this[object]"/>.
+            /// Registers the `state` in this dictionary so the <see cref="AnimancerState.Key"/> can be used to get it
+            /// later on using any of the lookup methods such as <see cref="this[object]"/> or
+            /// <see cref="TryGet(object, out AnimancerState)"/>.
             /// </summary>
-            internal void Register(object key, AnimancerState state)
+            /// <remarks>Does nothing if the <see cref="AnimancerState.Key"/> is <c>null</c>.</remarks>
+            internal void Register(AnimancerState state)
             {
+                var key = state._Key;
                 if (key != null)
                 {
 #if UNITY_ASSERTIONS
@@ -307,20 +298,14 @@ namespace Animancer
 
                     States.Add(key, state);
                 }
-
-                state._Key = key;
             }
 
-            /// <summary>[Internal]
-            /// Removes the `state` from this dictionary.
-            /// </summary>
+            /// <summary>[Internal] Removes the `state` from this dictionary (the opposite of <see cref="Register"/>).</summary>
             internal void Unregister(AnimancerState state)
             {
-                if (state._Key == null)
-                    return;
-
-                States.Remove(state._Key);
-                state._Key = null;
+                var key = state._Key;
+                if (key != null)
+                    States.Remove(key);
             }
 
             /************************************************************************************************************************/
@@ -329,17 +314,22 @@ namespace Animancer
             // IEnumerable for 'foreach' statements.
             /************************************************************************************************************************/
 
-            /// <summary>
-            /// Returns an enumerator that will iterate through all states in each layer (not states inside mixers).
-            /// </summary>
-            public IEnumerator<KeyValuePair<object, AnimancerState>> GetEnumerator() => States.GetEnumerator();
+            /// <summary>Returns an enumerator that will iterate through all registered states.</summary>
+            public Dictionary<object, AnimancerState>.ValueCollection.Enumerator GetEnumerator()
+                => States.Values.GetEnumerator();
 
-            IEnumerator IEnumerable.GetEnumerator() => GetEnumerator();
+            /// <inheritdoc/>
+            IEnumerator<AnimancerState> IEnumerable<AnimancerState>.GetEnumerator()
+                => GetEnumerator();
+
+            /// <inheritdoc/>
+            IEnumerator IEnumerable.GetEnumerator()
+                => GetEnumerator();
 
             /************************************************************************************************************************/
 
             /// <summary>[<see cref="IAnimationClipCollection"/>]
-            /// Gathers all the animations in all layers.
+            /// Adds all the animations of states with a <see cref="AnimancerState.Key"/> to the `clips`.
             /// </summary>
             public void GatherAnimationClips(ICollection<AnimationClip> clips)
             {
@@ -385,16 +375,11 @@ namespace Animancer
             /// </summary>
             public bool Destroy(object key)
             {
-                if (key == null)
+                if (!TryGet(key, out var state))
                     return false;
 
-                if (States.TryGetValue(key, out var state))
-                {
-                    state.Destroy();
-                    return true;
-                }
-
-                return false;
+                state.Destroy();
+                return true;
             }
 
             /************************************************************************************************************************/
@@ -452,21 +437,6 @@ namespace Animancer
             }
 
             /************************************************************************************************************************/
-
-            /// <summary>
-            /// Destroys all states connected to all layers (regardless of whether they are actually registered in this
-            /// dictionary).
-            /// </summary>
-            public void DestroyAll()
-            {
-                var count = Root.Layers.Count;
-                while (--count >= 0)
-                    Root.Layers._Layers[count].DestroyStates();
-
-                States.Clear();
-            }
-
-            /************************************************************************************************************************/
             #endregion
             /************************************************************************************************************************/
             #region Key Error Methods
@@ -480,14 +450,14 @@ namespace Animancer
             /// You should not use an <see cref="AnimancerState"/> as a key.
             /// The whole point of a key is to identify a state in the first place.
             /// </summary>
-            [System.Obsolete("You should not use an AnimancerState as a key. The whole point of a key is to identify a state in the first place.", true)]
+            [Obsolete("You should not use an AnimancerState as a key. The whole point of a key is to identify a state in the first place.", true)]
             public AnimancerState this[AnimancerState key] => key;
 
             /// <summary>[Warning]
             /// You should not use an <see cref="AnimancerState"/> as a key.
             /// The whole point of a key is to identify a state in the first place.
             /// </summary>
-            [System.Obsolete("You should not use an AnimancerState as a key. The whole point of a key is to identify a state in the first place.", true)]
+            [Obsolete("You should not use an AnimancerState as a key. The whole point of a key is to identify a state in the first place.", true)]
             public bool TryGet(AnimancerState key, out AnimancerState state)
             {
                 state = key;
@@ -498,14 +468,14 @@ namespace Animancer
             /// You should not use an <see cref="AnimancerState"/> as a key.
             /// The whole point of a key is to identify a state in the first place.
             /// </summary>
-            [System.Obsolete("You should not use an AnimancerState as a key. The whole point of a key is to identify a state in the first place.", true)]
+            [Obsolete("You should not use an AnimancerState as a key. The whole point of a key is to identify a state in the first place.", true)]
             public AnimancerState GetOrCreate(AnimancerState key, AnimationClip clip) => key;
 
             /// <summary>[Warning]
             /// You should not use an <see cref="AnimancerState"/> as a key.
             /// Just call <see cref="AnimancerState.Destroy"/>.
             /// </summary>
-            [System.Obsolete("You should not use an AnimancerState as a key. Just call AnimancerState.Destroy.", true)]
+            [Obsolete("You should not use an AnimancerState as a key. Just call AnimancerState.Destroy.", true)]
             public bool Destroy(AnimancerState key)
             {
                 key.Destroy();

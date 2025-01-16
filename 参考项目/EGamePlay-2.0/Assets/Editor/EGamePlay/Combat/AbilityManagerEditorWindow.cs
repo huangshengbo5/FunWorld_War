@@ -32,9 +32,9 @@ namespace EGamePlay.Combat
             var window = GetWindow<AbilityManagerEditorWindow>(false, "AbilityManagerEditor");
         }
 
-        protected override void OnImGUI()
+        protected  void OnImGUI()
 		{
-			base.OnImGUI();
+			//base.OnImGUI();
 
 			if (GUILayout.Button("CreateAbility"))
 			{

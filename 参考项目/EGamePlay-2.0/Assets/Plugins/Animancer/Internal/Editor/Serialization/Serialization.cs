@@ -1,4 +1,4 @@
-// Serialization // Copyright 2020 Kybernetik //
+// Serialization // Copyright 2018-2023 Kybernetik //
 
 #if UNITY_EDITOR
 
@@ -11,7 +11,7 @@ using UnityEditor;
 using UnityEngine;
 using Object = UnityEngine.Object;
 
-// Shared File Last Modified: 2020-11-07.
+// Shared File Last Modified: 2023-02-24
 namespace Animancer.Editor
 // namespace InspectorGadgets.Editor
 // namespace UltEvents.Editor
@@ -44,6 +44,10 @@ namespace Animancer.Editor
         public const string
             ArrayDataPrefix = ".Array.data[",
             ArrayDataSuffix = "]";
+
+        /// <summary>Bindings for Public and Non-Public Instance members.</summary>
+        public const BindingFlags
+            InstanceBindings = BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance;
 
         /************************************************************************************************************************/
 
@@ -161,12 +165,12 @@ namespace Animancer.Editor
                 case SerializedPropertyType.ArraySize:
                     return property.intValue == default;
 
-                case SerializedPropertyType.Vector2: return property.vector2Value == default;
-                case SerializedPropertyType.Vector3: return property.vector3Value == default;
-                case SerializedPropertyType.Vector4: return property.vector4Value == default;
+                case SerializedPropertyType.Vector2: return property.vector2Value.Equals(default);
+                case SerializedPropertyType.Vector3: return property.vector3Value.Equals(default);
+                case SerializedPropertyType.Vector4: return property.vector4Value.Equals(default);
 
-                case SerializedPropertyType.Quaternion: return property.quaternionValue == default;
-                case SerializedPropertyType.Color: return property.colorValue == default;
+                case SerializedPropertyType.Quaternion: return property.quaternionValue.Equals(default);
+                case SerializedPropertyType.Color: return property.colorValue.Equals(default);
                 case SerializedPropertyType.AnimationCurve: return property.animationCurveValue == default;
 
                 case SerializedPropertyType.Rect: return property.rectValue == default;
@@ -318,10 +322,13 @@ namespace Animancer.Editor
 
         /************************************************************************************************************************/
 
-        /// <summary>Resets the value of the <see cref="SerializedProperty"/> to the default value of its type.</summary>
+        /// <summary>
+        /// Resets the value of the <see cref="SerializedProperty"/> to the default value of its type and all its field
+        /// types, ignoring values set by constructors or field initializers.
+        /// </summary>
         /// <remarks>
-        /// This method sets the target value to <c>null</c> then makes Unity deserialize it to run its default
-        /// constructor and field initialisers.
+        /// If you want to run constructors and field initializers, you can call
+        /// <see cref="PropertyAccessor.ResetValue"/> instead.
         /// </remarks>
         public static void ResetValue(SerializedProperty property, string undoName = "Inspector")
         {
@@ -420,8 +427,6 @@ namespace Animancer.Editor
                     toRelative.propertyType == from.propertyType &&
                     toRelative.type == from.type)
                 {
-                    //Debug.Log($"Copying from '{from.propertyPath}' to '{toRelative.propertyPath}'");
-
                     // GetValue and SetValue currently access the underlying field for enums, but we need the stored value.
                     if (toRelative.propertyType == SerializedPropertyType.Enum)
                         toRelative.enumValueIndex = from.enumValueIndex;
@@ -510,10 +515,7 @@ namespace Animancer.Editor
             get
             {
                 if (_GradientValue == null)
-                {
-                    _GradientValue = typeof(SerializedProperty).GetProperty("gradientValue",
-                        BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance);
-                }
+                    _GradientValue = typeof(SerializedProperty).GetProperty("gradientValue", InstanceBindings);
 
                 return _GradientValue;
             }
@@ -774,6 +776,9 @@ namespace Animancer.Editor
         public static void RemoveArrayElement(SerializedProperty property, int index)
         {
             var count = property.arraySize;
+            if ((uint)index >= count)
+                return;
+
             property.DeleteArrayElementAtIndex(index);
             if (property.arraySize == count)
                 property.DeleteArrayElementAtIndex(index);
@@ -796,7 +801,7 @@ namespace Animancer.Editor
         public static PropertyAccessor GetAccessor(this SerializedProperty property)
         {
             var type = property.serializedObject.targetObject.GetType();
-            return GetAccessor(property.propertyPath, ref type);
+            return GetAccessor(property, property.propertyPath, ref type);
         }
 
         /************************************************************************************************************************/
@@ -805,7 +810,7 @@ namespace Animancer.Editor
         /// Returns an <see cref="PropertyAccessor"/> for a <see cref="SerializedProperty"/> with the specified `propertyPath`
         /// on the specified `type` of object.
         /// </summary>
-        private static PropertyAccessor GetAccessor(string propertyPath, ref Type type)
+        private static PropertyAccessor GetAccessor(SerializedProperty property, string propertyPath, ref Type type)
         {
             if (!TypeToPathToAccessor.TryGetValue(type, out var pathToAccessor))
             {
@@ -834,8 +839,8 @@ namespace Animancer.Editor
                     FieldInfo field;
                     if (nameStartIndex >= 0)
                     {
-                        parent = GetAccessor(propertyPath.Substring(0, nameStartIndex), ref type);
-                        field = GetField(parent != null ? parent.FieldType : type, elementName);
+                        parent = GetAccessor(property, propertyPath.Substring(0, nameStartIndex), ref type);
+                        field = GetField(parent, property, type, elementName);
                     }
                     else
                     {
@@ -843,17 +848,14 @@ namespace Animancer.Editor
                         field = GetField(type, elementName);
                     }
 
-                    if (field != null)
-                        accessor = new CollectionPropertyAccessor(parent, field, index);
-                    else
-                        accessor = null;
+                    accessor = new CollectionPropertyAccessor(parent, elementName, field, index);
                 }
                 else// Single.
                 {
                     if (nameStartIndex >= 0)
                     {
                         elementName = propertyPath.Substring(nameStartIndex + 1);
-                        parent = GetAccessor(propertyPath.Substring(0, nameStartIndex), ref type);
+                        parent = GetAccessor(property, propertyPath.Substring(0, nameStartIndex), ref type);
                     }
                     else
                     {
@@ -861,19 +863,27 @@ namespace Animancer.Editor
                         parent = null;
                     }
 
-                    var field = GetField(parent != null ? parent.FieldType : type, elementName);
+                    var field = GetField(parent, property, type, elementName);
 
-                    if (field != null)
-                        accessor = new PropertyAccessor(parent, field);
-                    else
-                        accessor = null;
+                    accessor = new PropertyAccessor(parent, elementName, field);
                 }
 
                 pathToAccessor.Add(propertyPath, accessor);
             }
 
             if (accessor != null)
-                type = accessor.Field.FieldType;
+            {
+                var field = accessor.GetField(property);
+                if (field != null)
+                {
+                    type = field.FieldType;
+                }
+                else
+                {
+                    var value = accessor.GetValue(property);
+                    type = value?.GetType();
+                }
+            }
 
             return accessor;
         }
@@ -881,18 +891,27 @@ namespace Animancer.Editor
         /************************************************************************************************************************/
 
         /// <summary>Returns a field with the specified `name` in the `declaringType` or any of its base types.</summary>
-        private static FieldInfo GetField(Type declaringType, string name)
+        /// <remarks>Uses the <see cref="InstanceBindings"/>.</remarks>
+        public static FieldInfo GetField(PropertyAccessor accessor, SerializedProperty property, Type declaringType, string name)
         {
-            while (true)
+            declaringType = accessor?.GetFieldElementType(property) ?? declaringType;
+            return GetField(declaringType, name);
+        }
+
+        /// <summary>Returns a field with the specified `name` in the `declaringType` or any of its base types.</summary>
+        /// <remarks>Uses the <see cref="InstanceBindings"/>.</remarks>
+        public static FieldInfo GetField(Type declaringType, string name)
+        {
+            while (declaringType != null)
             {
-                var field = declaringType.GetField(name, BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance);
+                var field = declaringType.GetField(name, InstanceBindings);
                 if (field != null)
                     return field;
 
                 declaringType = declaringType.BaseType;
-                if (declaringType == null)
-                    return null;
             }
+
+            return null;
         }
 
         /************************************************************************************************************************/
@@ -911,26 +930,136 @@ namespace Animancer.Editor
             /// <summary>The accessor for the field which this accessor is nested inside.</summary>
             public readonly PropertyAccessor Parent;
 
-            /// <summary>The field wrapped by this accessor.</summary>
-            public readonly FieldInfo Field;
+            /// <summary>The name of the field wrapped by this accessor.</summary>
+            public readonly string Name;
 
-            /// <summary>The type of the wrapped <see cref="Field"/>.</summary>
-            public readonly Type FieldType;
+            /// <summary>The field wrapped by this accessor.</summary>
+            protected readonly FieldInfo Field;
+
+            /// <summary>
+            /// The type of the wrapped <see cref="Field"/>.
+            /// Or if it's a collection, this is the type of items in the collection.
+            /// </summary>
+            protected readonly Type FieldElementType;
 
             /************************************************************************************************************************/
 
             /// <summary>[Internal] Creates a new <see cref="PropertyAccessor"/>.</summary>
-            internal PropertyAccessor(PropertyAccessor parent, FieldInfo field)
-                : this(parent, field, field.FieldType)
+            internal PropertyAccessor(PropertyAccessor parent, string name, FieldInfo field)
+                : this(parent, name, field, field?.FieldType)
             { }
 
             /// <summary>Creates a new <see cref="PropertyAccessor"/>.</summary>
-            protected PropertyAccessor(PropertyAccessor parent, FieldInfo field, Type fieldType)
+            protected PropertyAccessor(PropertyAccessor parent, string name, FieldInfo field, Type fieldElementType)
             {
                 Parent = parent;
+                Name = name;
                 Field = field;
-                FieldType = fieldType;
+                FieldElementType = fieldElementType;
             }
+
+            /************************************************************************************************************************/
+
+            /// <summary>Returns the <see cref="Field"/> if there is one or tries to get it from the object's type.</summary>
+            /// 
+            /// <remarks>
+            /// If this accessor has a <see cref="Parent"/>, the `obj` must be associated with the root
+            /// <see cref="SerializedProperty"/> and this method will change it to reference the parent field's value.
+            /// </remarks>
+            /// 
+            /// <example><code>
+            /// [Serializable]
+            /// public class InnerClass
+            /// {
+            ///     public float value;
+            /// }
+            /// 
+            /// [Serializable]
+            /// public class RootClass
+            /// {
+            ///     public InnerClass inner;
+            /// }
+            /// 
+            /// public class MyBehaviour : MonoBehaviour
+            /// {
+            ///     public RootClass root;
+            /// }
+            /// 
+            /// [UnityEditor.CustomEditor(typeof(MyBehaviour))]
+            /// public class MyEditor : UnityEditor.Editor
+            /// {
+            ///     private void OnEnable()
+            ///     {
+            ///         var serializedObject = new SerializedObject(target);
+            ///         var rootProperty = serializedObject.FindProperty("root");
+            ///         var innerProperty = rootProperty.FindPropertyRelative("inner");
+            ///         var valueProperty = innerProperty.FindPropertyRelative("value");
+            /// 
+            ///         var accessor = valueProperty.GetAccessor();
+            /// 
+            ///         object obj = target;
+            ///         var valueField = accessor.GetField(ref obj);
+            ///         // valueField is a FieldInfo referring to InnerClass.value.
+            ///         // obj now holds the ((MyBehaviour)target).root.inner.
+            ///     }
+            /// }
+            /// </code></example>
+            /// 
+            public FieldInfo GetField(ref object obj)
+            {
+                if (Parent != null)
+                    obj = Parent.GetValue(obj);
+
+                if (Field != null)
+                    return Field;
+
+                if (obj is null)
+                    return null;
+
+                return Serialization.GetField(obj.GetType(), Name);
+            }
+
+            /// <summary>
+            /// Returns the <see cref="Field"/> if there is one, otherwise calls <see cref="GetField(ref object)"/>.
+            /// </summary>
+            public FieldInfo GetField(object obj)
+                => Field ?? GetField(ref obj);
+
+            /// <summary>
+            /// Calls <see cref="GetField(object)"/> with the <see cref="SerializedObject.targetObject"/>.
+            /// </summary>
+            public FieldInfo GetField(SerializedObject serializedObject)
+                => serializedObject != null ? GetField(serializedObject.targetObject) : null;
+
+            /// <summary>
+            /// Calls <see cref="GetField(SerializedObject)"/> with the
+            /// <see cref="SerializedProperty.serializedObject"/>.
+            /// </summary>
+            public FieldInfo GetField(SerializedProperty serializedProperty)
+                => serializedProperty != null ? GetField(serializedProperty.serializedObject) : null;
+
+            /************************************************************************************************************************/
+
+            /// <summary>
+            /// Returns the <see cref="FieldElementType"/> if there is one, otherwise calls <see cref="GetField(ref object)"/>
+            /// and returns its <see cref="FieldInfo.FieldType"/>.
+            /// </summary>
+            public virtual Type GetFieldElementType(object obj)
+                => FieldElementType ?? GetField(ref obj)?.FieldType;
+
+            /// <summary>
+            /// Calls <see cref="GetFieldElementType(object)"/> with the
+            /// <see cref="SerializedObject.targetObject"/>.
+            /// </summary>
+            public Type GetFieldElementType(SerializedObject serializedObject)
+                => serializedObject != null ? GetFieldElementType(serializedObject.targetObject) : null;
+
+            /// <summary>
+            /// Calls <see cref="GetFieldElementType(SerializedObject)"/> with the
+            /// <see cref="SerializedProperty.serializedObject"/>.
+            /// </summary>
+            public Type GetFieldElementType(SerializedProperty serializedProperty)
+                => serializedProperty != null ? GetFieldElementType(serializedProperty.serializedObject) : null;
 
             /************************************************************************************************************************/
 
@@ -940,13 +1069,12 @@ namespace Animancer.Editor
             /// </summary>
             public virtual object GetValue(object obj)
             {
-                if (Parent != null)
-                    obj = Parent.GetValue(obj);
-
-                if (ReferenceEquals(obj, null))
+                var field = GetField(ref obj);
+                if (field is null ||
+                    (obj is null && !field.IsStatic))
                     return null;
 
-                return Field.GetValue(obj);
+                return field.GetValue(obj);
             }
 
             /// <summary>
@@ -961,7 +1089,7 @@ namespace Animancer.Editor
             /// the value of the <see cref="Field"/>.
             /// </summary>
             public object GetValue(SerializedProperty serializedProperty)
-                => serializedProperty != null ? GetValue(serializedProperty.serializedObject) : null;
+                => serializedProperty != null ? GetValue(serializedProperty.serializedObject.targetObject) : null;
 
             /************************************************************************************************************************/
 
@@ -971,13 +1099,13 @@ namespace Animancer.Editor
             /// </summary>
             public virtual void SetValue(object obj, object value)
             {
-                if (Parent != null)
-                    obj = Parent.GetValue(obj);
+                var field = GetField(ref obj);
 
-                if (obj is null)
+                if (field is null ||
+                    obj is null)
                     return;
 
-                Field.SetValue(obj, value);
+                field.SetValue(obj, value);
             }
 
             /// <summary>
@@ -1002,16 +1130,27 @@ namespace Animancer.Editor
 
             /************************************************************************************************************************/
 
-            /// <summary>Resets the value of the <see cref="SerializedProperty"/> to the default value of its type.</summary>
+            /// <summary>
+            /// Resets the value of the <see cref="SerializedProperty"/> to the default value of its type by executing
+            /// its constructor and field initializers.
+            /// </summary>
             /// <remarks>
-            /// This method sets the target value to <c>null</c> then makes Unity deserialize it to run its default
-            /// constructor and field initialisers.
+            /// If you don't want to run constructors and field initializers, you can call
+            /// <see cref="Serialization.ResetValue"/> instead.
             /// </remarks>
+            /// <example><code>
+            /// SerializedProperty property;
+            /// property.GetAccessor().ResetValue(property);
+            /// </code></example>
             public void ResetValue(SerializedProperty property, string undoName = "Inspector")
             {
                 property.RecordUndo(undoName);
                 property.serializedObject.ApplyModifiedProperties();
-                SetValue(property, null);
+
+                var type = GetValue(property)?.GetType();
+                var value = type != null ? Activator.CreateInstance(type) : null;
+                SetValue(property, value);
+
                 property.serializedObject.Update();
             }
 
@@ -1021,9 +1160,9 @@ namespace Animancer.Editor
             public override string ToString()
             {
                 if (Parent != null)
-                    return $"{Parent}.{Field.Name}";
+                    return $"{Parent}.{Name}";
                 else
-                    return Field.Name;
+                    return Name;
             }
 
             /************************************************************************************************************************/
@@ -1032,9 +1171,9 @@ namespace Animancer.Editor
             public virtual string GetPath()
             {
                 if (Parent != null)
-                    return $"{Parent.GetPath()}.{Field.Name}";
+                    return $"{Parent.GetPath()}.{Name}";
                 else
-                    return Field.Name;
+                    return Name;
             }
 
             /************************************************************************************************************************/
@@ -1057,31 +1196,34 @@ namespace Animancer.Editor
             /************************************************************************************************************************/
 
             /// <summary>[Internal] Creates a new <see cref="CollectionPropertyAccessor"/>.</summary>
-            internal CollectionPropertyAccessor(PropertyAccessor parent, FieldInfo field, int elementIndex)
-                : base(parent, field, GetElementType(field.FieldType))
+            internal CollectionPropertyAccessor(PropertyAccessor parent, string name, FieldInfo field, int elementIndex)
+                : base(parent, name, field, GetElementType(field?.FieldType))
             {
                 ElementIndex = elementIndex;
             }
 
             /************************************************************************************************************************/
 
+            /// <inheritdoc/>
+            public override Type GetFieldElementType(object obj) => FieldElementType ?? GetElementType(GetField(ref obj)?.FieldType);
+
+            /************************************************************************************************************************/
+
             /// <summary>Returns the type of elements in the array.</summary>
             public static Type GetElementType(Type fieldType)
             {
+                if (fieldType == null)
+                    return null;
+
                 if (fieldType.IsArray)
-                {
                     return fieldType.GetElementType();
-                }
-                else if (fieldType.IsGenericType)
-                {
+
+                if (fieldType.IsGenericType)
                     return fieldType.GetGenericArguments()[0];
-                }
-                else
-                {
-                    Debug.LogWarning($"{nameof(Serialization)}.{nameof(CollectionPropertyAccessor)}:" +
-                        $" unable to determine element type for {fieldType}");
-                    return fieldType;
-                }
+
+                Debug.LogWarning($"{nameof(Serialization)}.{nameof(CollectionPropertyAccessor)}:" +
+                    $" unable to determine element type for {fieldType}");
+                return fieldType;
             }
 
             /************************************************************************************************************************/
@@ -1137,7 +1279,7 @@ namespace Animancer.Editor
                     return;
                 }
 
-                throw new InvalidOperationException($"{nameof(SetValue)} failed: {Field} doesn't implement {nameof(IList)}.");
+                throw new InvalidOperationException($"{nameof(SetValue)} failed: field doesn't implement {nameof(IList)}.");
             }
 
             /************************************************************************************************************************/

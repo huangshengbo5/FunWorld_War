@@ -1,7 +1,6 @@
-// Animancer // https://kybernetik.com.au/animancer // Copyright 2020 Kybernetik //
+// Animancer // https://kybernetik.com.au/animancer // Copyright 2018-2023 Kybernetik //
 
 using System;
-using System.Collections.Generic;
 using System.Text;
 using UnityEngine;
 using Object = UnityEngine.Object;
@@ -47,6 +46,9 @@ namespace Animancer
         /// <remarks>Used by <see cref="DummyCallback"/>.</remarks>
         private static void Dummy() { }
 
+        /// <summary>Is the `callback` <c>null</c> or the <see cref="DummyCallback"/>?</summary>
+        public static bool IsNullOrDummy(Action callback) => callback == null || callback == DummyCallback;
+
         /************************************************************************************************************************/
 
         /// <summary>Creates a new <see cref="AnimancerEvent"/>.</summary>
@@ -58,45 +60,44 @@ namespace Animancer
 
         /************************************************************************************************************************/
 
-        /// <summary>Returns "AnimancerEvent(normalizedTime, callback)".</summary>
+        /// <summary>Returns a string describing the details of this event.</summary>
         public override string ToString()
         {
-            var text = ObjectPool.AcquireStringBuilder()
-                .Append($"{nameof(AnimancerEvent)}(")
-                .Append(normalizedTime)
-                .Append(", ");
-
-            if (callback == null)
-            {
-                text.Append("null)");
-            }
-            else if (callback.Target == null)
-            {
-                text.Append(callback.Method.Name)
-                    .Append(")");
-            }
-            else
-            {
-                text.Append(callback.Target)
-                    .Append('.')
-                    .Append(callback.Method.Name)
-                    .Append(")");
-            }
-
+            var text = ObjectPool.AcquireStringBuilder();
+            text.Append($"{nameof(AnimancerEvent)}(");
+            AppendDetails(text);
+            text.Append(')');
             return text.ReleaseToString();
         }
 
         /************************************************************************************************************************/
 
         /// <summary>Appends the details of this event to the `text`.</summary>
-        public void AppendDetails(StringBuilder text, string name, string delimiter = "\n")
+        public void AppendDetails(StringBuilder text)
         {
-            text.Append(delimiter).Append(name).Append(".NormalizedTime: ").Append(normalizedTime);
+            text.Append("NormalizedTime: ")
+                .Append(normalizedTime)
+                .Append(", Callback: ");
 
-            if (callback != null)
+            if (callback == null)
             {
-                text.Append(delimiter).Append(name).Append($".{nameof(callback.Target)}: ").Append(callback.Target);
-                text.Append(delimiter).Append(name).Append($".{nameof(callback.Method)}: ").Append(callback.Method);
+                text.Append("null");
+            }
+            else if (callback.Target == null)
+            {
+                text.Append(callback.Method.DeclaringType.FullName)
+                    .Append('.')
+                    .Append(callback.Method.Name);
+            }
+            else
+            {
+                text.Append("(Target: '")
+                    .Append(callback.Target)
+                    .Append("', Method: ")
+                    .Append(callback.Method.DeclaringType.FullName)
+                    .Append('.')
+                    .Append(callback.Method.Name)
+                    .Append(')');
             }
         }
 
@@ -106,26 +107,34 @@ namespace Animancer
         #region Invocation
         /************************************************************************************************************************/
 
-        /// <summary>The <see cref="AnimancerState"/> currently triggering an event using <see cref="Invoke"/>.</summary>
+        /// <summary>The <see cref="AnimancerState"/> currently triggering an event via <see cref="Invoke"/>.</summary>
         public static AnimancerState CurrentState => _CurrentState;
         private static AnimancerState _CurrentState;
 
         /************************************************************************************************************************/
 
-        /// <summary>The <see cref="AnimancerEvent"/> currently being triggered by <see cref="Invoke"/>.</summary>
+        /// <summary>The <see cref="AnimancerEvent"/> currently being triggered via <see cref="Invoke"/>.</summary>
         public static ref readonly AnimancerEvent CurrentEvent => ref _CurrentEvent;
         private static AnimancerEvent _CurrentEvent;
 
         /************************************************************************************************************************/
 
         /// <summary>
-        /// Sets the static <see cref="CurrentState"/> and <see cref="CurrentEvent"/> then invokes the <see cref="callback"/>.
-        /// <para></para>
-        /// This method catches and logs any exception thrown by the <see cref="callback"/>.
+        /// Sets the <see cref="CurrentState"/> and <see cref="CurrentEvent"/> then invokes the <see cref="callback"/>.
         /// </summary>
+        /// <remarks>This method catches and logs any exception thrown by the <see cref="callback"/>.</remarks>
         /// <exception cref="NullReferenceException">The <see cref="callback"/> is null.</exception>
         public void Invoke(AnimancerState state)
         {
+#if UNITY_ASSERTIONS
+            if (IsNullOrDummy(callback))
+                OptionalWarning.UselessEvent.Log(
+                    $"An {nameof(AnimancerEvent)} that does nothing was invoked." +
+                    " Most likely it was not configured correctly." +
+                    " Unused events should be removed to avoid wasting performance checking and invoking them.",
+                    state?.Root?.Component);
+#endif
+
             var previousState = _CurrentState;
             var previousEvent = _CurrentEvent;
 
@@ -148,17 +157,32 @@ namespace Animancer
         /************************************************************************************************************************/
 
         /// <summary>
-        /// Returns either the `minDuration` or the <see cref="AnimancerState.RemainingDuration"/> of the
-        /// <see cref="CurrentState"/> state (whichever is higher).
+        /// Returns either the <see cref="AnimancerPlayable.DefaultFadeDuration"/> or the
+        /// <see cref="AnimancerState.RemainingDuration"/> of the <see cref="CurrentState"/> (whichever is higher).
         /// </summary>
-        public static float GetFadeOutDuration(float minDuration = AnimancerPlayable.DefaultFadeDuration)
+        public static float GetFadeOutDuration()
+            => GetFadeOutDuration(CurrentState, AnimancerPlayable.DefaultFadeDuration);
+
+        /// <summary>
+        /// Returns either the `minDuration` or the <see cref="AnimancerState.RemainingDuration"/> of the
+        /// <see cref="CurrentState"/> (whichever is higher).
+        /// </summary>
+        public static float GetFadeOutDuration(float minDuration)
+            => GetFadeOutDuration(CurrentState, minDuration);
+
+        /// <summary>
+        /// Returns either the `minDuration` or the <see cref="AnimancerState.RemainingDuration"/> of the
+        /// `state` (whichever is higher).
+        /// </summary>
+        public static float GetFadeOutDuration(AnimancerState state, float minDuration)
         {
-            var state = CurrentState;
             if (state == null)
                 return minDuration;
 
             var time = state.Time;
             var speed = state.EffectiveSpeed;
+            if (speed == 0)
+                return minDuration;
 
             float remainingDuration;
             if (state.IsLooping)
@@ -174,11 +198,11 @@ namespace Animancer
 
             if (speed > 0)
             {
-                remainingDuration = (state.Length - time) * speed;
+                remainingDuration = (state.Length - time) / speed;
             }
             else
             {
-                remainingDuration = time * -speed;
+                remainingDuration = time / -speed;
             }
 
             return Math.Max(minDuration, remainingDuration);
@@ -191,23 +215,26 @@ namespace Animancer
         /************************************************************************************************************************/
 
         /// <summary>Are the <see cref="normalizedTime"/> and <see cref="callback"/> equal?</summary>
-        public static bool operator ==(AnimancerEvent a, AnimancerEvent b) =>
-            a.normalizedTime == b.normalizedTime &&
-            a.callback == b.callback;
+        public static bool operator ==(AnimancerEvent a, AnimancerEvent b)
+            => a.Equals(b);
 
         /// <summary>Are the <see cref="normalizedTime"/> and <see cref="callback"/> not equal?</summary>
-        public static bool operator !=(AnimancerEvent a, AnimancerEvent b) => !(a == b);
+        public static bool operator !=(AnimancerEvent a, AnimancerEvent b)
+            => !a.Equals(b);
 
         /************************************************************************************************************************/
 
         /// <summary>[<see cref="IEquatable{AnimancerEvent}"/>]
-        /// Are the <see cref="normalizedTime"/> and <see cref="callback"/> of this event equal to those of the
-        /// `animancerEvent`?
+        /// Are the <see cref="normalizedTime"/> and <see cref="callback"/> of this event equal to `other`?
         /// </summary>
-        public bool Equals(AnimancerEvent animancerEvent) => this == animancerEvent;
+        public bool Equals(AnimancerEvent other)
+            => callback == other.callback
+            && (normalizedTime == other.normalizedTime || (float.IsNaN(normalizedTime) && float.IsNaN(other.normalizedTime)));
 
         /// <inheritdoc/>
-        public override bool Equals(object obj) => obj is AnimancerEvent animancerEvent && this == animancerEvent;
+        public override bool Equals(object obj)
+            => obj is AnimancerEvent animancerEvent
+            && Equals(animancerEvent);
 
         /// <inheritdoc/>
         public override int GetHashCode()

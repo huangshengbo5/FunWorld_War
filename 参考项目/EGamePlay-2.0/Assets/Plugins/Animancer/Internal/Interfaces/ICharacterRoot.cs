@@ -1,4 +1,4 @@
-// Animancer // https://kybernetik.com.au/animancer // Copyright 2020 Kybernetik //
+// Animancer // https://kybernetik.com.au/animancer // Copyright 2018-2023 Kybernetik //
 
 using UnityEngine;
 
@@ -12,8 +12,10 @@ namespace Animancer
     /// 
     public interface ICharacterRoot
     {
-#pragma warning disable IDE0079 // Remove unnecessary suppression.
+        /************************************************************************************************************************/
 #pragma warning disable IDE1006 // Naming Styles.
+        /************************************************************************************************************************/
+
         /// <summary>
         /// The <see cref="Transform"/> to search for <see cref="AnimationClip"/>s beneath.
         /// </summary>
@@ -21,19 +23,24 @@ namespace Animancer
         /// <example>
         /// Implementing this interface in a <see cref="MonoBehaviour"/> will automatically inherit this property so
         /// you do not need to do anything else:
-        /// <code>public class MyComponent : MonoBehaviour, IAnimancerRoot
+        /// <para></para><code>
+        /// public class MyComponent : MonoBehaviour, IAnimancerRoot
         /// {
-        /// }</code>
+        /// }
+        /// </code>
         /// But if you want to have your script point to a different object as the root, you can explicitly implement
         /// this property:
-        /// <code>public class MyComponent : MonoBehaviour, IAnimancerRoot
+        /// <para></para><code>
+        /// public class MyComponent : MonoBehaviour, IAnimancerRoot
         /// {
         ///     Transform IAnimancerRoot.transform => ???;
-        /// }</code>
-        /// </example>
+        /// }
+        /// </code></example>
         Transform transform { get; }
+
+        /************************************************************************************************************************/
 #pragma warning restore IDE1006 // Naming Styles.
-#pragma warning restore IDE0079 // Remove unnecessary suppression.
+        /************************************************************************************************************************/
     }
 }
 
@@ -43,51 +50,58 @@ namespace Animancer
 
 namespace Animancer.Editor
 {
+    /// https://kybernetik.com.au/animancer/api/Animancer.Editor/AnimancerEditorUtilities
     partial class AnimancerEditorUtilities
     {
         /************************************************************************************************************************/
 
-        /// <summary>
-        /// Takes a `gameObject` and returns the root <see cref="Transform"/> of the character it is part of.
-        /// <para></para>
+        /// <summary>Takes a `gameObject` and returns the root <see cref="Transform"/> of the character it is part of.</summary>
+        /// 
+        /// <remarks>
         /// This method first searches all parents for an <see cref="ICharacterRoot"/>. If it finds one, it returns the
         /// <see cref="ICharacterRoot.transform"/>.
         /// <para></para>
         /// Otherwise, if the object is part of a prefab then it returns the root of that prefab instance.
         /// <para></para>
-        /// Otherwise, it counts the number of <see cref="Animator"/>s in the children of the `gameObject` then does
-        /// the same for each parent. If it finds a parent with a different number of child <see cref="Animator"/>s, it
+        /// Otherwise, it counts the number of Animators in the children of the `gameObject` then does
+        /// the same for each parent. If it finds a parent with a different number of child Animators, it
         /// assumes that object is the parent of multiple characters and returns the previous parent as the root.
-        /// </summary>
+        /// </remarks>
         ///
         /// <example>
         /// <h2>Simple Hierarchy</h2>
-        /// <code>    - Character - Rigidbody, etc.
+        /// <code>
+        /// - Character - Rigidbody, etc.
         ///     - Model - Animator, AnimancerComponent
-        ///     - States - Various components which reference the AnimationClips they will play</code>
+        ///     - States - Various components which reference the AnimationClips they will play
+        /// </code>
         /// Passing the <c>Model</c> into this method will return the <c>Character</c> because it has the same
-        /// number of <see cref="Animator"/> components in its children.
+        /// number of Animator components in its children.
         ///
         /// <h2>Shared Hierarchy</h2>
-        /// <code>    - Characters - Empty object used to group all characters
+        /// <code>
+        /// - Characters - Empty object used to group all characters
         ///     - Character - Rigidbody, etc.
         ///         - Model - Animator, AnimancerComponent
         ///         - States - Various components which reference the AnimationClips they will play
         ///     - Another Character
         ///         - Model
-        ///         - States</code>
+        ///         - States
+        /// </code>
         /// <list type="bullet">
-        /// <item><c>Model</c> has one <see cref="Animator"/> and no more in its children.</item>
-        /// <item>And <c>Character</c> has one <see cref="Animator"/> in its children (the same one).</item>
-        /// <item>But <c>Characters</c> has two <see cref="Animator"/>s in its children (one on each character).</item>
+        /// <item><c>Model</c> has one Animator and no more in its children.</item>
+        /// <item>And <c>Character</c> has one Animator in its children (the same one).</item>
+        /// <item>But <c>Characters</c> has two Animators in its children (one on each character).</item>
         /// </list>
         /// So it picks the <c>Character</c> as the root.
         ///
         /// <h2>Complex Hierarchy</h2>
-        /// <code>    - Character - Rigidbody, etc.
+        /// <code>
+        /// - Character - Rigidbody, etc.
         ///     - Model - Animator, AnimancerComponent
         ///     - States - Various components which reference the AnimationClips they will play
-        ///     - Another Model - Animator (maybe the character is holding a gun which has a reload animation)</code>
+        ///     - Another Model - Animator (maybe the character is holding a gun which has a reload animation)
+        /// </code>
         /// In this case, the automatic system would see that the <c>Character</c> already has more child
         /// <see cref="Animator"/>s than the selected <c>Model</c> so it would only return the <c>Model</c> itself.
         /// This can be fixed by making any of the scripts on the <c>Character</c> implement <see cref="ICharacterRoot"/>

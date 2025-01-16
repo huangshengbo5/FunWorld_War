@@ -1,4 +1,4 @@
-// Animancer // https://kybernetik.com.au/animancer // Copyright 2020 Kybernetik //
+// Animancer // https://kybernetik.com.au/animancer // Copyright 2018-2023 Kybernetik //
 
 using UnityEngine;
 using UnityEngine.Playables;
@@ -14,6 +14,9 @@ namespace Animancer
 
         /// <summary>The object which receives the output of the <see cref="Playable"/>.</summary>
         IPlayableWrapper Parent { get; }
+
+        /// <summary>The current blend weight of this node which determines how much it affects the final output.</summary>
+        float Weight { get; }
 
         /// <summary>The <see cref="UnityEngine.Playables.Playable"/> managed by this object.</summary>
         Playable Playable { get; }
@@ -43,8 +46,7 @@ namespace Animancer
         /// <em>Animancer Lite does not allow this value to be changed in runtime builds.</em>
         /// </remarks>
         ///
-        /// <example>
-        /// <code>
+        /// <example><code>
         /// void PlayAnimation(AnimancerComponent animancer, AnimationClip clip)
         /// {
         ///     var state = animancer.Play(clip);
@@ -54,8 +56,7 @@ namespace Animancer
         ///     state.Speed = 0.5f;// Half speed.
         ///     state.Speed = -1;// Normal speed playing backwards.
         /// }
-        /// </code>
-        /// </example>
+        /// </code></example>
         float Speed { get; set; }
 
         /************************************************************************************************************************/
@@ -73,6 +74,8 @@ namespace Animancer
         /// <para></para>
         /// IK only takes effect while at least one <see cref="ClipState"/> has a <see cref="AnimancerNode.Weight"/>
         /// above zero. Other node types either store the value to apply to their children or don't support IK.
+        /// <para></para>
+        /// Documentation: <see href="https://kybernetik.com.au/animancer/docs/manual/ik#ik-pass">IK Pass</see>
         /// </remarks>
         bool ApplyAnimatorIK { get; set; }
 
@@ -87,6 +90,8 @@ namespace Animancer
         /// <para></para>
         /// IK only takes effect while at least one <see cref="ClipState"/> has a <see cref="AnimancerNode.Weight"/>
         /// above zero. Other node types either store the value to apply to their children or don't support IK.
+        /// <para></para>
+        /// Documentation: <see href="https://kybernetik.com.au/animancer/docs/manual/ik#foot-ik">Foot IK</see>
         /// </remarks>
         bool ApplyFootIK { get; set; }
 
@@ -100,7 +105,8 @@ namespace Animancer
 
 namespace Animancer.Editor
 {
-    partial class AnimancerEditorUtilities
+    /// https://kybernetik.com.au/animancer/api/Animancer.Editor/AnimancerEditorUtilities
+    public static partial class AnimancerEditorUtilities
     {
         /************************************************************************************************************************/
 
@@ -116,6 +122,33 @@ namespace Animancer.Editor
             menu.AddItem(new GUIContent("Inverse Kinematics/Apply Foot IK ?"),
                 ik.ApplyFootIK,
                 () => ik.ApplyFootIK = !ik.ApplyFootIK);
+        }
+
+        /************************************************************************************************************************/
+
+        /// <summary>Re-scales the <see cref="AnimancerNode.Weight"/> of all children to add up to 1.</summary>
+        public static void NormalizeChildWeights(this IPlayableWrapper parent)
+        {
+            var totalWeight = 0f;
+            var childCount = parent.ChildCount;
+            for (int i = 0; i < childCount; i++)
+            {
+                var child = parent.GetChild(i);
+                if (child.IsValid())
+                    totalWeight += child.Weight;
+            }
+
+            if (totalWeight == 0 ||// Can't normalize.
+                Mathf.Approximately(totalWeight, 1))// Already normalized.
+                return;
+
+            totalWeight = 1f / totalWeight;
+            for (int i = 0; i < childCount; i++)
+            {
+                var child = parent.GetChild(i);
+                if (child.IsValid())
+                    child.Weight *= totalWeight;
+            }
         }
 
         /************************************************************************************************************************/

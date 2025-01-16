@@ -1,6 +1,8 @@
-// Animancer // https://kybernetik.com.au/animancer // Copyright 2020 Kybernetik //
+// Animancer // https://kybernetik.com.au/animancer // Copyright 2018-2023 Kybernetik //
 
-//#define LOG_STRING_CACHE
+#if UNITY_EDITOR
+
+//#define ANIMANCER_LOG_CONVERSION_CACHE
 
 using System;
 using System.Collections.Generic;
@@ -8,17 +10,18 @@ using UnityEngine;
 
 namespace Animancer.Editor
 {
-    /// <summary>
+    /// <summary>[Editor-Only]
     /// A simple system for converting objects and storing the results so they can be reused to minimise the need for
     /// garbage collection, particularly for string construction.
     /// </summary>
+    /// <remarks>This class doesn't use any Editor-Only functionality, but it's unlikely to be useful at runtime.</remarks>
     /// https://kybernetik.com.au/animancer/api/Animancer.Editor/ConversionCache_2
     /// 
-    public sealed class ConversionCache<TKey, TValue>
+    public class ConversionCache<TKey, TValue>
     {
         /************************************************************************************************************************/
 
-        private sealed class CachedValue
+        private class CachedValue
         {
             public int lastFrameAccessed;
             public TValue value;
@@ -31,7 +34,7 @@ namespace Animancer.Editor
         private readonly List<TKey>
             Keys = new List<TKey>();
         private readonly Func<TKey, TValue>
-            ConvertToValue;
+            Converter;
 
         private int _LastCleanupFrame;
 
@@ -40,7 +43,7 @@ namespace Animancer.Editor
         /// <summary>
         /// Creates a new <see cref="ConversionCache{TKey, TValue}"/> which uses the specified delegate to convert values.
         /// </summary>
-        public ConversionCache(Func<TKey, TValue> convertToValue) => ConvertToValue = convertToValue;
+        public ConversionCache(Func<TKey, TValue> converter) => Converter = converter;
 
         /************************************************************************************************************************/
 
@@ -48,10 +51,14 @@ namespace Animancer.Editor
         /// If a value has already been cached for the specified `key`, return it. Otherwise create a new one using
         /// the delegate provided in the constructor and cache it.
         /// <para></para>
-        /// This method also periodically removes values that have not been used recently.
+        /// If the `key` is <c>null</c>, this method returns the default <typeparamref name="TValue"/>.
         /// </summary>
+        /// <remarks>This method also periodically removes values that have not been used recently.</remarks>
         public TValue Convert(TKey key)
         {
+            if (key == null)
+                return default;
+
             CachedValue cached;
 
             // The next time a value is retrieved after at least 100 frames, clear out any old ones.
@@ -76,7 +83,7 @@ namespace Animancer.Editor
 
             if (!Cache.TryGetValue(key, out cached))
             {
-                Cache.Add(key, cached = new CachedValue { value = ConvertToValue(key) });
+                Cache.Add(key, cached = new CachedValue { value = Converter(key) });
                 Keys.Add(key);
 
             }
@@ -89,4 +96,6 @@ namespace Animancer.Editor
         /************************************************************************************************************************/
     }
 }
+
+#endif
 

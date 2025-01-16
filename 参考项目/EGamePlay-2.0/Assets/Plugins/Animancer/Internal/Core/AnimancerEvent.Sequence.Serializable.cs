@@ -1,4 +1,4 @@
-// Animancer // https://kybernetik.com.au/animancer // Copyright 2020 Kybernetik //
+// Animancer // https://kybernetik.com.au/animancer // Copyright 2018-2023 Kybernetik //
 
 #pragma warning disable CS0649 // Field is never assigned to, and will always have its default value.
 
@@ -18,16 +18,14 @@ using System;
 namespace Animancer
 {
     /// https://kybernetik.com.au/animancer/api/Animancer/AnimancerEvent
-    /// 
     partial struct AnimancerEvent
     {
         /// https://kybernetik.com.au/animancer/api/Animancer/Sequence
-        /// 
         partial class Sequence
         {
             /// <summary>
-            /// An <see cref="AnimancerEvent.Sequence"/> that can be serialized and uses
-            /// <see cref="SerializableCallback"/>s to define the <see cref="callback"/>s.
+            /// An <see cref="Sequence"/> that can be serialized and uses <see cref="SerializableCallback"/>s to define
+            /// the <see cref="callback"/>s.
             /// </summary>
             /// <remarks>
             /// If you have Animancer Pro you can replace <see cref="SerializableCallback"/>s with
@@ -44,39 +42,42 @@ namespace Animancer
             /// https://kybernetik.com.au/animancer/api/Animancer/Serializable
             /// 
             [Serializable]
-            public sealed class Serializable
+            public class Serializable : ICopyable<Serializable>
 #if UNITY_EDITOR
-                : ISerializationCallbackReceiver
+                , ISerializationCallbackReceiver
 #endif
             {
                 /************************************************************************************************************************/
 
-                /// <summary>The serialized <see cref="Names"/>.</summary>
-                [SerializeField]
-                private string[] _Names;
-
-                /************************************************************************************************************************/
-
-                /// <summary>The serialized <see cref="normalizedTime"/>s.</summary>
                 [SerializeField]
                 private float[] _NormalizedTimes;
 
+                /// <summary>[<see cref="SerializeField"/>] The serialized <see cref="normalizedTime"/>s.</summary>
+                public ref float[] NormalizedTimes => ref _NormalizedTimes;
+
                 /************************************************************************************************************************/
 
-                /// <summary>The serialized <see cref="callback"/>s.</summary>
+                [SerializeField]
+                private SerializableCallback[] _Callbacks;
+
+                /// <summary>[<see cref="SerializeField"/>] The serialized <see cref="callback"/>s.</summary>
                 /// <remarks>
                 /// This array only needs to be large enough to hold the last event that actually contains any calls.
                 /// Any empty or missing elements will simply use the <see cref="DummyCallback"/> at runtime.
                 /// </remarks>
+                public ref SerializableCallback[] Callbacks => ref _Callbacks;
+
+                /************************************************************************************************************************/
+
                 [SerializeField]
-                private SerializableCallback[] _Callbacks;
+                private string[] _Names;
+
+                /// <summary>[<see cref="SerializeField"/>] The serialized <see cref="Sequence.Names"/>.</summary>
+                public ref string[] Names => ref _Names;
 
                 /************************************************************************************************************************/
 #if UNITY_EDITOR
                 /************************************************************************************************************************/
-
-                /// <summary>[Editor-Only, Internal] The name of the array field which stores the serialized <see cref="Names"/>.</summary>
-                internal const string NamesField = nameof(_Names);
 
                 /// <summary>[Editor-Only, Internal] The name of the array field which stores the <see cref="normalizedTime"/>s.</summary>
                 internal const string NormalizedTimesField = nameof(_NormalizedTimes);
@@ -84,65 +85,69 @@ namespace Animancer
                 /// <summary>[Editor-Only, Internal] The name of the array field which stores the serialized <see cref="callback"/>s.</summary>
                 internal const string CallbacksField = nameof(_Callbacks);
 
+                /// <summary>[Editor-Only, Internal] The name of the array field which stores the serialized <see cref="Names"/>.</summary>
+                internal const string NamesField = nameof(_Names);
+
                 /************************************************************************************************************************/
 #endif
                 /************************************************************************************************************************/
 
-                private Sequence _Sequence;
+                private Sequence _Events;
 
                 /// <summary>
-                /// The runtime <see cref="AnimancerEvent.Sequence"/> compiled from this <see cref="Serializable"/>.
-                /// Each call after the first will return the same value.
+                /// The runtime <see cref="Sequence"/> compiled from this <see cref="Serializable"/>.
+                /// Each call after the first will return the same reference.
                 /// </summary>
                 /// <remarks>
-                /// Unlike <see cref="GetSequenceOptional"/>, this method will create an empty
-                /// <see cref="AnimancerEvent.Sequence"/> instead of returning null.
+                /// Unlike <see cref="GetEventsOptional"/>, this property will create an empty
+                /// <see cref="Sequence"/> instead of returning null if there are no events.
                 /// </remarks>
-                public Sequence Sequence
+                public Sequence Events
                 {
                     get
                     {
-                        if (_Sequence == null)
+                        if (_Events == null)
                         {
-                            GetSequenceOptional();
-
-                            AnimancerUtilities.NewIfNull(ref _Sequence);
+                            GetEventsOptional();
+                            if (_Events == null)
+                                _Events = new Sequence();
                         }
-                        return _Sequence;
+
+                        return _Events;
                     }
-                    set => _Sequence = value;
+                    set => _Events = value;
                 }
 
                 /************************************************************************************************************************/
 
                 /// <summary>
-                /// Returns the runtime <see cref="AnimancerEvent.Sequence"/> compiled from this
-                /// <see cref="Serializable"/>. Each call after the first will return the same value.
+                /// Returns the runtime <see cref="Sequence"/> compiled from this <see cref="Serializable"/>.
+                /// Each call after the first will return the same reference.
                 /// </summary>
                 /// <remarks>
                 /// This method returns null if the sequence would be empty anyway and is used by the implicit
-                /// conversion from <see cref="Serializable"/> to <see cref="AnimancerEvent.Sequence"/>.
+                /// conversion from <see cref="Serializable"/> to <see cref="Sequence"/>.
                 /// </remarks>
-                public Sequence GetSequenceOptional()
+                public Sequence GetEventsOptional()
                 {
-                    if (_Sequence != null ||
+                    if (_Events != null ||
                         _NormalizedTimes == null)
-                        return _Sequence;
+                        return _Events;
 
                     var timeCount = _NormalizedTimes.Length;
                     if (timeCount == 0)
                         return null;
 
-                    var callbackCount = _Callbacks.Length;
+                    var callbackCount = _Callbacks != null ? _Callbacks.Length : 0;
 
                     var callback = callbackCount >= timeCount-- ?
                         GetInvoker(_Callbacks[timeCount]) :
                         null;
                     var endEvent = new AnimancerEvent(_NormalizedTimes[timeCount], callback);
 
-                    _Sequence = new Sequence(timeCount)
+                    _Events = new Sequence(timeCount)
                     {
-                        endEvent = endEvent,
+                        EndEvent = endEvent,
                         Count = timeCount,
                         _Names = _Names,
                     };
@@ -150,14 +155,19 @@ namespace Animancer
                     for (int i = 0; i < timeCount; i++)
                     {
                         callback = i < callbackCount ? GetInvoker(_Callbacks[i]) : DummyCallback;
-                        _Sequence._Events[i] = new AnimancerEvent(_NormalizedTimes[i], callback);
+                        _Events._Events[i] = new AnimancerEvent(_NormalizedTimes[i], callback);
                     }
 
-                    return _Sequence;
+                    return _Events;
                 }
 
-                /// <summary>Calls <see cref="GetSequenceOptional"/>.</summary>
-                public static implicit operator Sequence(Serializable serializable) => serializable?.GetSequenceOptional();
+                /// <summary>Calls <see cref="GetEventsOptional"/>.</summary>
+                public static implicit operator Sequence(Serializable serializable) => serializable?.GetEventsOptional();
+
+                /************************************************************************************************************************/
+
+                /// <summary>Returns the <see cref="Events"/> or <c>null</c> if it wasn't yet initialized.</summary>
+                internal Sequence InitializedEvents => _Events;
 
                 /************************************************************************************************************************/
 
@@ -168,6 +178,14 @@ namespace Animancer
                 /// </summary>
                 public static Action GetInvoker(SerializableCallback callback)
                     => HasPersistentCalls(callback) ? callback.Invoke : DummyCallback;
+
+#if UNITY_EDITOR
+                /// <summary>[Editor-Only]
+                /// Casts the `callback` and calls <see cref="GetInvoker(SerializableCallback)"/>.
+                /// </summary>
+                public static Action GetInvoker(object callback)
+                    => GetInvoker((SerializableCallback)callback);
+#endif
 
                 /************************************************************************************************************************/
 
@@ -193,24 +211,20 @@ namespace Animancer
 #endif
                 }
 
-                /// <summary>
-                /// Determines if the `callback` contains any method calls that will be serialized (otherwise the
-                /// <see cref="DummyCallback"/> can be used instead of creating a new delegate to invoke the empty
-                /// `callback`).
+#if UNITY_EDITOR
+                /// <summary>[Editor-Only]
+                /// Casts the `callback` and calls <see cref="HasPersistentCalls(SerializableCallback)"/>.
                 /// </summary>
-                /// <remarks>
-                /// This method casts the `callback` to <see cref="SerializableCallback"/> so the caller does not need
-                /// to know what type is actually being used.
-                /// </remarks>
                 public static bool HasPersistentCalls(object callback) => HasPersistentCalls((SerializableCallback)callback);
+#endif
 
                 /************************************************************************************************************************/
 
-                /// <summary>Returns the <see cref="normalizedTime"/> of the <see cref="endEvent"/>.</summary>
+                /// <summary>Returns the <see cref="normalizedTime"/> of the <see cref="EndEvent"/>.</summary>
                 /// <remarks>If the value is not set, the value is determined by <see cref="GetDefaultNormalizedEndTime"/>.</remarks>
                 public float GetNormalizedEndTime(float speed = 1)
                 {
-                    if (_NormalizedTimes == null || _NormalizedTimes.Length == 0)
+                    if (_NormalizedTimes.IsNullOrEmpty())
                         return GetDefaultNormalizedEndTime(speed);
                     else
                         return _NormalizedTimes[_NormalizedTimes.Length - 1];
@@ -218,34 +232,58 @@ namespace Animancer
 
                 /************************************************************************************************************************/
 
-                /// <summary>Sets the <see cref="normalizedTime"/> of the <see cref="endEvent"/>.</summary>
+                /// <summary>Sets the <see cref="normalizedTime"/> of the <see cref="EndEvent"/>.</summary>
                 public void SetNormalizedEndTime(float normalizedTime)
                 {
-                    if (_NormalizedTimes == null || _NormalizedTimes.Length == 0)
+                    if (_NormalizedTimes.IsNullOrEmpty())
                         _NormalizedTimes = new float[] { normalizedTime };
                     else
                         _NormalizedTimes[_NormalizedTimes.Length - 1] = normalizedTime;
                 }
 
                 /************************************************************************************************************************/
+
+                /// <inheritdoc/>
+                public void CopyFrom(Serializable copyFrom)
+                {
+                    if (copyFrom == null)
+                    {
+                        _NormalizedTimes = default;
+                        _Callbacks = default;
+                        _Names = default;
+                        return;
+                    }
+
+                    AnimancerUtilities.CopyExactArray(copyFrom._NormalizedTimes, ref _NormalizedTimes);
+                    AnimancerUtilities.CopyExactArray(copyFrom._Callbacks, ref _Callbacks);
+                    AnimancerUtilities.CopyExactArray(copyFrom._Names, ref _Names);
+                }
+
+                /************************************************************************************************************************/
 #if UNITY_EDITOR
                 /************************************************************************************************************************/
 
-                /// <summary>[Editor-Only] Clears the <see cref="Sequence"/> so it can be recreated when necessary.</summary>
-                void ISerializationCallbackReceiver.OnAfterDeserialize()
-                {
-                    _Sequence = null;
-                }
+                /// <summary>[Editor-Only] Does nothing.</summary>
+                /// <remarks>
+                /// Keeping the runtime <see cref="Events"/> in sync with the serialized data is handled by
+                /// <see cref="Editor.SerializableEventSequenceDrawer"/>.
+                /// </remarks>
+                void ISerializationCallbackReceiver.OnAfterDeserialize() { }
+
+                /************************************************************************************************************************/
 
                 /// <summary>[Editor-Only] Ensures that the events are sorted by time (excluding the end event).</summary>
                 void ISerializationCallbackReceiver.OnBeforeSerialize()
                 {
                     if (_NormalizedTimes == null ||
                         _NormalizedTimes.Length <= 2)
-                        goto Trim;
+                    {
+                        CompactArrays();
+                        return;
+                    }
 
-                    var context = Editor.EventSequenceDrawer.Context.Current;
-                    var selectedEvent = context?.Property != null ? context.SelectedEvent : -1;
+                    var eventContext = Editor.SerializableEventSequenceDrawer.Context.Current;
+                    var selectedEvent = eventContext?.Property != null ? eventContext.SelectedEvent : -1;
 
                     var timeCount = _NormalizedTimes.Length - 1;
 
@@ -299,21 +337,18 @@ namespace Animancer
                     }
 
                     // If the selected event was moved adjust the selection.
-                    if (context?.Property != null && context.SelectedEvent != selectedEvent)
+                    if (eventContext?.Property != null && eventContext.SelectedEvent != selectedEvent)
                     {
-                        context.SelectedEvent = selectedEvent;
+                        eventContext.SelectedEvent = selectedEvent;
                         Editor.TransitionPreviewWindow.PreviewNormalizedTime = _NormalizedTimes[selectedEvent];
                     }
 
-                    // Remove any empty data from the end of the arrays to reduce the serialized data size.
-                    Trim:
-                    Trim(ref _Callbacks, (callback) => callback != null && HasPersistentCalls(callback));
-                    Trim(ref _Names, (name) => !string.IsNullOrEmpty(name));
+                    CompactArrays();
                 }
 
                 /************************************************************************************************************************/
 
-                /// <summary>
+                /// <summary>[Editor-Only]
                 /// Swaps <c>array[index]</c> with <c>array[index - 1]</c> while accounting for the possibility of the
                 /// `index` being beyond the bounds of the `array`.
                 /// </summary>
@@ -322,30 +357,58 @@ namespace Animancer
                     var count = array != null ? array.Length : 0;
 
                     if (index == count)
-                    {
                         Array.Resize(ref array, ++count);
-                    }
 
                     if (index < count)
-                    {
                         array.Swap(index, index - 1);
-                    }
                 }
 
                 /************************************************************************************************************************/
 
-                /// <summary>Removes unimportant values from the end of the `array`.</summary>
-                private static void Trim<T>(ref T[] array, Func<T, bool> isImportant)
+                /// <summary>[Internal]
+                /// Should the arrays be prevented from reducing their size when their last elements are unused?
+                /// </summary>
+                internal static bool DisableCompactArrays { get; set; }
+
+                /// <summary>[Editor-Only]
+                /// Removes empty data from the ends of the arrays to reduce the serialized data size.
+                /// </summary>
+                private void CompactArrays()
+                {
+                    if (DisableCompactArrays)
+                        return;
+
+                    // If there is only one time and it is NaN, we don't need to store anything.
+                    if (_NormalizedTimes == null ||
+                        (_NormalizedTimes.Length == 1 &&
+                        (_Callbacks == null || _Callbacks.Length == 0) &&
+                        (_Names == null || _Names.Length == 0) &&
+                        float.IsNaN(_NormalizedTimes[0])))
+                    {
+                        _NormalizedTimes = Array.Empty<float>();
+                        _Callbacks = Array.Empty<SerializableCallback>();
+                        _Names = Array.Empty<string>();
+                        return;
+                    }
+
+                    Trim(ref _Callbacks, _NormalizedTimes.Length, (callback) => HasPersistentCalls(callback));
+                    Trim(ref _Names, _NormalizedTimes.Length, (name) => !string.IsNullOrEmpty(name));
+                }
+
+                /************************************************************************************************************************/
+
+                /// <summary>[Editor-Only] Removes unimportant values from the end of the `array`.</summary>
+                private static void Trim<T>(ref T[] array, int maxLength, Func<T, bool> isImportant)
                 {
                     if (array == null)
                         return;
 
-                    var count = array.Length;
+                    var count = Math.Min(array.Length, maxLength);
 
                     while (count >= 1)
                     {
-                        var callback = array[count - 1];
-                        if (isImportant(callback))
+                        var item = array[count - 1];
+                        if (isImportant(item))
                             break;
                         else
                             count--;

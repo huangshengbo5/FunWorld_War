@@ -1,4 +1,4 @@
-// Serialization // Copyright 2020 Kybernetik //
+// Serialization // Copyright 2018-2023 Kybernetik //
 
 #if UNITY_EDITOR
 
@@ -7,18 +7,16 @@ using UnityEditor;
 using UnityEngine;
 using Object = UnityEngine.Object;
 
-// Shared File Last Modified: 2020-05-17.
+// Shared File Last Modified: 2021-12-11.
 namespace Animancer.Editor
 // namespace InspectorGadgets.Editor
 {
     /// <summary>[Editor-Only] Various serialization utilities.</summary>
     public partial class Serialization
     {
-        /// <summary>[Editor-Only]
-        /// A serializable reference to a <see cref="SerializedProperty"/>.
-        /// </summary>
+        /// <summary>[Editor-Only] A serializable reference to a <see cref="SerializedProperty"/>.</summary>
         [Serializable]
-        public sealed class PropertyReference
+        public class PropertyReference
         {
             /************************************************************************************************************************/
 
@@ -53,10 +51,10 @@ namespace Animancer.Editor
 
             /************************************************************************************************************************/
 
-            [NonSerialized] private bool _IsInitialised;
+            [NonSerialized] private bool _IsInitialized;
 
             /// <summary>Indicates whether the <see cref="Property"/> has been accessed.</summary>
-            public bool IsInitialised => _IsInitialised;
+            public bool IsInitialized => _IsInitialized;
 
             /************************************************************************************************************************/
 
@@ -67,7 +65,7 @@ namespace Animancer.Editor
             {
                 get
                 {
-                    Initialise();
+                    Initialize();
                     return _Property;
                 }
             }
@@ -101,19 +99,18 @@ namespace Animancer.Editor
 
             /************************************************************************************************************************/
 
-            private void Initialise()
+            private void Initialize()
             {
-                if (_IsInitialised)
+                if (_IsInitialized)
                 {
                     if (!TargetsExist)
                         Dispose();
                     return;
                 }
 
-                _IsInitialised = true;
+                _IsInitialized = true;
 
                 if (string.IsNullOrEmpty(_PropertyPath) ||
-                    _TargetObjects.Length == 0 ||
                     !TargetsExist)
                     return;
 
@@ -124,13 +121,12 @@ namespace Animancer.Editor
 
             /************************************************************************************************************************/
 
-            /// <summary>
-            /// Returns true if the specified property and objects match the targets of this reference.
-            /// </summary>
+            /// <summary>Do the specified `property` and `targetObjects` match the targets of this reference?</summary>
             public bool IsTarget(SerializedProperty property, Object[] targetObjects)
             {
                 if (_Property == null ||
                     _Property.propertyPath != property.propertyPath ||
+                    _TargetObjects == null ||
                     _TargetObjects.Length != targetObjects.Length)
                     return false;
 
@@ -145,14 +141,13 @@ namespace Animancer.Editor
 
             /************************************************************************************************************************/
 
-            /// <summary>
-            /// Returns true if there is at least one target and none of them are null.
-            /// </summary>
+            /// <summary>Is there is at least one target and none of them are <c>null</c>?</summary>
             private bool TargetsExist
             {
                 get
                 {
-                    if (_TargetObjects.Length == 0)
+                    if (_TargetObjects == null ||
+                        _TargetObjects.Length == 0)
                         return false;
 
                     for (int i = 0; i < _TargetObjects.Length; i++)
@@ -168,7 +163,7 @@ namespace Animancer.Editor
             /************************************************************************************************************************/
 
             /// <summary>
-            /// Calls <see cref="SerializedObject.Update"/> if the <see cref="Property"/> has been initialised.
+            /// Calls <see cref="SerializedObject.Update"/> if the <see cref="Property"/> has been initialized.
             /// </summary>
             public void Update()
             {
@@ -185,7 +180,7 @@ namespace Animancer.Editor
             }
 
             /// <summary>
-            /// Calls <see cref="SerializedObject.ApplyModifiedProperties"/> if the <see cref="Property"/> has been initialised.
+            /// Calls <see cref="SerializedObject.ApplyModifiedProperties"/> if the <see cref="Property"/> has been initialized.
             /// </summary>
             public void ApplyModifiedProperties()
             {
@@ -202,7 +197,7 @@ namespace Animancer.Editor
             }
 
             /// <summary>
-            /// Calls <see cref="SerializedObject.Dispose"/> if the <see cref="Property"/> has been initialised.
+            /// Calls <see cref="SerializedObject.Dispose"/> if the <see cref="Property"/> has been initialized.
             /// </summary>
             public void Dispose()
             {
@@ -231,7 +226,7 @@ namespace Animancer.Editor
             {
                 area.height = EditorGUIUtility.singleLineHeight;
 
-                Initialise();
+                Initialize();
 
                 if (_Property == null)
                 {
@@ -241,17 +236,16 @@ namespace Animancer.Editor
 
                 var targets = _Property.serializedObject.targetObjects;
 
-                var enabled = GUI.enabled;
-                GUI.enabled = false;
+                using (new EditorGUI.DisabledScope(true))
+                {
+                    var showMixedValue = EditorGUI.showMixedValue;
+                    EditorGUI.showMixedValue = targets.Length > 1;
 
-                var showMixedValue = EditorGUI.showMixedValue;
-                EditorGUI.showMixedValue = targets.Length > 1;
+                    var target = targets.Length > 0 ? targets[0] : null;
+                    EditorGUI.ObjectField(area, target, typeof(Object), true);
 
-                var target = targets.Length > 0 ? targets[0] : null;
-                EditorGUI.ObjectField(area, target, typeof(Object), true);
-
-                EditorGUI.showMixedValue = showMixedValue;
-                GUI.enabled = enabled;
+                    EditorGUI.showMixedValue = showMixedValue;
+                }
             }
 
             /************************************************************************************************************************/
@@ -259,7 +253,7 @@ namespace Animancer.Editor
             /// <summary>Draws the target property within the specified `area`.</summary>
             public void DoPropertyGUI(Rect area)
             {
-                Initialise();
+                Initialize();
 
                 if (_Property == null)
                     return;

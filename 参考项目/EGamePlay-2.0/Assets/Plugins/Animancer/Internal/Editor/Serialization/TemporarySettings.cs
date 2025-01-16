@@ -1,4 +1,4 @@
-// Animancer // https://kybernetik.com.au/animancer // Copyright 2020 Kybernetik //
+// Animancer // https://kybernetik.com.au/animancer // Copyright 2018-2023 Kybernetik //
 
 #if UNITY_EDITOR
 
@@ -12,7 +12,7 @@ namespace Animancer.Editor
     /// Stores data which needs to survive assembly reloading (such as from script compilation), but can be discarded
     /// when the Unity Editor is closed.
     /// </summary>
-    internal sealed class TemporarySettings : ScriptableObject
+    internal class TemporarySettings : ScriptableObject
     {
         /************************************************************************************************************************/
         #region Instance
@@ -20,10 +20,8 @@ namespace Animancer.Editor
 
         private static TemporarySettings _Instance;
 
-        /// <summary>
-        /// Finds an existing instance of this class or creates a new one.
-        /// </summary>
-        public static TemporarySettings Instance
+        /// <summary>Finds an existing instance of this class or creates a new one.</summary>
+        private static TemporarySettings Instance
         {
             get
             {
@@ -47,12 +45,12 @@ namespace Animancer.Editor
 
         /************************************************************************************************************************/
 
-        private void OnEnable()
+        protected virtual void OnEnable()
         {
             OnEnableSelection();
         }
 
-        private void OnDisable()
+        protected virtual void OnDisable()
         {
             OnDisableSelection();
         }
@@ -68,9 +66,10 @@ namespace Animancer.Editor
 
         /************************************************************************************************************************/
 
-        public int GetSelectedEvent(SerializedProperty property)
+        public static int GetSelectedEvent(SerializedProperty property)
         {
-            if (!ObjectToPropertyPathToSelectedEvent.TryGetValue(property.serializedObject.targetObject, out var pathToSelection))
+            var instance = Instance;
+            if (!instance.ObjectToPropertyPathToSelectedEvent.TryGetValue(property.serializedObject.targetObject, out var pathToSelection))
                 return -1;
             else if (pathToSelection.TryGetValue(property.propertyPath, out var selection))
                 return selection;
@@ -80,7 +79,7 @@ namespace Animancer.Editor
 
         /************************************************************************************************************************/
 
-        public void SetSelectedEvent(SerializedProperty property, int eventIndex)
+        public static void SetSelectedEvent(SerializedProperty property, int eventIndex)
         {
             var pathToSelection = GetOrCreatePathToSelection(property.serializedObject.targetObject);
             if (eventIndex >= 0)
@@ -91,11 +90,12 @@ namespace Animancer.Editor
 
         /************************************************************************************************************************/
 
-        private Dictionary<string, int> GetOrCreatePathToSelection(Object obj)
+        private static Dictionary<string, int> GetOrCreatePathToSelection(Object obj)
         {
-            if (!ObjectToPropertyPathToSelectedEvent.TryGetValue(obj, out var pathToSelection))
+            var instance = Instance;
+            if (!instance.ObjectToPropertyPathToSelectedEvent.TryGetValue(obj, out var pathToSelection))
             {
-                ObjectToPropertyPathToSelectedEvent.Add(obj,
+                instance.ObjectToPropertyPathToSelectedEvent.Add(obj,
                     pathToSelection = new Dictionary<string, int>());
             }
 
@@ -154,6 +154,24 @@ namespace Animancer.Editor
                     var pathToSelection = GetOrCreatePathToSelection(obj);
                     pathToSelection.Add(_EventSelectionPropertyPaths[i], _EventSelectionIndices[i]);
                 }
+            }
+        }
+
+        /************************************************************************************************************************/
+        #endregion
+        /************************************************************************************************************************/
+        #region Preview Models
+        /************************************************************************************************************************/
+
+        [SerializeField]
+        private List<GameObject> _PreviewModels;
+        public static List<GameObject> PreviewModels
+        {
+            get
+            {
+                var instance = Instance;
+                AnimancerEditorUtilities.RemoveMissingAndDuplicates(ref instance._PreviewModels);
+                return instance._PreviewModels;
             }
         }
 

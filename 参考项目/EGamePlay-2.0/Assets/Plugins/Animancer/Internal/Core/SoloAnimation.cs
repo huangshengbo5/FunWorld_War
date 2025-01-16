@@ -1,5 +1,6 @@
-// Animancer // https://kybernetik.com.au/animancer // Copyright 2020 Kybernetik //
+// Animancer // https://kybernetik.com.au/animancer // Copyright 2018-2023 Kybernetik //
 
+using Animancer.Units;
 using System;
 using System.Collections.Generic;
 using UnityEngine;
@@ -8,7 +9,7 @@ using UnityEngine.Playables;
 
 namespace Animancer
 {
-    /// <summary>Plays a single <see cref="AnimationClip"/> on startup.</summary>
+    /// <summary>Plays a single <see cref="AnimationClip"/>.</summary>
     /// <remarks>
     /// Documentation: <see href="https://kybernetik.com.au/animancer/docs/manual/playing/component-types">Component Types</see>
     /// </remarks>
@@ -18,12 +19,17 @@ namespace Animancer
     /// https://kybernetik.com.au/animancer/api/Animancer/SoloAnimation
     /// 
     [AddComponentMenu(Strings.MenuPrefix + "Solo Animation")]
-    [DefaultExecutionOrder(-5000)]// Initialise before anything else tries to use this component.
+    [DefaultExecutionOrder(DefaultExecutionOrder)]
     [HelpURL(Strings.DocsURLs.APIDocumentation + "/" + nameof(SoloAnimation))]
-    public sealed class SoloAnimation : MonoBehaviour, IAnimationClipSource
+    public class SoloAnimation : MonoBehaviour, IAnimationClipSource
     {
         /************************************************************************************************************************/
         #region Fields and Properties
+        /************************************************************************************************************************/
+
+        /// <summary>Initialize before anything else tries to use this component.</summary>
+        public const int DefaultExecutionOrder = -5000;
+
         /************************************************************************************************************************/
 
         [SerializeField, Tooltip("The Animator component which this script controls")]
@@ -31,38 +37,40 @@ namespace Animancer
 
         /// <summary>[<see cref="SerializeField"/>]
         /// The <see cref="UnityEngine.Animator"/> component which this script controls.
-        /// <para></para>
+        /// </summary>
+        /// <remarks>
         /// If you need to set this value at runtime you are likely better off using a proper
         /// <see cref="AnimancerComponent"/>.
-        /// </summary>
+        /// </remarks>
         public Animator Animator
         {
             get => _Animator;
             set
             {
                 _Animator = value;
-                Awake();
+                if (IsInitialized)
+                    Play();
             }
         }
 
         /************************************************************************************************************************/
 
-        [SerializeField, Tooltip("The AnimationClip which will be played by OnEnable")]
+        [SerializeField, Tooltip("The animation that will be played")]
         private AnimationClip _Clip;
 
-        /// <summary>[<see cref="SerializeField"/>]
-        /// The <see cref="AnimationClip"/> which will be played by <see cref="OnEnable"/>.
-        /// <para></para>
+        /// <summary>[<see cref="SerializeField"/>] The <see cref="AnimationClip"/> that will be played.</summary>
+        /// <remarks>
         /// If you need to set this value at runtime you are likely better off using a proper
         /// <see cref="AnimancerComponent"/>.
-        /// </summary>
+        /// </remarks>
         public AnimationClip Clip
         {
             get => _Clip;
             set
             {
                 _Clip = value;
-                Awake();
+                if (IsInitialized)
+                    Play();
             }
         }
 
@@ -71,37 +79,37 @@ namespace Animancer
         /// <summary>
         /// If true, disabling this object will stop and rewind the animation. Otherwise it will simply be paused
         /// and will resume from its current state when it is re-enabled.
-        /// <para></para>
+        /// </summary>
+        /// <remarks>
         /// The default value is true.
         /// <para></para>
         /// This property wraps <see cref="Animator.keepAnimatorControllerStateOnDisable"/> and inverts its value.
         /// The value is serialized by the <see cref="UnityEngine.Animator"/>.
-        /// </summary>
+        /// </remarks>
         public bool StopOnDisable
         {
+#if UNITY_2022_2_OR_NEWER
             get => !_Animator.keepAnimatorStateOnDisable;
             set => _Animator.keepAnimatorStateOnDisable = !value;
+#else
+            get => !_Animator.keepAnimatorControllerStateOnDisable;
+            set => _Animator.keepAnimatorControllerStateOnDisable = !value;
+#endif
         }
 
         /************************************************************************************************************************/
 
-        /// <summary>
-        /// The <see cref="PlayableGraph"/> being used to play the <see cref="Clip"/>.
-        /// </summary>
+        /// <summary>The <see cref="PlayableGraph"/> being used to play the <see cref="Clip"/>.</summary>
         private PlayableGraph _Graph;
 
-        /// <summary>
-        /// The <see cref="AnimationClipPlayable"/> being used to play the <see cref="Clip"/>.
-        /// </summary>
+        /// <summary>The <see cref="AnimationClipPlayable"/> being used to play the <see cref="Clip"/>.</summary>
         private AnimationClipPlayable _Playable;
 
         /************************************************************************************************************************/
 
         private bool _IsPlaying;
 
-        /// <summary>
-        /// Indicates whether the animation is playing (true) or paused (false).
-        /// </summary>
+        /// <summary>Is the animation playing (true) or paused (false)?</summary>
         public bool IsPlaying
         {
             get => _IsPlaying;
@@ -109,25 +117,28 @@ namespace Animancer
             {
                 _IsPlaying = value;
 
-                if (!IsInitialised)
-                    return;
-
                 if (value)
-                    _Graph.Play();
+                {
+                    if (!IsInitialized)
+                        Play();
+                    else
+                        _Graph.Play();
+                }
                 else
-                    _Graph.Stop();
+                {
+                    if (IsInitialized)
+                        _Graph.Stop();
+                }
             }
         }
 
         /************************************************************************************************************************/
 
-        [SerializeField, Tooltip("The speed at which the animation plays (default 1)")]
+        [SerializeField, Multiplier, Tooltip("The speed at which the animation plays (default 1)")]
         private float _Speed = 1;
 
-        /// <summary>[<see cref="SerializeField"/>]
-        /// The speed at which the animation is playing (default 1).
-        /// </summary>
-        /// <exception cref="ArgumentException">This component is not yet <see cref="Awake"/>.</exception>
+        /// <summary>[<see cref="SerializeField"/>] The speed at which the animation is playing (default 1).</summary>
+        /// <exception cref="ArgumentException">This component is not yet <see cref="IsInitialized"/>.</exception>
         public float Speed
         {
             get => _Speed;
@@ -144,13 +155,12 @@ namespace Animancer
         [SerializeField, Tooltip("Determines whether Foot IK will be applied to the model (if it is Humanoid)")]
         private bool _FootIK;
 
-        /// <summary>[<see cref="SerializeField"/>]
-        /// Determines whether Foot IK will be applied to the model (if it is Humanoid).
-        /// <para></para>
-        /// The developers of Unity have states that they believe it looks better with this enabled, but more often
+        /// <summary>[<see cref="SerializeField"/>] Should Foot IK will be applied to the model (if it is Humanoid)?</summary>
+        /// <remarks>
+        /// The developers of Unity have stated that they believe it looks better with this enabled, but more often
         /// than not it just makes the legs end up in a slightly different pose to what the animator intended.
-        /// </summary>
-        /// <exception cref="ArgumentException">This component is not yet <see cref="Awake"/>.</exception>
+        /// </remarks>
+        /// <exception cref="ArgumentException">This component is not yet <see cref="IsInitialized"/>.</exception>
         public bool FootIK
         {
             get => _FootIK;
@@ -163,10 +173,8 @@ namespace Animancer
 
         /************************************************************************************************************************/
 
-        /// <summary>
-        /// The number of seconds that have passed since the start of the animation.
-        /// </summary>
-        /// <exception cref="ArgumentException">This component is not yet <see cref="Awake"/>.</exception>
+        /// <summary>The number of seconds that have passed since the start of the animation.</summary>
+        /// <exception cref="ArgumentException">This component is not yet <see cref="IsInitialized"/>.</exception>
         public float Time
         {
             get => (float)_Playable.GetTime();
@@ -183,15 +191,16 @@ namespace Animancer
         /// <summary>
         /// The <see cref="Time"/> of this state as a portion of the <see cref="AnimationClip.length"/>, meaning the
         /// value goes from 0 to 1 as it plays from start to end, regardless of how long that actually takes.
-        /// <para></para>
+        /// </summary>
+        /// <remarks>
         /// This value will continue increasing after the animation passes the end of its length and it will either
         /// freeze in place or start again from the beginning according to whether it is looping or not.
         /// <para></para>
         /// The fractional part of the value (<c>NormalizedTime % 1</c>) is the percentage (0-1) of progress in the
         /// current loop while the integer part (<c>(int)NormalizedTime</c>) is the number of times the animation has
         /// been looped.
-        /// </summary>
-        /// <exception cref="ArgumentException">This component is not yet <see cref="Awake"/>.</exception>
+        /// </remarks>
+        /// <exception cref="ArgumentException">This component is not yet <see cref="IsInitialized"/>.</exception>
         public float NormalizedTime
         {
             get => Time / _Clip.length;
@@ -201,12 +210,21 @@ namespace Animancer
         /************************************************************************************************************************/
 
         /// <summary>Indicates whether the <see cref="PlayableGraph"/> is valid.</summary>
-        public bool IsInitialised => _Graph.IsValid();
+        public bool IsInitialized => _Graph.IsValid();
 
         /************************************************************************************************************************/
         #endregion
         /************************************************************************************************************************/
+
 #if UNITY_EDITOR
+        /************************************************************************************************************************/
+
+        [SerializeField, Tooltip("Should the " + nameof(Clip) + " be automatically applied to the object in Edit Mode?")]
+        private bool _ApplyInEditMode;
+
+        /// <summary>[Editor-Only] Should the <see cref="Clip"/> be automatically applied to the object in Edit Mode?</summary>
+        public ref bool ApplyInEditMode => ref _ApplyInEditMode;
+
         /************************************************************************************************************************/
 
         /// <summary>[Editor-Only]
@@ -217,27 +235,27 @@ namespace Animancer
         /// Called by the Unity Editor when this component is first added (in Edit Mode) and whenever the Reset command
         /// is executed from its context menu.
         /// </remarks>
-        private void Reset()
+        protected virtual void Reset()
         {
-            _Animator = Editor.AnimancerEditorUtilities.GetComponentInHierarchy<Animator>(gameObject);
+            gameObject.GetComponentInParentOrChildren(ref _Animator);
         }
 
         /************************************************************************************************************************/
 
         /// <summary>[Editor-Only]
-        /// Tries to find an <see cref="UnityEngine.Animator"/> component on this <see cref="GameObject"/> or its
-        /// parents or children (in that order).
+        /// Applies the <see cref="Speed"/>, <see cref="FootIK"/>, and <see cref="ApplyInEditMode"/>.
         /// </summary>
-        /// <remarks>
-        /// Called by the Unity Editor in Edit Mode whenever an instance of this script is loaded or a value is changed
-        /// in the Inspector.
-        /// </remarks>
-        private void OnValidate()
+        /// <remarks>Called in Edit Mode whenever this script is loaded or a value is changed in the Inspector.</remarks>
+        protected virtual void OnValidate()
         {
-            if (IsInitialised)
+            if (IsInitialized)
             {
                 Speed = Speed;
                 FootIK = FootIK;
+            }
+            else if (_ApplyInEditMode && enabled)
+            {
+                _Clip.EditModeSampleAnimation(_Animator);
             }
         }
 
@@ -245,32 +263,35 @@ namespace Animancer
 #endif
         /************************************************************************************************************************/
 
-        /// <summary>Initialises everything needed to play the <see cref="Clip"/>.</summary>
-        /// <remarks>Called by Unity when this component is first initialised.</remarks>
-        private void Awake()
+        /// <summary>Plays the <see cref="Clip"/>.</summary>
+        public void Play() => Play(_Clip);
+
+        /// <summary>Plays the `clip`.</summary>
+        public void Play(AnimationClip clip)
         {
-            if (_Clip == null || _Animator == null)
+            if (clip == null || _Animator == null)
                 return;
 
             if (_Graph.IsValid())
                 _Graph.Destroy();
 
-            _Playable = AnimationPlayableUtilities.PlayClip(_Animator, _Clip, out _Graph);
+            _Playable = AnimationPlayableUtilities.PlayClip(_Animator, clip, out _Graph);
 
             _Playable.SetSpeed(_Speed);
 
             if (!_FootIK)
                 _Playable.SetApplyFootIK(false);
 
-            if (!_Clip.isLooping)
-                _Playable.SetDuration(_Clip.length);
+            if (!clip.isLooping)
+                _Playable.SetDuration(clip.length);
+
+            _IsPlaying = true;
         }
 
         /************************************************************************************************************************/
 
         /// <summary>Plays the <see cref="Clip"/> on the target <see cref="Animator"/>.</summary>
-        /// <remarks>Called by Unity when this component becomes enabled and active.</remarks>
-        private void OnEnable()
+        protected virtual void OnEnable()
         {
             IsPlaying = true;
         }
@@ -280,8 +301,7 @@ namespace Animancer
         /// <summary>
         /// Checks if the animation is done so it can pause the <see cref="PlayableGraph"/> to improve performance.
         /// </summary>
-        /// <remarks>Called by Unity every frame while this component is enabled and active.</remarks>
-        private void Update()
+        protected virtual void Update()
         {
             if (!IsPlaying)
                 return;
@@ -300,17 +320,13 @@ namespace Animancer
         /************************************************************************************************************************/
 
         /// <summary>Ensures that the <see cref="_Graph"/> is properly cleaned up.</summary>
-        /// <remarks>Called by Unity when this component becomes disabled or inactive.</remarks>
-        private void OnDisable()
+        protected virtual void OnDisable()
         {
             IsPlaying = false;
 
-            if (_Animator.keepAnimatorStateOnDisable)
-                return;
-
-            if (IsInitialised)
+            if (IsInitialized && StopOnDisable)
             {
-                // We need to call SetTime twice to ensure that animation events aren't triggered incorrectly.
+                // Call SetTime twice to ensure that animation events aren't triggered incorrectly.
                 _Playable.SetTime(0);
                 _Playable.SetTime(0);
             }
@@ -319,19 +335,16 @@ namespace Animancer
         /************************************************************************************************************************/
 
         /// <summary>Ensures that the <see cref="PlayableGraph"/> is properly cleaned up.</summary>
-        /// <remarks>Called by Unity when this component is destroyed.</remarks>
-        private void OnDestroy()
+        protected virtual void OnDestroy()
         {
-            if (IsInitialised)
+            if (IsInitialized)
                 _Graph.Destroy();
         }
 
         /************************************************************************************************************************/
 
 #if UNITY_EDITOR
-        /// <summary>[Editor-Only]
-        /// Ensures that the <see cref="PlayableGraph"/> is destroyed.
-        /// </summary>
+        /// <summary>[Editor-Only] Ensures that the <see cref="PlayableGraph"/> is destroyed.</summary>
         ~SoloAnimation()
         {
             UnityEditor.EditorApplication.delayCall += OnDestroy;
@@ -357,22 +370,29 @@ namespace Animancer
 
 namespace Animancer.Editor
 {
+    /// <summary>[Editor-Only] A custom Inspector for <see cref="SoloAnimation"/>.</summary>
+    /// https://kybernetik.com.au/animancer/api/Animancer.Editor/SoloAnimationEditor
+    /// 
     [UnityEditor.CustomEditor(typeof(SoloAnimation)), UnityEditor.CanEditMultipleObjects]
-    internal sealed class SoloAnimationEditor : UnityEditor.Editor
+    public class SoloAnimationEditor : UnityEditor.Editor
     {
         /************************************************************************************************************************/
 
         /// <summary>The animator referenced by each target.</summary>
+        [NonSerialized]
         private Animator[] _Animators;
 
         /// <summary>A <see cref="UnityEditor.SerializedObject"/> encapsulating the <see cref="_Animators"/>.</summary>
+        [NonSerialized]
         private UnityEditor.SerializedObject _SerializedAnimator;
 
         /// <summary>The <see cref="Animator.keepAnimatorControllerStateOnDisable"/> property.</summary>
+        [NonSerialized]
         private UnityEditor.SerializedProperty _KeepStateOnDisable;
 
         /************************************************************************************************************************/
 
+        /// <inheritdoc/>
         public override void OnInspectorGUI()
         {
             DoSerializedFieldsGUI();
@@ -383,9 +403,7 @@ namespace Animancer.Editor
 
         /************************************************************************************************************************/
 
-        /// <summary>
-        /// Draws the target's serialized fields.
-        /// </summary>
+        /// <summary>Draws the target's serialized fields.</summary>
         private void DoSerializedFieldsGUI()
         {
             serializedObject.Update();
@@ -407,12 +425,12 @@ namespace Animancer.Editor
 
         /************************************************************************************************************************/
 
+        /// <summary>Ensures that the cached references relating to the target's <see cref="Animator"/> are correct.</summary>
         private void RefreshSerializedAnimator()
         {
             var targets = this.targets;
 
-            if (_Animators == null || _Animators.Length != targets.Length)
-                _Animators = new Animator[targets.Length];
+            AnimancerUtilities.SetLength(ref _Animators, targets.Length);
 
             var dirty = false;
             var hasAll = true;
@@ -451,28 +469,27 @@ namespace Animancer.Editor
         {
             var area = AnimancerGUI.LayoutSingleLineRect();
 
-            var label = AnimancerGUI.TempContent("Stop On Disable",
+            using (ObjectPool.Disposable.AcquireContent(out var label, "Stop On Disable",
                 "If true, disabling this object will stop and rewind all animations." +
-                " Otherwise they will simply be paused and will resume from their current states when it is re-enabled.");
-
-            if (_KeepStateOnDisable != null)
+                " Otherwise they will simply be paused and will resume from their current states when it is re-enabled."))
             {
-                _KeepStateOnDisable.serializedObject.Update();
+                if (_KeepStateOnDisable != null)
+                {
+                    _KeepStateOnDisable.serializedObject.Update();
 
-                label = UnityEditor.EditorGUI.BeginProperty(area, label, _KeepStateOnDisable);
+                    var content = UnityEditor.EditorGUI.BeginProperty(area, label, _KeepStateOnDisable);
 
-                _KeepStateOnDisable.boolValue = !UnityEditor.EditorGUI.Toggle(area, label, !_KeepStateOnDisable.boolValue);
+                    _KeepStateOnDisable.boolValue = !UnityEditor.EditorGUI.Toggle(area, content, !_KeepStateOnDisable.boolValue);
 
-                UnityEditor.EditorGUI.EndProperty();
+                    UnityEditor.EditorGUI.EndProperty();
 
-                _KeepStateOnDisable.serializedObject.ApplyModifiedProperties();
-            }
-            else
-            {
-                var enabled = GUI.enabled;
-                GUI.enabled = false;
-                UnityEditor.EditorGUI.Toggle(area, label, false);
-                GUI.enabled = enabled;
+                    _KeepStateOnDisable.serializedObject.ApplyModifiedProperties();
+                }
+                else
+                {
+                    using (new UnityEditor.EditorGUI.DisabledScope(true))
+                        UnityEditor.EditorGUI.Toggle(area, label, false);
+                }
             }
         }
 
@@ -481,16 +498,16 @@ namespace Animancer.Editor
         /// <summary>Draws the target's runtime details.</summary>
         private void DoRuntimeDetailsGUI()
         {
-            if (!UnityEditor.EditorApplication.isPlayingOrWillChangePlaymode ||
+            if (!UnityEditor.EditorApplication.isPlaying ||
                 targets.Length != 1)
                 return;
 
             AnimancerGUI.BeginVerticalBox(GUI.skin.box);
 
             var target = (SoloAnimation)this.target;
-            if (!target.IsInitialised)
+            if (!target.IsInitialized)
             {
-                GUILayout.Label("Not Initialised");
+                GUILayout.Label("Not Initialized");
             }
             else
             {
@@ -520,7 +537,8 @@ namespace Animancer.Editor
 
         /************************************************************************************************************************/
 
-        private void OnDisable()
+        /// <summary>Cleans up cached references relating to the target's <see cref="Animator"/>.</summary>
+        protected virtual void OnDisable()
         {
             if (_SerializedAnimator != null)
             {

@@ -1,15 +1,16 @@
-// Animancer // https://kybernetik.com.au/animancer // Copyright 2020 Kybernetik //
+// Animancer // https://kybernetik.com.au/animancer // Copyright 2018-2023 Kybernetik //
 
 using UnityEngine;
-using UnityEngine.Playables;
 
 namespace Animancer
 {
-    /// <summary>An object that can be updated during Animancer's <see cref="PlayableBehaviour.PrepareFrame"/>.</summary>
+    /// <summary>[Pro-Only] An object that can be updated during Animancer's animation updates.</summary>
     ///
     /// <example>
-    /// Register to receive updates using <see cref="AnimancerPlayable.RequireUpdate(IUpdatable)"/> and stop
-    /// receiving updates using <see cref="AnimancerPlayable.CancelUpdate(IUpdatable)"/>.
+    /// Register to receive updates using <see cref="AnimancerPlayable.RequirePreUpdate"/> or
+    /// <see cref="AnimancerPlayable.RequirePostUpdate"/> and stop
+    /// receiving updates using <see cref="AnimancerPlayable.CancelPreUpdate"/> or
+    /// <see cref="AnimancerPlayable.CancelPostUpdate"/>.
     /// <para></para><code>
     /// public sealed class MyUpdatable : Key, IUpdatable
     /// {
@@ -18,49 +19,41 @@ namespace Animancer
     ///     public void StartUpdating(AnimancerComponent animancer)
     ///     {
     ///         _Animancer = animancer;
-    ///         _Animancer.Playable.RequireUpdate(this);
+    ///         
+    ///         // If you want Update to be called before the playables get updated.
+    ///         _Animancer.Playable.RequirePreUpdate(this);
+    ///         
+    ///         // If you want Update to be called after the playables get updated.
+    ///         _Animancer.Playable.RequirePostUpdate(this);
     ///     }
     ///
     ///     public void StopUpdating()
     ///     {
-    ///         _Animancer.Playable.CancelUpdate(this);
+    ///         // If you used RequirePreUpdate.
+    ///         _Animancer.Playable.CancelPreUpdate(this);
+    ///         
+    ///         // If you used RequirePostUpdate.
+    ///         _Animancer.Playable.CancelPostUpdate(this);
     ///     }
     ///
-    ///     void IUpdatable.EarlyUpdate()
+    ///     void IUpdatable.Update()
     ///     {
-    ///         // Called at the start of every animation update before the playables get updated.
-    ///     }
-    ///
-    ///     void IUpdatable.LateUpdate()
-    ///     {
-    ///         // Called at the end of every animation update after the playables get updated.
-    ///     }
-    ///
-    ///     void IUpdatable.OnDestroy()
-    ///     {
-    ///         // Called by AnimancerPlayable.Destroy if this object is currently being updated.
+    ///         // Called during every animation update.
+    ///         
+    ///         // AnimancerPlayable.Current can be used to access the system it is being updated by.
     ///     }
     /// }
     /// </code></example>
+    /// 
     /// https://kybernetik.com.au/animancer/api/Animancer/IUpdatable
     /// 
-    public interface IUpdatable : IKeyedListItem
+    public interface IUpdatable : Key.IListItem
     {
         /************************************************************************************************************************/
 
-        /// <summary>Called at the start of every <see cref="Animator"/> update before the playables get updated.</summary>
-        /// <remarks>The <see cref="Animator.updateMode"/> determines when it updates.</remarks>
-        void EarlyUpdate();
-
-        /// <summary>Called at the end of every <see cref="Animator"/> update after the playables get updated.</summary>
-        /// <remarks>
-        /// The <see cref="Animator.updateMode"/> determines when it updates.
-        /// This method has nothing to do with <see cref="MonoBehaviour"/>.LateUpdate().
-        /// </remarks>
-        void LateUpdate();
-
-        /// <summary>Called by <see cref="AnimancerPlayable.Destroy"/> if this object is currently being updated.</summary>
-        void OnDestroy();
+        /// <summary>Called during every <see cref="Animator"/> update.</summary>
+        /// <remarks>The <see cref="Animator.updateMode"/> determines the update rate.</remarks>
+        void Update();
 
         /************************************************************************************************************************/
     }

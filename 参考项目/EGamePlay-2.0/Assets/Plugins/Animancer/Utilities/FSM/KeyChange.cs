@@ -1,6 +1,4 @@
-// Animancer // https://kybernetik.com.au/animancer // Copyright 2020 Kybernetik //
-
-//#define ANIMANCER_DONT_VALIDATE_STATE_CHANGES
+// Animancer // https://kybernetik.com.au/animancer // Copyright 2018-2023 Kybernetik //
 
 using System;
 
@@ -8,25 +6,31 @@ namespace Animancer.FSM
 {
     /// <summary>A static access point for the details of a key change in a <see cref="StateMachine{TKey, TState}"/>.</summary>
     /// <remarks>
-    /// Documentation: <see href="https://kybernetik.com.au/animancer/docs/manual/fsm#state-change-details">State Change Details</see>
+    /// This system is thread-safe.
+    /// <para></para>
+    /// Documentation: <see href="https://kybernetik.com.au/animancer/docs/manual/fsm/changing-states">Changing States</see>
     /// </remarks>
     /// https://kybernetik.com.au/animancer/api/Animancer.FSM/KeyChange_1
     /// 
-    public readonly struct KeyChange<TKey>
+    public struct KeyChange<TKey> : IDisposable
     {
         /************************************************************************************************************************/
 
         [ThreadStatic]
         private static KeyChange<TKey> _Current;
 
-        private readonly bool _IsActive;
-        private readonly TKey _PreviousKey;
-        private readonly TKey _NextKey;
+        private IKeyedStateMachine<TKey> _StateMachine;
+        private TKey _PreviousKey;
+        private TKey _NextKey;
 
         /************************************************************************************************************************/
 
         /// <summary>Is a <see cref="KeyChange{TKey}"/> of this type currently occurring?</summary>
-        public static bool IsActive => _Current._IsActive;
+        public static bool IsActive => _Current._StateMachine != null;
+
+        /// <summary>The <see cref="KeyChange{TKey}"/> in which the current change is occurring.</summary>
+        /// <remarks>This will be null if no change is currently occurring.</remarks>
+        public static IKeyedStateMachine<TKey> StateMachine => _Current._StateMachine;
 
         /************************************************************************************************************************/
 
@@ -38,9 +42,10 @@ namespace Animancer.FSM
         {
             get
             {
+#if UNITY_ASSERTIONS
                 if (!IsActive)
-                    KeyChangeDebug.ThrowInactiveException(typeof(TKey));
-
+                    throw new InvalidOperationException(StateExtensions.GetChangeError(typeof(TKey), typeof(StateMachine<,>), "Key"));
+#endif
                 return _Current._PreviousKey;
             }
         }
@@ -55,41 +60,49 @@ namespace Animancer.FSM
         {
             get
             {
+#if UNITY_ASSERTIONS
                 if (!IsActive)
-                    KeyChangeDebug.ThrowInactiveException(typeof(TKey));
-
+                    throw new InvalidOperationException(StateExtensions.GetChangeError(typeof(TKey), typeof(StateMachine<,>), "Key"));
+#endif
                 return _Current._NextKey;
             }
         }
 
         /************************************************************************************************************************/
 
-        private KeyChange(TKey previousKey, TKey nextKey)
+        /// <summary>[Internal]
+        /// Assigns the parameters as the details of the currently active change and creates a new
+        /// <see cref="KeyChange{TKey}"/> containing the details of the previously active change so that disposing
+        /// it will re-assign those previous details to be current again in case of recursive state changes.
+        /// </summary>
+        /// <example><code>
+        /// using (new KeyChange&lt;TState&gt;(previousKey, nextKey))
+        /// {
+        ///     // Do the actual key change.
+        /// }
+        /// </code></example>
+        internal KeyChange(IKeyedStateMachine<TKey> stateMachine, TKey previousKey, TKey nextKey)
         {
-            _IsActive = true;
-            _PreviousKey = previousKey;
-            _NextKey = nextKey;
+            this = _Current;
+
+            _Current._StateMachine = stateMachine;
+            _Current._PreviousKey = previousKey;
+            _Current._NextKey = nextKey;
         }
 
         /************************************************************************************************************************/
 
-        internal static void Begin(TKey previousKey, TKey nextKey, out KeyChange<TKey> previouslyActiveChange)
+        /// <summary>[<see cref="IDisposable"/>]
+        /// Re-assigns the values of this change (which were the previous values from when it was created) to be the
+        /// currently active change. See the constructor for recommended usage.
+        /// </summary>
+        /// <remarks>
+        /// Usually this will be returning to default values (nulls), but if one state change causes another then the
+        /// second one ending will return to the first which will then return to the defaults.
+        /// </remarks>
+        public void Dispose()
         {
-            previouslyActiveChange = _Current;// In case of recursive calls.
-            _Current = new KeyChange<TKey>(previousKey, nextKey);
-
-            KeyChangeDebug.AddActiveChange(typeof(TKey));
-        }
-
-        /************************************************************************************************************************/
-
-        internal static void End(in KeyChange<TKey> previouslyActiveChange)
-        {
-            KeyChangeDebug.RemoveActiveChange();
-
-            // Usually this will be returning to default values (nulls), but if one state change causes another then
-            // this will return to the first one after the second ends.
-            _Current = previouslyActiveChange;
+            _Current = this;
         }
 
         /************************************************************************************************************************/
@@ -103,40 +116,6 @@ namespace Animancer.FSM
 
         /// <summary>Returns a string describing the contents of the current <see cref="KeyChange{TKey}"/>.</summary>
         public static string CurrentToString() => _Current.ToString();
-
-        /************************************************************************************************************************/
-    }
-
-    /// <summary>[Assert-Only] [Internal]
-    /// A system that keeps track of the active <see cref="KeyChange{TKey}"/>s to help with debugging.
-    /// </summary>
-    internal static class KeyChangeDebug
-    {
-        /************************************************************************************************************************/
-
-        /// <summary>The types currently being used in a <see cref="KeyChange{TKey}"/>.</summary>
-        private static readonly System.Collections.Generic.List<Type>
-            ActiveChanges = new System.Collections.Generic.List<Type>();
-
-        /************************************************************************************************************************/
-
-        /// <summary>Adds the `type` to the list of active changes.</summary>
-        internal static void AddActiveChange(Type type) => ActiveChanges.Add(type);
-
-        /// <summary>Removes the last active change added by <see cref="AddActiveChange"/>.</summary>
-        internal static void RemoveActiveChange() => ActiveChanges.RemoveAt(ActiveChanges.Count - 1);
-
-        /************************************************************************************************************************/
-
-        /// <summary>
-        /// Throws an <see cref="InvalidOperationException"/> explaining that the `type` is not currently being used in
-        /// a <see cref="KeyChange{TKey}"/> and listing the types that are currently being used.
-        /// </summary>
-        public static void ThrowInactiveException(Type type)
-        {
-            var error = StateChangeDebug.BuildErrorMessage(nameof(KeyChange<object>), type, ActiveChanges);
-            throw new InvalidOperationException(error);
-        }
 
         /************************************************************************************************************************/
     }

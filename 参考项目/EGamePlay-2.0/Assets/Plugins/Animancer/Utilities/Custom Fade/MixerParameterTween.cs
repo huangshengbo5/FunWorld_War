@@ -1,13 +1,16 @@
-// Animancer // https://kybernetik.com.au/animancer // Copyright 2020 Kybernetik //
+// Animancer // https://kybernetik.com.au/animancer // Copyright 2018-2023 Kybernetik //
 
 using UnityEngine;
 
 namespace Animancer
 {
     /// <summary>A <see cref="MixerParameterTween{TParameter}"/> which uses <see cref="Mathf.LerpUnclamped"/>.</summary>
+    /// <remarks>
+    /// Documentation: <see href="https://kybernetik.com.au/animancer/docs/manual/blending/mixers#smoothing">Smoothing</see>
+    /// </remarks>
     /// <example><code>
     /// [SerializeField] private AnimancerComponent _Animancer;
-    /// [SerializeField] private LinearMixerState.Transition _Mixer;
+    /// [SerializeField] private LinearMixerTransition _Mixer;
     /// 
     /// private MixerParameterTweenFloat _MixerTween;
     /// 
@@ -99,8 +102,8 @@ namespace Animancer
         public void Start(TParameter endValue, float duration)
         {
 #if UNITY_ASSERTIONS
-            Debug.Assert(Mixer != null, nameof(Mixer) + " is null.");
-            Debug.Assert(Mixer.Root != null, $"{nameof(Mixer)}.{nameof(Mixer.Root)} is null.");
+            AnimancerUtilities.Assert(Mixer != null, nameof(Mixer) + " is null.");
+            AnimancerUtilities.Assert(Mixer.Root != null, $"{nameof(Mixer)}.{nameof(Mixer.Root)} is null.");
 #endif
 
             StartValue = Mixer.Parameter;
@@ -108,13 +111,13 @@ namespace Animancer
             Duration = duration;
             Time = 0;
 
-            Mixer.Root.RequireUpdate(this);
+            Mixer.Root.RequirePreUpdate(this);
         }
 
         /************************************************************************************************************************/
 
         /// <summary>Stops this tween from updating.</summary>
-        public void Stop() => Mixer?.Root?.CancelUpdate(this);
+        public void Stop() => Mixer?.Root?.CancelPreUpdate(this);
 
         /************************************************************************************************************************/
 
@@ -132,7 +135,7 @@ namespace Animancer
 
         /************************************************************************************************************************/
 
-        void IUpdatable.EarlyUpdate()
+        void IUpdatable.Update()
         {
             Time += AnimancerPlayable.DeltaTime;
 
@@ -147,12 +150,6 @@ namespace Animancer
                 Stop();
             }
         }
-
-        /************************************************************************************************************************/
-
-        void IUpdatable.LateUpdate() { }
-
-        void IUpdatable.OnDestroy() { }
 
         /************************************************************************************************************************/
     }

@@ -1,4 +1,4 @@
-// Animancer // https://kybernetik.com.au/animancer // Copyright 2020 Kybernetik //
+// Animancer // https://kybernetik.com.au/animancer // Copyright 2018-2023 Kybernetik //
 
 using System;
 using System.Text;
@@ -17,8 +17,30 @@ namespace Animancer
     /// </remarks>
     /// https://kybernetik.com.au/animancer/api/Animancer/CartesianMixerState
     /// 
-    public class CartesianMixerState : MixerState<Vector2>
+    public class CartesianMixerState : MixerState<Vector2>, ICopyable<CartesianMixerState>
     {
+        /************************************************************************************************************************/
+
+        /// <summary><see cref="MixerState{TParameter}.Parameter"/>.x.</summary>
+        public float ParameterX
+        {
+            get => Parameter.x;
+            set => Parameter = new Vector2(value, Parameter.y);
+        }
+
+        /// <summary><see cref="MixerState{TParameter}.Parameter"/>.y.</summary>
+        public float ParameterY
+        {
+            get => Parameter.y;
+            set => Parameter = new Vector2(Parameter.x, value);
+        }
+
+        /************************************************************************************************************************/
+
+        /// <inheritdoc/>
+        public override string GetParameterError(Vector2 value)
+            => value.IsFinite() ? null : $"value.x and value.y {Strings.MustBeFinite}";
+
         /************************************************************************************************************************/
 
         /// <summary>Precalculated values to speed up the recalculation of weights.</summary>
@@ -26,22 +48,6 @@ namespace Animancer
 
         /// <summary>Indicates whether the <see cref="_BlendFactors"/> need to be recalculated.</summary>
         private bool _BlendFactorsDirty = true;
-
-        /************************************************************************************************************************/
-
-        /// <summary>Gets or sets Parameter.x.</summary>
-        public float ParameterX
-        {
-            get => Parameter.x;
-            set => Parameter = new Vector2(value, Parameter.y);
-        }
-
-        /// <summary>Gets or sets Parameter.y.</summary>
-        public float ParameterY
-        {
-            get => Parameter.y;
-            set => Parameter = new Vector2(Parameter.x, value);
-        }
 
         /************************************************************************************************************************/
 
@@ -58,16 +64,26 @@ namespace Animancer
         /************************************************************************************************************************/
 
         /// <summary>
-        /// Recalculates the weights of all <see cref="ManualMixerState._States"/> based on the current value of the
+        /// Recalculates the weights of all <see cref="ManualMixerState.ChildStates"/> based on the current value of the
         /// <see cref="MixerState{TParameter}.Parameter"/> and the <see cref="MixerState{TParameter}._Thresholds"/>.
         /// </summary>
         protected override void ForceRecalculateWeights()
         {
             WeightsAreDirty = false;
 
-            CalculateBlendFactors();
-
             var childCount = ChildCount;
+            if (childCount == 0)
+            {
+                return;
+            }
+            else if (childCount == 1)
+            {
+                var state = GetChild(0);
+                state.Weight = 1;
+                return;
+            }
+
+            CalculateBlendFactors(childCount);
 
             float totalWeight = 0;
 
@@ -107,21 +123,16 @@ namespace Animancer
 
         /************************************************************************************************************************/
 
-        private void CalculateBlendFactors()
+        private void CalculateBlendFactors(int childCount)
         {
             if (!_BlendFactorsDirty)
                 return;
 
             _BlendFactorsDirty = false;
 
-            var childCount = ChildCount;
-            if (childCount <= 1)
-                return;
-
             // Resize the precalculated values.
-            if (_BlendFactors == null || _BlendFactors.Length != childCount)
+            if (AnimancerUtilities.SetLength(ref _BlendFactors, childCount))
             {
-                _BlendFactors = new Vector2[childCount][];
                 for (int i = 0; i < childCount; i++)
                     _BlendFactors[i] = new Vector2[childCount];
             }
@@ -138,13 +149,42 @@ namespace Animancer
                 {
                     var thresholdIToJ = GetThreshold(j) - thresholdI;
 
-                    thresholdIToJ *= 1f / thresholdIToJ.sqrMagnitude;
+#if UNITY_ASSERTIONS
+                    if (thresholdIToJ == default)
+                        throw new ArgumentException(
+                            $"Mixer has multiple identical thresholds.\n{GetDescription()}");
+#endif
+
+                    thresholdIToJ /= thresholdIToJ.sqrMagnitude;
 
                     // Each factor is used in [i][j] with it's opposite in [j][i].
                     blendFactors[j] = thresholdIToJ;
                     _BlendFactors[j][i] = -thresholdIToJ;
                 }
             }
+        }
+
+        /************************************************************************************************************************/
+
+        /// <inheritdoc/>
+        public override AnimancerState Clone(AnimancerPlayable root)
+        {
+            var clone = new CartesianMixerState();
+            clone.SetNewCloneRoot(root);
+            ((ICopyable<CartesianMixerState>)clone).CopyFrom(this);
+            return clone;
+        }
+
+        /************************************************************************************************************************/
+
+        /// <inheritdoc/>
+        void ICopyable<CartesianMixerState>.CopyFrom(CartesianMixerState copyFrom)
+        {
+            _BlendFactorsDirty = copyFrom._BlendFactorsDirty;
+            if (!_BlendFactorsDirty)
+                _BlendFactors = copyFrom._BlendFactors;
+
+            ((ICopyable<MixerState<Vector2>>)this).CopyFrom(copyFrom);
         }
 
         /************************************************************************************************************************/

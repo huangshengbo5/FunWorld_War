@@ -1,4 +1,4 @@
-// Animancer // https://kybernetik.com.au/animancer // Copyright 2020 Kybernetik //
+// Animancer // https://kybernetik.com.au/animancer // Copyright 2018-2023 Kybernetik //
 
 using System.Diagnostics.CodeAnalysis;
 using System.Reflection;
@@ -7,24 +7,18 @@ using System.Reflection;
 [assembly: AssemblyDescription("An animation system for Unity which is based on the Playables API.")]
 [assembly: AssemblyProduct("Animancer Pro")]
 [assembly: AssemblyCompany("Kybernetik")]
-[assembly: AssemblyCopyright("Copyright © Kybernetik 2020")]
-[assembly: AssemblyVersion("6.0.0.0")]
+[assembly: AssemblyCopyright("Copyright © Kybernetik 2022")]
+[assembly: AssemblyVersion("7.4.2.25")]
+
+#if UNITY_EDITOR
 
 [assembly: SuppressMessage("Style", "IDE0016:Use 'throw' expression",
     Justification = "Not supported by older Unity versions.")]
-[assembly: SuppressMessage("Style", "IDE0018:Inline variable declaration",
-    Justification = "Not supported by older Unity versions.")]
 [assembly: SuppressMessage("Style", "IDE0019:Use pattern matching",
     Justification = "Not supported by older Unity versions.")]
-[assembly: SuppressMessage("Style", "IDE0029:Use coalesce expression",
-    Justification = "Doesn't work properly with the UnityEngine.Object overloaded == operator.")]
 [assembly: SuppressMessage("Style", "IDE0031:Use null propagation",
-    Justification = "Not supported by older Unity versions.")]
-[assembly: SuppressMessage("Style", "IDE0034:Simplify 'default' expression",
-    Justification = "Not supported by older Unity versions.")]
+    Justification = "Doesn't work properly on UnityEngine.Objects.")]
 [assembly: SuppressMessage("Style", "IDE0039:Use local function",
-    Justification = "Not supported by older Unity versions.")]
-[assembly: SuppressMessage("Style", "IDE0041:Use 'is null' check",
     Justification = "Not supported by older Unity versions.")]
 [assembly: SuppressMessage("Style", "IDE0044:Make field readonly",
     Justification = "Using the [SerializeField] attribute on a private field means Unity will set it from serialized data.")]
@@ -50,8 +44,10 @@ using System.Reflection;
     Justification = "Not supported by Unity")]
 [assembly: SuppressMessage("Style", "IDE0083:Use pattern matching",
     Justification = "Not supported by older Unity versions")]
-[assembly: SuppressMessage("Style", "IDE1005:Delegate invocation can be simplified.",
+[assembly: SuppressMessage("Style", "IDE0090:Use 'new(...)'",
     Justification = "Not supported by older Unity versions.")]
+[assembly: SuppressMessage("CodeQuality", "IDE0079:Remove unnecessary suppression",
+    Justification = "Don't give code style advice in publically released code.")]
 [assembly: SuppressMessage("Style", "IDE1006:Naming Styles",
     Justification = "Don't give code style advice in publically released code.")]
 
@@ -60,9 +56,8 @@ using System.Reflection;
 [assembly: SuppressMessage("Type Safety", "UNT0014:Invalid type for call to GetComponent",
     Justification = "Doesn't account for generic constraints.")]
 
-// This suppression doesn't seem to actually work so we need to put #pragma warning disable in every file :(
-//[assembly: SuppressMessage("Code Quality", "CS0649:Field is never assigned to, and will always have its default value",
-//    Justification = "Using the [SerializeField] attribute on a private field means Unity will set it from serialized data.")]
+[assembly: SuppressMessage("Code Quality", "CS0649:Field is never assigned to, and will always have its default value",
+    Justification = "Using the [SerializeField] attribute on a private field means Unity will set it from serialized data.")]
 
 [assembly: SuppressMessage("Microsoft.Design", "CA1001:TypesThatOwnDisposableFieldsShouldBeDisposable",
     Justification = "Having a field doesn't mean you are responsible for creating and destroying it.")]
@@ -75,3 +70,4 @@ using System.Reflection;
 [assembly: SuppressMessage("Microsoft.Usage", "CA2235:MarkAllNonSerializableFields",
     Justification = "UnityEngine.Object is serializable by Unity.")]
 
+#endif

@@ -1,4 +1,4 @@
-// Animancer // https://kybernetik.com.au/animancer // Copyright 2020 Kybernetik //
+// Animancer // https://kybernetik.com.au/animancer // Copyright 2018-2023 Kybernetik //
 
 #if UNITY_EDITOR
 
@@ -9,7 +9,7 @@ using UnityEditorInternal;
 using UnityEngine;
 using Object = UnityEngine.Object;
 
-namespace Animancer.Editor
+namespace Animancer.Editor.Tools
 {
     /// <summary>[Editor-Only] [Pro-Only]
     /// An <see cref="EditorWindow"/> with various utilities for managing sprites and generating animations.
@@ -17,29 +17,37 @@ namespace Animancer.Editor
     /// <remarks>
     /// Documentation: <see href="https://kybernetik.com.au/animancer/docs/manual/tools">Animancer Tools</see>
     /// </remarks>
-    internal sealed partial class AnimancerToolsWindow : EditorWindow
+    /// https://kybernetik.com.au/animancer/api/Animancer.Editor.Tools/AnimancerToolsWindow
+    /// 
+    public sealed partial class AnimancerToolsWindow : EditorWindow
     {
         /************************************************************************************************************************/
 
-        private const string Name = "Animancer Tools";
+        /// <summary>The display name of this window.</summary>
+        public const string Name = "Animancer Tools";
 
+        /// <summary>The singleton instance of this window.</summary>
         public static AnimancerToolsWindow Instance { get; private set; }
 
-        [SerializeField] private ModifySprites _ModifySprites;
-        [SerializeField] private RenameSprites _RenameSprites;
-        [SerializeField] private GenerateSpriteAnimations _GenerateSpriteAnimations;
-        [SerializeField] private RemapSpriteAnimation _RemapSpriteAnimation;
-        [SerializeField] private RemapAnimationBindings _RemapAnimationBindings;
-        [SerializeField] private Vector2 _Scroll;
-        [SerializeField] private int _CurrentPanel = -1;
+        [SerializeReference] private List<Tool> _Tools;
 
-        private Panel[] _Panels;
-        private string[] _PanelNames;
+        [SerializeField] private Vector2 _Scroll;
+        [SerializeField] private int _CurrentTool = -1;
+
+        /************************************************************************************************************************/
 
         private SerializedObject _SerializedObject;
 
         private SerializedObject SerializedObject
             => _SerializedObject ?? (_SerializedObject = new SerializedObject(this));
+
+        /// <summary>Returns the <see cref="SerializedProperty"/> which represents the specified `tool`.</summary>
+        public SerializedProperty FindSerializedPropertyForTool(Tool tool)
+        {
+            var index = _Tools.IndexOf(tool);
+            var property = SerializedObject.FindProperty(nameof(_Tools));
+            return property.GetArrayElementAtIndex(index);
+        }
 
         /************************************************************************************************************************/
 
@@ -48,28 +56,7 @@ namespace Animancer.Editor
             titleContent = new GUIContent(Name);
             Instance = this;
 
-            AnimancerUtilities.NewIfNull(ref _ModifySprites);
-            AnimancerUtilities.NewIfNull(ref _RenameSprites);
-            AnimancerUtilities.NewIfNull(ref _GenerateSpriteAnimations);
-            AnimancerUtilities.NewIfNull(ref _RemapSpriteAnimation);
-            AnimancerUtilities.NewIfNull(ref _RemapAnimationBindings);
-
-            _Panels = new Panel[]
-            {
-                _ModifySprites,
-                _RenameSprites,
-                _GenerateSpriteAnimations,
-                _RemapSpriteAnimation,
-                _RemapAnimationBindings,
-            };
-            _PanelNames = new string[_Panels.Length];
-
-            for (int i = 0; i < _Panels.Length; i++)
-            {
-                var panel = _Panels[i];
-                panel.OnEnable(i);
-                _PanelNames[i] = panel.Name;
-            }
+            InitializeTools();
 
             Undo.undoRedoPerformed += Repaint;
 
@@ -78,17 +65,69 @@ namespace Animancer.Editor
 
         /************************************************************************************************************************/
 
+        private void InitializeTools()
+        {
+            if (_Tools == null)
+            {
+                _Tools = new List<Tool>();
+            }
+            else
+            {
+                for (int i = _Tools.Count - 1; i >= 0; i--)
+                    if (_Tools[i] == null)
+                        _Tools.RemoveAt(i);
+            }
+
+            var toolTypes = TypeSelectionButton.GetDerivedTypes(typeof(Tool));
+            for (int i = 0; i < toolTypes.Count; i++)
+            {
+                var toolType = toolTypes[i];
+                if (IndexOfTool(toolType) >= 0)
+                    continue;
+
+                var tool = (Tool)Activator.CreateInstance(toolType);
+                _Tools.Add(tool);
+            }
+
+            _Tools.Sort();
+
+            for (int i = 0; i < _Tools.Count; i++)
+                _Tools[i].OnEnable(i);
+        }
+
+        /************************************************************************************************************************/
+
+        private int IndexOfTool(Type type)
+        {
+            for (int i = 0; i < _Tools.Count; i++)
+                if (_Tools[i].GetType() == type)
+                    return i;
+
+            return -1;
+        }
+
+        /************************************************************************************************************************/
+
         private void OnDisable()
         {
             Undo.undoRedoPerformed -= Repaint;
+
+            for (int i = 0; i < _Tools.Count; i++)
+                _Tools[i].OnDisable();
+
+            if (_SerializedObject != null)
+            {
+                _SerializedObject.Dispose();
+                _SerializedObject = null;
+            }
         }
 
         /************************************************************************************************************************/
 
         private void OnSelectionChange()
         {
-            for (int i = 0; i < _Panels.Length; i++)
-                _Panels[i].OnSelectionChanged();
+            for (int i = 0; i < _Tools.Count; i++)
+                _Tools[i].OnSelectionChanged();
 
             Repaint();
         }
@@ -100,24 +139,28 @@ namespace Animancer.Editor
             EditorGUIUtility.labelWidth = Mathf.Min(EditorGUIUtility.labelWidth, position.width * 0.5f);
 
             _Scroll = GUILayout.BeginScrollView(_Scroll);
-            for (int i = 0; i < _Panels.Length; i++)
-                _Panels[i].DoGUI();
+            GUILayout.BeginVertical();
+            GUILayout.EndVertical();
+            for (int i = 0; i < _Tools.Count; i++)
+                _Tools[i].DoGUI();
             GUILayout.EndScrollView();
         }
 
         /************************************************************************************************************************/
 
-        private static new void Repaint() => ((EditorWindow)Instance).Repaint();
+        /// <summary>Causes this window to redraw its GUI.</summary>
+        public static new void Repaint() => ((EditorWindow)Instance).Repaint();
 
-        private static void RecordUndo() => Undo.RecordObject(Instance, Name);
+        /// <summary>Calls <see cref="Undo.RecordObject(Object, string)"/> for this window.</summary>
+        public static void RecordUndo() => Undo.RecordObject(Instance, Name);
 
         /************************************************************************************************************************/
 
         /// <summary>Calls <see cref="EditorGUI.BeginChangeCheck"/>.</summary>
-        private static void BeginChangeCheck() => EditorGUI.BeginChangeCheck();
+        public static void BeginChangeCheck() => EditorGUI.BeginChangeCheck();
 
         /// <summary>Calls <see cref="EditorGUI.EndChangeCheck"/> and <see cref="RecordUndo"/> if it returned true.</summary>
-        private static bool EndChangeCheck()
+        public static bool EndChangeCheck()
         {
             if (EditorGUI.EndChangeCheck())
             {
@@ -128,7 +171,7 @@ namespace Animancer.Editor
         }
 
         /// <summary>Calls <see cref="EndChangeCheck"/> and sets the <c>field = value</c> if it returned true.</summary>
-        private static bool EndChangeCheck<T>(ref T field, T value)
+        public static bool EndChangeCheck<T>(ref T field, T value)
         {
             if (EndChangeCheck())
             {
@@ -140,45 +183,60 @@ namespace Animancer.Editor
 
         /************************************************************************************************************************/
 
-        /// <summary>Creates and initialises a new <see cref="ReorderableList"/>.</summary>
-        private static ReorderableList CreateReorderableList<T>(List<T> list, string name,
-            ReorderableList.ElementCallbackDelegate drawElementCallback)
+        /// <summary>Creates and initializes a new <see cref="ReorderableList"/>.</summary>
+        public static ReorderableList CreateReorderableList<T>(
+            List<T> list, string name, ReorderableList.ElementCallbackDelegate drawElementCallback, bool showFooter = false)
         {
-            return new ReorderableList(list, typeof(T))
+            var reorderableList = new ReorderableList(list, typeof(T))
             {
                 drawHeaderCallback = (area) => GUI.Label(area, name),
                 drawElementCallback = drawElementCallback,
                 elementHeight = EditorGUIUtility.singleLineHeight + EditorGUIUtility.standardVerticalSpacing,
-                footerHeight = 0,
-                displayAdd = false,
-                displayRemove = false,
             };
+
+            if (!showFooter)
+            {
+                reorderableList.footerHeight = 0;
+                reorderableList.displayAdd = false;
+                reorderableList.displayRemove = false;
+            }
+
+            return reorderableList;
         }
 
         /************************************************************************************************************************/
 
-        /// <summary>Creates and initialises a new <see cref="ReorderableList"/> for <see cref="Sprite"/>s.</summary>
-        private static ReorderableList CreateReorderableSpriteList(List<Sprite> sprites, string name)
+        /// <summary>Creates and initializes a new <see cref="ReorderableList"/> for <see cref="Sprite"/>s.</summary>
+        public static ReorderableList CreateReorderableObjectList<T>(
+            List<T> objects, string name, bool showFooter = false)
+            where T : Object
         {
-            return CreateReorderableList(sprites, name, (area, index, isActive, isFocused) =>
+            var reorderableList = CreateReorderableList(objects, name, (area, index, isActive, isFocused) =>
             {
                 area.y = Mathf.Ceil(area.y + EditorGUIUtility.standardVerticalSpacing * 0.5f);
                 area.height = EditorGUIUtility.singleLineHeight;
 
                 BeginChangeCheck();
-                var sprite = (Sprite)EditorGUI.ObjectField(area, sprites[index], typeof(Sprite), false);
+                var obj = (T)EditorGUI.ObjectField(area, objects[index], typeof(T), false);
                 if (EndChangeCheck())
                 {
-                    sprites[index] = sprite;
+                    objects[index] = obj;
                 }
-            });
+            }, showFooter);
+
+            if (showFooter)
+            {
+                reorderableList.onAddCallback = (list) => list.list.Add(null);
+            }
+
+            return reorderableList;
         }
 
         /************************************************************************************************************************/
 
         /// <summary>Creates a new <see cref="ReorderableList"/> for <see cref="string"/>s.</summary>
-        private static ReorderableList CreateReorderableStringList(List<string> strings, string name,
-            Func<Rect, int, string> doElementGUI)
+        public static ReorderableList CreateReorderableStringList(
+            List<string> strings, string name, Func<Rect, int, string> doElementGUI)
         {
             return CreateReorderableList(strings, name, (area, index, isActive, isFocused) =>
             {
@@ -195,7 +253,7 @@ namespace Animancer.Editor
         }
 
         /// <summary>Creates a new <see cref="ReorderableList"/> for <see cref="string"/>s.</summary>
-        private static ReorderableList CreateReorderableStringList(List<string> strings, string name)
+        public static ReorderableList CreateReorderableStringList(List<string> strings, string name)
         {
             return CreateReorderableStringList(strings, name, (area, index) =>
             {
@@ -205,33 +263,16 @@ namespace Animancer.Editor
 
         /************************************************************************************************************************/
 
-        /// <summary>Returns all the <see cref="Sprite"/> sub-assets of the `texture`.</summary>
-        public static Sprite[] LoadAllSpritesInTexture(Texture2D texture)
-            => LoadAllSpritesAtPath(AssetDatabase.GetAssetPath(texture));
-
-        /// <summary>Returns all the <see cref="Sprite"/> assets at the `path`.</summary>
-        public static Sprite[] LoadAllSpritesAtPath(string path)
-        {
-            var assets = AssetDatabase.LoadAllAssetsAtPath(path);
-            var sprites = new List<Sprite>();
-            for (int j = 0; j < assets.Length; j++)
-            {
-                if (assets[j] is Sprite sprite)
-                    sprites.Add(sprite);
-            }
-            return sprites.ToArray();
-        }
-
-        /************************************************************************************************************************/
-
-        /// <summary>Calls <see cref="EditorUtility.NaturalCompare"/> on the <see cref="Object.name"/>s.</summary>
-        public static int NaturalCompare(Object a, Object b) => EditorUtility.NaturalCompare(a.name, b.name);
-
-        /************************************************************************************************************************/
-
         /// <summary>Opens the <see cref="AnimancerToolsWindow"/>.</summary>
-        [MenuItem("Window/Animation/" + Name)]
-        private static void Open() => GetWindow<AnimancerToolsWindow>();
+        [MenuItem(Strings.AnimancerToolsMenuPath)]
+        public static void Open() => GetWindow<AnimancerToolsWindow>();
+
+        /// <summary>Opens the <see cref="AnimancerToolsWindow"/> showing the specified `tool`.</summary>
+        public static void Open(Type toolType)
+        {
+            var window = GetWindow<AnimancerToolsWindow>();
+            window._CurrentTool = window.IndexOfTool(toolType);
+        }
 
         /************************************************************************************************************************/
     }

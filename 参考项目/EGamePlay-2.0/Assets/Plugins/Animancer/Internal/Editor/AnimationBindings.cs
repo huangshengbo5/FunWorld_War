@@ -1,4 +1,4 @@
-// Animancer // https://kybernetik.com.au/animancer // Copyright 2020 Kybernetik //
+// Animancer // https://kybernetik.com.au/animancer // Copyright 2018-2023 Kybernetik //
 
 #if UNITY_EDITOR
 
@@ -33,7 +33,7 @@ namespace Animancer.Editor
     /// </summary>
     /// https://kybernetik.com.au/animancer/api/Animancer.Editor/AnimationBindings
     /// 
-    public sealed class AnimationBindings : AssetPostprocessor
+    public class AnimationBindings : AssetPostprocessor
     {
         /************************************************************************************************************************/
         #region Animation Types
@@ -50,7 +50,7 @@ namespace Animancer.Editor
             if (clip.isHumanMotion)
                 return AnimationType.Humanoid;
 
-            AnimancerEditorUtilities.InitialiseCleanDictionary(ref _ClipToIsSprite);
+            AnimancerEditorUtilities.InitializeCleanDictionary(ref _ClipToIsSprite);
 
             if (!_ClipToIsSprite.TryGetValue(clip, out var isSprite))
             {
@@ -131,7 +131,7 @@ namespace Animancer.Editor
         #endregion
         /************************************************************************************************************************/
 
-        private static bool _CanGatherBindings;
+        private static bool _CanGatherBindings = true;
 
         /// <summary>No more than one set of bindings should be gathered per frame.</summary>
         private static bool CanGatherBindings()
@@ -152,10 +152,7 @@ namespace Animancer.Editor
         /// <remarks>Note that the cache is cleared by <see cref="EditorApplication.hierarchyChanged"/>.</remarks>
         public static BindingData GetBindings(GameObject gameObject, bool forceGather = true)
         {
-            if (AnimancerEditorUtilities.InitialiseCleanDictionary(ref _ObjectToBindings))
-            {
-                EditorApplication.hierarchyChanged += _ObjectToBindings.Clear;
-            }
+            AnimancerEditorUtilities.InitializeCleanDictionary(ref _ObjectToBindings);
 
             if (!_ObjectToBindings.TryGetValue(gameObject, out var bindings))
             {
@@ -176,7 +173,7 @@ namespace Animancer.Editor
         /// <summary>Returns a cached array of all properties animated by the specified `clip`.</summary>
         public static EditorCurveBinding[] GetBindings(AnimationClip clip)
         {
-            AnimancerEditorUtilities.InitialiseCleanDictionary(ref _ClipToBindings);
+            AnimancerEditorUtilities.InitializeCleanDictionary(ref _ClipToBindings);
 
             if (!_ClipToBindings.TryGetValue(clip, out var bindings))
             {
@@ -193,7 +190,9 @@ namespace Animancer.Editor
 
         /************************************************************************************************************************/
 
-        private void OnPostprocessAnimation(GameObject root, AnimationClip clip) => OnAnimationChanged(clip);
+        /// <summary>Called when Unity imports an animation.</summary>
+        protected virtual void OnPostprocessAnimation(GameObject root, AnimationClip clip)
+            => OnAnimationChanged(clip);
 
         /// <summary>Clears any cached values relating to the `clip` since they may no longer be correct.</summary>
         public static void OnAnimationChanged(AnimationClip clip)
@@ -222,7 +221,7 @@ namespace Animancer.Editor
         /// which can be animated and the relationships between those properties and the properties that individual
         /// <see cref="AnimationClip"/>s are trying to animate.
         /// </summary>
-        public sealed class BindingData
+        public class BindingData
         {
             /************************************************************************************************************************/
 
@@ -256,8 +255,9 @@ namespace Animancer.Editor
             {
                 get
                 {
-                    if (AnimancerUtilities.NewIfNull(ref _ObjectBindings))
+                    if (_ObjectBindings == null)
                     {
+                        _ObjectBindings = new HashSet<EditorCurveBinding>();
                         var transforms = GameObject.GetComponentsInChildren<Transform>();
                         for (int i = 0; i < transforms.Length; i++)
                         {
@@ -282,8 +282,9 @@ namespace Animancer.Editor
             {
                 get
                 {
-                    if (AnimancerUtilities.NewIfNull(ref _ObjectTransformBindings))
+                    if (_ObjectTransformBindings == null)
                     {
+                        _ObjectTransformBindings = new HashSet<string>();
                         foreach (var binding in ObjectBindings)
                         {
                             if (binding.type == typeof(Transform))
@@ -353,7 +354,7 @@ namespace Animancer.Editor
             public MatchType GetMatchType(AnimationClip clip, StringBuilder message,
                 Dictionary<EditorCurveBinding, bool> bindingsInMessage, ref int existingBindings, bool forceGather = true)
             {
-                AnimancerEditorUtilities.InitialiseCleanDictionary(ref _BindingMatches);
+                AnimancerEditorUtilities.InitializeCleanDictionary(ref _BindingMatches);
 
                 if (_BindingMatches.TryGetValue(clip, out var match))
                 {
@@ -503,8 +504,6 @@ namespace Animancer.Editor
 
             /************************************************************************************************************************/
 
-            private static string[] NoStrings = new string[0];
-
             private static void AppendBindings(StringBuilder message, Dictionary<EditorCurveBinding, bool> bindings, int existingBindings)
             {
                 if (bindings == null ||
@@ -547,7 +546,7 @@ namespace Animancer.Editor
                     });
 
                     var previousBinding = default(EditorCurveBinding);
-                    var pathSplit = NoStrings;
+                    var pathSplit = Array.Empty<string>();
 
                     for (int iBinding = 0; iBinding < sortedBindings.Count; iBinding++)
                     {
@@ -592,7 +591,7 @@ namespace Animancer.Editor
 
                         message
                             .Append(bindings[binding] ? "[o] " : "[x] ")
-                            .Append(binding.type.Name)
+                            .Append(binding.type.GetNameCS(false))
                             .Append('.')
                             .Append(binding.propertyName);
 
@@ -793,7 +792,7 @@ namespace Animancer.Editor
             /// </summary>
             public void LogIssues(AnimancerState state, MatchType match)
             {
-                var animator = state.Root?.Component.Animator;
+                var animator = state.Root?.Component?.Animator;
                 var newMatch = match;
                 var message = ObjectPool.AcquireStringBuilder();
 
@@ -845,6 +844,9 @@ namespace Animancer.Editor
                 if (newMatch != match)
                     Debug.LogWarning($"{nameof(MatchType)} changed from {match} to {newMatch}" +
                         " between the initial check and the button press.");
+
+                if (animator != null)
+                    _ObjectToBindings.Remove(animator.gameObject);
             }
 
             /************************************************************************************************************************/
@@ -857,35 +859,6 @@ namespace Animancer.Editor
             }
 
             /************************************************************************************************************************/
-        }
-
-        /************************************************************************************************************************/
-
-        /// <summary>Indicates whether the Unity Editor is currently changing between Play Mode and Edit Mode.</summary>
-        public static bool IsChangingPlayMode { get; private set; }
-
-        [InitializeOnLoadMethod]
-        private static void WatchForPlayModeChanges()
-        {
-            if (EditorApplication.isPlaying != EditorApplication.isPlayingOrWillChangePlaymode)
-                IsChangingPlayMode = true;
-
-            EditorApplication.playModeStateChanged += (change) =>
-            {
-                switch (change)
-                {
-                    case PlayModeStateChange.ExitingEditMode:
-                    case PlayModeStateChange.ExitingPlayMode:
-                        IsChangingPlayMode = true;
-                        break;
-
-                    case PlayModeStateChange.EnteredEditMode:
-                    case PlayModeStateChange.EnteredPlayMode:
-                    default:
-                        IsChangingPlayMode = false;
-                        break;
-                }
-            };
         }
 
         /************************************************************************************************************************/
@@ -930,7 +903,7 @@ namespace Animancer.Editor
         /// </summary>
         public static void DoBindingMatchGUI(ref Rect area, AnimancerState state)
         {
-            if (IsChangingPlayMode ||
+            if (AnimancerEditorUtilities.IsChangingPlayMode ||
                 !AnimancerPlayableDrawer.VerifyAnimationBindings ||
                 state.Root == null ||
                 state.Root.Component == null ||
@@ -1016,26 +989,26 @@ namespace Animancer.Editor
         {
             /************************************************************************************************************************/
 
-            public static readonly Texture Empty = EditorGUIUtility.IconContent("console.infoicon.sml").image;
-            public static readonly Texture Warning = EditorGUIUtility.IconContent("console.warnicon.sml").image;
-            public static readonly Texture Error = EditorGUIUtility.IconContent("console.erroricon.sml").image;
+            public static readonly Texture Empty = AnimancerGUI.LoadIcon("console.infoicon.sml");
+            public static readonly Texture Warning = AnimancerGUI.LoadIcon("console.warnicon.sml");
+            public static readonly Texture Error = AnimancerGUI.LoadIcon("console.erroricon.sml");
 
             /************************************************************************************************************************/
 
             public static readonly Texture[] Unknown =
             {
-                EditorGUIUtility.IconContent("WaitSpin00").image,
-                EditorGUIUtility.IconContent("WaitSpin01").image,
-                EditorGUIUtility.IconContent("WaitSpin02").image,
-                EditorGUIUtility.IconContent("WaitSpin03").image,
-                EditorGUIUtility.IconContent("WaitSpin04").image,
-                EditorGUIUtility.IconContent("WaitSpin05").image,
-                EditorGUIUtility.IconContent("WaitSpin06").image,
-                EditorGUIUtility.IconContent("WaitSpin07").image,
-                EditorGUIUtility.IconContent("WaitSpin08").image,
-                EditorGUIUtility.IconContent("WaitSpin09").image,
-                EditorGUIUtility.IconContent("WaitSpin10").image,
-                EditorGUIUtility.IconContent("WaitSpin11").image,
+                AnimancerGUI.LoadIcon("WaitSpin00"),
+                AnimancerGUI.LoadIcon("WaitSpin01"),
+                AnimancerGUI.LoadIcon("WaitSpin02"),
+                AnimancerGUI.LoadIcon("WaitSpin03"),
+                AnimancerGUI.LoadIcon("WaitSpin04"),
+                AnimancerGUI.LoadIcon("WaitSpin05"),
+                AnimancerGUI.LoadIcon("WaitSpin06"),
+                AnimancerGUI.LoadIcon("WaitSpin07"),
+                AnimancerGUI.LoadIcon("WaitSpin08"),
+                AnimancerGUI.LoadIcon("WaitSpin09"),
+                AnimancerGUI.LoadIcon("WaitSpin10"),
+                AnimancerGUI.LoadIcon("WaitSpin11"),
             };
 
             public static Texture GetUnknown()

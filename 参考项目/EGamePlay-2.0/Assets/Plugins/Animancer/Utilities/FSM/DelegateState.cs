@@ -1,4 +1,4 @@
-// Animancer // https://kybernetik.com.au/animancer // Copyright 2020 Kybernetik //
+// Animancer // https://kybernetik.com.au/animancer // Copyright 2018-2023 Kybernetik //
 
 using System;
 
@@ -6,7 +6,7 @@ namespace Animancer.FSM
 {
     /// <summary>An <see cref="IState"/> that uses delegates to define its behaviour.</summary>
     /// <remarks>
-    /// Documentation: <see href="https://kybernetik.com.au/animancer/docs/manual/fsm">Finite State Machines</see>
+    /// Documentation: <see href="https://kybernetik.com.au/animancer/docs/manual/fsm/state-types">State Types</see>
     /// </remarks>
     /// https://kybernetik.com.au/animancer/api/Animancer.FSM/DelegateState
     /// 
@@ -17,32 +17,32 @@ namespace Animancer.FSM
         /// <summary>Determines whether this state can be entered. Null is treated as returning true.</summary>
         public Func<bool> canEnter;
 
-        /// <summary>Calls <see cref="canEnter"/> to determine whether this state can be entered.</summary>
-        bool IState.CanEnterState => canEnter == null || canEnter();
+        /// <summary>[<see cref="IState"/>] Calls <see cref="canEnter"/> to determine whether this state can be entered.</summary>
+        public virtual bool CanEnterState => canEnter == null || canEnter();
 
         /************************************************************************************************************************/
 
         /// <summary>Determines whether this state can be exited. Null is treated as returning true.</summary>
         public Func<bool> canExit;
 
-        /// <summary>Calls <see cref="canExit"/> to determine whether this state can be exited.</summary>
-        bool IState.CanExitState => canExit == null || canExit();
+        /// <summary>[<see cref="IState"/>] Calls <see cref="canExit"/> to determine whether this state can be exited.</summary>
+        public virtual bool CanExitState => canExit == null || canExit();
 
         /************************************************************************************************************************/
 
         /// <summary>Called when this state is entered.</summary>
         public Action onEnter;
 
-        /// <summary>Calls <see cref="onEnter"/> when this state is entered.</summary>
-        void IState.OnEnterState() => onEnter?.Invoke();
+        /// <summary>[<see cref="IState"/>] Calls <see cref="onEnter"/> when this state is entered.</summary>
+        public virtual void OnEnterState() => onEnter?.Invoke();
 
         /************************************************************************************************************************/
 
         /// <summary>Called when this state is exited.</summary>
         public Action onExit;
 
-        /// <summary>Calls <see cref="onExit"/> when this state is exited.</summary>
-        void IState.OnExitState() => onExit?.Invoke();
+        /// <summary>[<see cref="IState"/>] Calls <see cref="onExit"/> when this state is exited.</summary>
+        public virtual void OnExitState() => onExit?.Invoke();
 
         /************************************************************************************************************************/
     }

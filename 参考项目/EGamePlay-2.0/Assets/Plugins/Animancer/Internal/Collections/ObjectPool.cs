@@ -1,11 +1,9 @@
-// Animancer // https://kybernetik.com.au/animancer // Copyright 2020 Kybernetik //
+// Animancer // https://kybernetik.com.au/animancer // Copyright 2018-2023 Kybernetik //
 
 //#define ANIMANCER_LOG_OBJECT_POOLING
 
 using System;
-using System.Collections;
 using System.Collections.Generic;
-using System.Reflection;
 using System.Text;
 using UnityEngine;
 
@@ -18,17 +16,13 @@ namespace Animancer
     {
         /************************************************************************************************************************/
 
-        /// <summary>
-        /// Calls <see cref="ObjectPool{T}.Acquire"/> to get a spare item if there are any, or create a new one.
-        /// </summary>
+        /// <summary>Returns a spare item if there are any, or creates a new one.</summary>
         /// <remarks>Remember to <see cref="Release{T}(T)"/> it when you are done.</remarks>
         public static T Acquire<T>()
             where T : class, new()
             => ObjectPool<T>.Acquire();
 
-        /// <summary>
-        /// Calls <see cref="ObjectPool{T}.Acquire"/> to get a spare item if there are any, or create a new one.
-        /// </summary>
+        /// <summary>Returns a spare `item` if there are any, or creates a new one.</summary>
         /// <remarks>Remember to <see cref="Release{T}(T)"/> it when you are done.</remarks>
         public static void Acquire<T>(out T item)
             where T : class, new()
@@ -36,23 +30,16 @@ namespace Animancer
 
         /************************************************************************************************************************/
 
-        /// <summary>
-        /// Calls <see cref="ObjectPool{T}.Release"/> to add the `item` to the list of spares so it can be reused.
-        /// </summary>
+        /// <summary>Adds the `item` to the list of spares so it can be reused.</summary>
         public static void Release<T>(T item)
             where T : class, new()
             => ObjectPool<T>.Release(item);
 
-        /// <summary>
-        /// Calls <see cref="ObjectPool{T}.Release"/> to add the `item` to the list of spares so it can be reused.
-        /// </summary>
+        /// <summary>Adds the `item` to the list of spares so it can be reused and sets it to <c>null</c>.</summary>
         public static void Release<T>(ref T item) where T : class, new()
         {
-            if (item != null)
-            {
-                ObjectPool<T>.Release(item);
-                item = null;
-            }
+            ObjectPool<T>.Release(item);
+            item = null;
         }
 
         /************************************************************************************************************************/
@@ -63,117 +50,88 @@ namespace Animancer
 
         /************************************************************************************************************************/
 
-        /// <summary>
-        /// Calls <see cref="ObjectPool{T}.Acquire"/> to get a spare <see cref="List{T}"/> if
-        /// there are any or create a new one.
-        /// </summary>
+        /// <summary>Returns a spare <see cref="List{T}"/> if there are any, or creates a new one.</summary>
         /// <remarks>Remember to <see cref="Release{T}(List{T})"/> it when you are done.</remarks>
         public static List<T> AcquireList<T>()
         {
             var list = ObjectPool<List<T>>.Acquire();
-            Debug.Assert(list.Count == 0, "A pooled list is not empty." + NotClearError);
+            AnimancerUtilities.Assert(list.Count == 0, "A pooled list is not empty." + NotClearError);
             return list;
         }
 
-        /// <summary>
-        /// Calls <see cref="ObjectPool{T}.Release"/> to clear the `list` and mark it as a spare
-        /// so it can be later returned by <see cref="AcquireList"/>.
-        /// </summary>
+        /// <summary>Returns a spare <see cref="List{T}"/> if there are any, or creates a new one.</summary>
+        /// <remarks>Remember to <see cref="Release{T}(List{T})"/> it when you are done.</remarks>
+        public static void Acquire<T>(out List<T> list)
+            => list = AcquireList<T>();
+
+        /// <summary>Clears the `list` and adds it to the list of spares so it can be reused.</summary>
         public static void Release<T>(List<T> list)
         {
             list.Clear();
             ObjectPool<List<T>>.Release(list);
         }
 
+        /// <summary>Clears the `list`, adds it to the list of spares so it can be reused, and sets it to <c>null</c>.</summary>
+        public static void Release<T>(ref List<T> list)
+        {
+            Release(list);
+            list = null;
+        }
+
         /************************************************************************************************************************/
 
-        /// <summary>
-        /// Calls <see cref="ObjectPool{T}.Acquire"/> to get a spare <see cref="HashSet{T}"/> if
-        /// there are any or create a new one.
-        /// </summary>
+        /// <summary>Returns a spare <see cref="HashSet{T}"/> if there are any, or creates a new one.</summary>
         /// <remarks>Remember to <see cref="Release{T}(HashSet{T})"/> it when you are done.</remarks>
         public static HashSet<T> AcquireSet<T>()
         {
             var set = ObjectPool<HashSet<T>>.Acquire();
-            Debug.Assert(set.Count == 0, "A pooled set is not empty." + NotClearError);
+            AnimancerUtilities.Assert(set.Count == 0, "A pooled set is not empty." + NotClearError);
             return set;
         }
 
-        /// <summary>
-        /// Calls <see cref="ObjectPool{T}.Release"/> to clear the `set` and mark it as a spare
-        /// so it can be later returned by <see cref="AcquireSet"/>.
-        /// </summary>
+        /// <summary>Returns a spare <see cref="HashSet{T}"/> if there are any, or creates a new one.</summary>
+        /// <remarks>Remember to <see cref="Release{T}(HashSet{T})"/> it when you are done.</remarks>
+        public static void Acquire<T>(out HashSet<T> set)
+            => set = AcquireSet<T>();
+
+        /// <summary>Clears the `set` and adds it to the list of spares so it can be reused.</summary>
         public static void Release<T>(HashSet<T> set)
         {
             set.Clear();
             ObjectPool<HashSet<T>>.Release(set);
         }
 
+        /// <summary>Clears the `set`, adds it to the list of spares so it can be reused, and sets it to <c>null</c>.</summary>
+        public static void Release<T>(ref HashSet<T> set)
+        {
+            Release(set);
+            set = null;
+        }
+
         /************************************************************************************************************************/
 
-        /// <summary>
-        /// Calls <see cref="ObjectPool{T}.Acquire"/> to get a spare <see cref="StringBuilder"/> if
-        /// there are any or create a new one.
-        /// </summary>
+        /// <summary>Returns a spare <see cref="StringBuilder"/> if there are any, or creates a new one.</summary>
         /// <remarks>Remember to <see cref="Release(StringBuilder)"/> it when you are done.</remarks>
         public static StringBuilder AcquireStringBuilder()
         {
             var builder = ObjectPool<StringBuilder>.Acquire();
-            Debug.Assert(builder.Length == 0, $"A pooled {nameof(StringBuilder)} is not empty." + NotClearError);
+            AnimancerUtilities.Assert(builder.Length == 0, $"A pooled {nameof(StringBuilder)} is not empty." + NotClearError);
             return builder;
         }
 
-        /// <summary>
-        /// Sets <see cref="StringBuilder.Length"/> = 0 and <see cref="ObjectPool{T}.Release"/> to mark it as a spare
-        /// so it can be later returned by <see cref="AcquireStringBuilder"/>.
-        /// </summary>
+        /// <summary>Sets the <see cref="StringBuilder.Length"/> = 0 and adds it to the list of spares so it can be reused.</summary>
         public static void Release(StringBuilder builder)
         {
             builder.Length = 0;
             ObjectPool<StringBuilder>.Release(builder);
         }
 
-        /// <summary>
-        /// Calls <see cref="StringBuilder.ToString()"/> and <see cref="Release(StringBuilder)"/>.
-        /// </summary>
+        /// <summary>[Animancer Extension] Calls <see cref="StringBuilder.ToString()"/> and <see cref="Release(StringBuilder)"/>.</summary>
         public static string ReleaseToString(this StringBuilder builder)
         {
             var result = builder.ToString();
             Release(builder);
             return result;
-        }
-
-        /************************************************************************************************************************/
-
-        private static class Cache<T>
-        {
-            public static readonly Dictionary<MethodInfo, KeyValuePair<Func<T>, T>>
-                Results = new Dictionary<MethodInfo, KeyValuePair<Func<T>, T>>();
-        }
-
-        /// <summary>
-        /// Creates an object using the provided delegate and caches it to return the same object when this method is
-        /// called again for the same delegate.
-        /// </summary>
-        public static T GetCachedResult<T>(Func<T> function)
-        {
-            var method = function.Method;
-            if (!Cache<T>.Results.TryGetValue(method, out var result))
-            {
-
-                result = new KeyValuePair<Func<T>, T>(function, function());
-                Cache<T>.Results.Add(method, result);
-            }
-            else if (result.Key != function)
-            {
-                Debug.LogWarning(
-                    $"{nameof(GetCachedResult)}<{typeof(T).Name}>" +
-                    $" was previously called on {method.Name} with a different target." +
-                    " This likely means that a new delegate is being passed into every call" +
-                    " so it can't actually return the same cached object.");
-            }
-
-            return result.Value;
         }
 
         /************************************************************************************************************************/
@@ -184,44 +142,93 @@ namespace Animancer
             /************************************************************************************************************************/
 
             /// <summary>
-            /// Calls <see cref="ObjectPool{T}.Disposable.Acquire"/> to get a spare <see cref="List{T}"/> if
-            /// there are any or create a new one.
+            /// Creates a new <see cref="ObjectPool{T}.Disposable"/> and calls <see cref="ObjectPool{T}.Acquire"/> to set the
+            /// <see cref="ObjectPool{T}.Disposable.Item"/> and `item`.
             /// </summary>
-            public static IDisposable Acquire<T>(out T item)
+            public static ObjectPool<T>.Disposable Acquire<T>(out T item)
                 where T : class, new()
-                => ObjectPool<T>.Disposable.Acquire(out item);
+                => new ObjectPool<T>.Disposable(out item);
 
             /************************************************************************************************************************/
 
             /// <summary>
-            /// Calls <see cref="ObjectPool{T}.Disposable.Acquire"/> to get a spare <see cref="List{T}"/> if
-            /// there are any or create a new one.
+            /// Creates a new <see cref="ObjectPool{T}.Disposable"/> and calls <see cref="ObjectPool{T}.Acquire"/> to set the
+            /// <see cref="ObjectPool{T}.Disposable.Item"/> and `item`.
             /// </summary>
-            public static IDisposable AcquireList<T>(out List<T> list)
+            public static ObjectPool<List<T>>.Disposable AcquireList<T>(out List<T> list)
             {
-                var disposable = ObjectPool<List<T>>.Disposable.Acquire(out list, onRelease: (l) => l.Clear());
-                Debug.Assert(list.Count == 0, "A pooled list is not empty." + NotClearError);
+                var disposable = new ObjectPool<List<T>>.Disposable(out list, onRelease: (l) => l.Clear());
+                AnimancerUtilities.Assert(list.Count == 0, "A pooled list is not empty." + NotClearError);
                 return disposable;
             }
 
             /************************************************************************************************************************/
 
             /// <summary>
-            /// Calls <see cref="ObjectPool{T}.Disposable.Acquire"/> to get a spare <see cref="HashSet{T}"/> if
-            /// there are any or create a new one.
+            /// Creates a new <see cref="ObjectPool{T}.Disposable"/> and calls <see cref="ObjectPool{T}.Acquire"/> to set the
+            /// <see cref="ObjectPool{T}.Disposable.Item"/> and `item`.
             /// </summary>
-            public static IDisposable AcquireSet<T>(out HashSet<T> set)
+            public static ObjectPool<HashSet<T>>.Disposable AcquireSet<T>(out HashSet<T> set)
             {
-                var disposable = ObjectPool<HashSet<T>>.Disposable.Acquire(out set, onRelease: (s) => s.Clear());
-                Debug.Assert(set.Count == 0, "A pooled set is not empty." + NotClearError);
+                var disposable = new ObjectPool<HashSet<T>>.Disposable(out set, onRelease: (s) => s.Clear());
+                AnimancerUtilities.Assert(set.Count == 0, "A pooled set is not empty." + NotClearError);
                 return disposable;
             }
+
+            /************************************************************************************************************************/
+
+            /// <summary>
+            /// Creates a new <see cref="ObjectPool{T}.Disposable"/> and calls <see cref="ObjectPool{T}.Acquire"/> to set the
+            /// <see cref="ObjectPool{T}.Disposable.Item"/> and `item`.
+            /// </summary>
+            public static ObjectPool<GUIContent>.Disposable AcquireContent(out GUIContent content,
+                string text = null, string tooltip = null, bool narrowText = true)
+            {
+                var disposable = new ObjectPool<GUIContent>.Disposable(out content, onRelease: c =>
+                {
+                    c.text = null;
+                    c.tooltip = null;
+                    c.image = null;
+                });
+
+#if UNITY_ASSERTIONS
+                if (!string.IsNullOrEmpty(content.text) ||
+                    !string.IsNullOrEmpty(content.tooltip) ||
+                    content.image != null)
+                {
+                    throw new UnityEngine.Assertions.AssertionException(
+                        $"A pooled {nameof(GUIContent)} is not cleared." + NotClearError,
+                        $"- {nameof(content.text)} = '{content.text}'" +
+                        $"\n- {nameof(content.tooltip)} = '{content.tooltip}'" +
+                        $"\n- {nameof(content.image)} = '{content.image}'");
+                }
+#endif
+
+                content.text = text;
+                content.tooltip = tooltip;
+                content.image = null;
+                return disposable;
+            }
+
+            /************************************************************************************************************************/
+
+#if UNITY_EDITOR
+            /// <summary>[Editor-Only]
+            /// Creates a new <see cref="ObjectPool{T}.Disposable"/> and calls <see cref="ObjectPool{T}.Acquire"/> to set the
+            /// <see cref="ObjectPool{T}.Disposable.Item"/> and `item`.
+            /// </summary>
+            public static ObjectPool<GUIContent>.Disposable AcquireContent(out GUIContent content,
+                UnityEditor.SerializedProperty property, bool narrowText = true)
+                => AcquireContent(out content, property.displayName, property.tooltip, narrowText);
+#endif
 
             /************************************************************************************************************************/
         }
 
         /************************************************************************************************************************/
     }
+
+    /************************************************************************************************************************/
 
     /// <summary>A simple object pooling system.</summary>
     /// <remarks><typeparamref name="T"/> must not inherit from <see cref="Component"/> or <see cref="ScriptableObject"/>.</remarks>
@@ -265,11 +272,8 @@ namespace Animancer
 
         /************************************************************************************************************************/
 
-        /// <summary>
-        /// If the <see cref="Count"/> is less than the specified value, this method increases it to that value by
-        /// creating new objects.
-        /// </summary>
-        public static void SetMinCount(int count)
+        /// <summary>Increases the <see cref="Count"/> to equal the `count` if it was lower.</summary>
+        public static void IncreaseCountTo(int count)
         {
             if (Count < count)
                 Count = count;
@@ -287,6 +291,15 @@ namespace Animancer
                     Items.RemoveRange(value, Items.Count - value);
                 Items.Capacity = value;
             }
+        }
+
+        /************************************************************************************************************************/
+
+        /// <summary>Increases the <see cref="Capacity"/> to equal the `capacity` if it was lower.</summary>
+        public static void IncreaseCapacityTo(int capacity)
+        {
+            if (Capacity < capacity)
+                Capacity = capacity;
         }
 
         /************************************************************************************************************************/
@@ -315,6 +328,9 @@ namespace Animancer
         /// <summary>Adds the `item` to the list of spares so it can be reused.</summary>
         public static void Release(T item)
         {
+            AnimancerUtilities.Assert(item != null,
+                $"Null objects must not be released into an {nameof(ObjectPool<T>)}.");
+
             Items.Add(item);
 
         }
@@ -334,55 +350,37 @@ namespace Animancer
         /************************************************************************************************************************/
 
         /// <summary>
-        /// An <see cref="IDisposable"/> system to allow pooled objects to be acquired and released within <c>using</c>
+        /// An <see cref="IDisposable"/> to allow pooled objects to be acquired and released within <c>using</c>
         /// statements instead of needing to manually release everything.
         /// </summary>
-        public sealed class Disposable : IDisposable
+        public readonly struct Disposable : IDisposable
         {
             /************************************************************************************************************************/
 
-            private static readonly List<Disposable> LazyStack = new List<Disposable>();
+            /// <summary>The object acquired from the <see cref="ObjectPool{T}"/>.</summary>
+            public readonly T Item;
 
-            private static int _ActiveDisposables;
-
-            private T _Item;
-            private Action<T> _OnRelease;
+            /// <summary>Called by <see cref="IDisposable.Dispose"/>.</summary>
+            public readonly Action<T> OnRelease;
 
             /************************************************************************************************************************/
 
-            private Disposable() { }
-
             /// <summary>
-            /// Calls <see cref="ObjectPool{T}.Acquire"/> to set the `item` and returns an <see cref="IDisposable"/>
-            /// that will call <see cref="Release(T)"/> on the `item` when disposed.
+            /// Creates a new <see cref="Disposable"/> and calls <see cref="ObjectPool{T}.Acquire"/> to set the
+            /// <see cref="Item"/> and `item`.
             /// </summary>
-            public static IDisposable Acquire(out T item, Action<T> onRelease = null)
+            public Disposable(out T item, Action<T> onRelease = null)
             {
-                Disposable disposable;
-
-                if (LazyStack.Count <= _ActiveDisposables)
-                {
-                    LazyStack.Add(disposable = new Disposable());
-                }
-                else
-                {
-                    disposable = LazyStack[_ActiveDisposables];
-                }
-
-                _ActiveDisposables++;
-
-                disposable._Item = item = ObjectPool<T>.Acquire();
-                disposable._OnRelease = onRelease;
-                return disposable;
+                Item = item = Acquire();
+                OnRelease = onRelease;
             }
 
             /************************************************************************************************************************/
 
             void IDisposable.Dispose()
             {
-                _OnRelease?.Invoke(_Item);
-                Release(_Item);
-                _ActiveDisposables--;
+                OnRelease?.Invoke(Item);
+                Release(Item);
             }
 
             /************************************************************************************************************************/

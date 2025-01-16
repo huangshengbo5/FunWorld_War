@@ -1,4 +1,4 @@
-// Animancer // https://kybernetik.com.au/animancer // Copyright 2020 Kybernetik //
+// Animancer // https://kybernetik.com.au/animancer // Copyright 2018-2023 Kybernetik //
 
 using System;
 using static UnityEngine.Mathf;
@@ -125,7 +125,9 @@ namespace Animancer
 
         private static NormalizedDelegate[] _FunctionDelegates;
 
-        /// <summary>Returns a cached delegate representing the specified `function` with a normalized range.</summary>
+        /// <summary>[Animancer Extension]
+        /// Returns a cached delegate representing the specified `function` with a normalized range.
+        /// </summary>
         public static NormalizedDelegate GetDelegate(this Function function)
         {
             var i = (int)function;
@@ -186,7 +188,9 @@ namespace Animancer
 
         private static NormalizedDelegate[] _DerivativeDelegates;
 
-        /// <summary>Returns a cached delegate representing the derivative of the specified `function` with a normalized range.</summary>
+        /// <summary>[Animancer Extension]
+        /// Returns a cached delegate representing the derivative of the specified `function` with a normalized range.
+        /// </summary>
         public static NormalizedDelegate GetDerivativeDelegate(this Function function)
         {
             var i = (int)function;
@@ -247,7 +251,9 @@ namespace Animancer
 
         private static RangedDelegate[] _RangedFunctionDelegates;
 
-        /// <summary>Returns a cached delegate representing the specified `function` with a custom range.</summary>
+        /// <summary>[Animancer Extension]
+        /// Returns a cached delegate representing the specified `function` with a custom range.
+        /// </summary>
         public static RangedDelegate GetRangedDelegate(this Function function)
         {
             var i = (int)function;
@@ -308,7 +314,9 @@ namespace Animancer
 
         private static RangedDelegate[] _RangedDerivativeDelegates;
 
-        /// <summary>Returns a cached delegate representing the derivative of the specified `function` with a custom range.</summary>
+        /// <summary>[Animancer Extension]
+        /// Returns a cached delegate representing the derivative of the specified `function` with a custom range.
+        /// </summary>
         public static RangedDelegate GetRangedDerivativeDelegate(this Function function)
         {
             var i = (int)function;

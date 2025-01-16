@@ -1,7 +1,6 @@
-// Animancer // https://kybernetik.com.au/animancer // Copyright 2020 Kybernetik //
+// Animancer // https://kybernetik.com.au/animancer // Copyright 2018-2023 Kybernetik //
 
 using System;
-using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Playables;
@@ -13,12 +12,18 @@ namespace Animancer
     /// An <see cref="AnimancerComponent"/> which uses the <see cref="Object.name"/>s of <see cref="AnimationClip"/>s
     /// so they can be referenced using strings as well as the clips themselves.
     /// </summary>
+    /// 
     /// <remarks>
     /// It also has fields to automatically register animations on startup and play the first one automatically without
     /// needing another script to control it, much like Unity's Legacy <see cref="Animation"/> component.
     /// <para></para>
     /// Documentation: <see href="https://kybernetik.com.au/animancer/docs/manual/playing/component-types">Component Types</see>
     /// </remarks>
+    /// 
+    /// <example><see href="https://kybernetik.com.au/animancer/docs/examples/fine-control/named-animations">Named Animations</see></example>
+    /// 
+    /// https://kybernetik.com.au/animancer/api/Animancer/NamedAnimancerComponent
+    /// 
     [AddComponentMenu(Strings.MenuPrefix + "Named Animancer Component")]
     [HelpURL(Strings.DocsURLs.APIDocumentation + "/" + nameof(NamedAnimancerComponent))]
     public class NamedAnimancerComponent : AnimancerComponent
@@ -27,7 +32,7 @@ namespace Animancer
         #region Fields and Properties
         /************************************************************************************************************************/
 
-        [SerializeField, Tooltip("If true, the 'Default Animation' will be automatically played by OnEnable")]
+        [SerializeField, Tooltip("If true, the 'Default Animation' will be automatically played by " + nameof(OnEnable))]
         private bool _PlayAutomatically = true;
 
         /// <summary>[<see cref="SerializeField"/>]
@@ -38,7 +43,7 @@ namespace Animancer
 
         /************************************************************************************************************************/
 
-        [SerializeField, Tooltip("Animations in this array will be automatically registered by Awake" +
+        [SerializeField, Tooltip("Animations in this array will be automatically registered by " + nameof(Awake) +
             " as states that can be retrieved using their name")]
         private AnimationClip[] _Animations;
 
@@ -53,8 +58,7 @@ namespace Animancer
             set
             {
                 _Animations = value;
-                if (value != null && value.Length > 0)
-                    States.CreateIfNew(value);
+                States.CreateIfNew(value);
             }
         }
 
@@ -66,16 +70,10 @@ namespace Animancer
         /// </summary>
         public AnimationClip DefaultAnimation
         {
-            get
-            {
-                if (_Animations == null || _Animations.Length == 0)
-                    return null;
-                else
-                    return _Animations[0];
-            }
+            get => _Animations.IsNullOrEmpty() ? null : _Animations[0];
             set
             {
-                if (_Animations == null || _Animations.Length == 0)
+                if (_Animations.IsNullOrEmpty())
                     _Animations = new AnimationClip[] { value };
                 else
                     _Animations[0] = value;
@@ -85,7 +83,7 @@ namespace Animancer
         /************************************************************************************************************************/
         #endregion
         /************************************************************************************************************************/
-        #region Initialisation
+        #region Methods
         /************************************************************************************************************************/
 
 #if UNITY_EDITOR
@@ -93,10 +91,7 @@ namespace Animancer
         /// Uses <see cref="ClipState.ValidateClip"/> to ensure that all of the clips in the <see cref="Animations"/>
         /// array are supported by the <see cref="Animancer"/> system and removes any others.
         /// </summary>
-        /// <remarks>
-        /// Called by the Unity Editor in Edit Mode whenever an instance of this script is loaded or a value is changed
-        /// in the Inspector.
-        /// </remarks>
+        /// <remarks>Called in Edit Mode whenever this script is loaded or a value is changed in the Inspector.</remarks>
         protected virtual void OnValidate()
         {
             if (_Animations == null)
@@ -128,26 +123,28 @@ namespace Animancer
         /************************************************************************************************************************/
 
         /// <summary>Creates a state for each clip in the <see cref="Animations"/> array.</summary>
-        /// <remarks>Called by Unity when this component is being loaded.</remarks>
         protected virtual void Awake()
         {
-            if (_Animations != null && _Animations.Length > 0)
-                States.CreateIfNew(_Animations);
+            if (!TryGetAnimator())
+                return;
+
+            States.CreateIfNew(_Animations);
         }
 
         /************************************************************************************************************************/
 
         /// <summary>
         /// Plays the first clip in the <see cref="Animations"/> array if <see cref="PlayAutomatically"/> is true.
-        /// <para></para>
-        /// Ensures that the <see cref="PlayableGraph"/> is playing.
         /// </summary>
-        /// <remarks>Called by Unity when this component becomes enabled and active.</remarks>
+        /// <remarks>This method also ensures that the <see cref="PlayableGraph"/> is playing.</remarks>
         protected override void OnEnable()
         {
+            if (!TryGetAnimator())
+                return;
+
             base.OnEnable();
 
-            if (_PlayAutomatically && _Animations != null && _Animations.Length > 0)
+            if (_PlayAutomatically && !_Animations.IsNullOrEmpty())
             {
                 var clip = _Animations[0];
                 if (clip != null)
@@ -157,63 +154,20 @@ namespace Animancer
 
         /************************************************************************************************************************/
 
-        public override void GatherAnimationClips(ICollection<AnimationClip> clips)
-        {
-            base.GatherAnimationClips(clips);
-            clips.Gather(_Animations);
-        }
-
-        /************************************************************************************************************************/
-        #endregion
-        /************************************************************************************************************************/
-        #region Play Management
-        /************************************************************************************************************************/
-
-        /// <summary>
-        /// Returns the clip's name. This method is used to determine the dictionary key to use for an animation when
-        /// none is specified by the user, such as in <see cref="AnimancerComponent.Play(AnimationClip)"/>.
-        /// </summary>
+        /// <summary>Returns the clip's name.</summary>
+        /// <remarks>
+        /// This method is used to determine the dictionary key to use for an animation when none is specified by the
+        /// caller, such as in <see cref="AnimancerComponent.Play(AnimationClip)"/>.
+        /// </remarks>
         public override object GetKey(AnimationClip clip) => clip.name;
 
         /************************************************************************************************************************/
 
-        /// <summary>[Coroutine]
-        /// Plays each clip in the <see cref="Animations"/> array one after the other. Mainly useful for testing and
-        /// showcasing purposes.
-        /// </summary>
-        public IEnumerator PlayAnimationsInSequence()
+        /// <inheritdoc/>
+        public override void GatherAnimationClips(ICollection<AnimationClip> clips)
         {
-            for (int i = 0; i < _Animations.Length; i++)
-            {
-                var state = Play(_Animations[i]);
-
-                if (state != null)
-                    yield return state;
-            }
-
-            Stop();
-        }
-
-        /************************************************************************************************************************/
-
-        /// <summary>[Coroutine]
-        /// Cross fades between each clip in the <see cref="Animations"/> array one after the other. Mainly useful for
-        /// testing and showcasing purposes.
-        /// </summary>
-        public IEnumerator CrossFadeAnimationsInSequence(float fadeDuration = AnimancerPlayable.DefaultFadeDuration)
-        {
-            for (int i = 0; i < _Animations.Length; i++)
-            {
-                var state = Play(_Animations[i], fadeDuration);
-
-                if (state != null)
-                {
-                    state.Time = 0;
-                    yield return state;
-                }
-            }
-
-            Stop();
+            base.GatherAnimationClips(clips);
+            clips.Gather(_Animations);
         }
 
         /************************************************************************************************************************/

@@ -1,9 +1,8 @@
-// Animancer // https://kybernetik.com.au/animancer // Copyright 2020 Kybernetik //
+// Animancer // https://kybernetik.com.au/animancer // Copyright 2018-2023 Kybernetik //
 
 using System;
 using UnityEngine;
 using UnityEngine.Animations;
-using UnityEngine.Experimental.Animations;
 using Unity.Collections;
 
 namespace Animancer
@@ -11,9 +10,10 @@ namespace Animancer
     /// <summary>[Pro-Only]
     /// A base wrapper which allows access to the value of properties that are controlled by animations.
     /// </summary>
-    /// <example>
-    /// Example: <see href="https://kybernetik.com.au/animancer/docs/examples/jobs">Animation Jobs</see>
-    /// </example>
+    /// <remarks>
+    /// Documentation: <see href="https://kybernetik.com.au/animancer/docs/manual/ik#animated-properties">Animated Properties</see>
+    /// </remarks>
+    /// <example><see href="https://kybernetik.com.au/animancer/docs/examples/jobs">Animation Jobs</see></example>
     /// https://kybernetik.com.au/animancer/api/Animancer/AnimatedProperty_2
     /// 
     public abstract class AnimatedProperty<TJob, TValue> : AnimancerJob<TJob>, IDisposable
@@ -29,12 +29,12 @@ namespace Animancer
         protected NativeArray<TValue> _Values;
 
         /************************************************************************************************************************/
-        #region Initialisation
+        #region Initialization
         /************************************************************************************************************************/
 
         /// <summary>
         /// Allocates room for a specified number of properties to be filled by
-        /// <see cref="InitialiseProperty(int, Transform, Type, string)"/>.
+        /// <see cref="InitializeProperty(int, Transform, Type, string)"/>.
         /// </summary>
         public AnimatedProperty(IAnimancerComponent animancer, int propertyCount,
             NativeArrayOptions options = NativeArrayOptions.ClearMemory)
@@ -48,7 +48,7 @@ namespace Animancer
             playable.Disposables.Add(this);
         }
 
-        /// <summary>Initialises a single property.</summary>
+        /// <summary>Initializes a single property.</summary>
         public AnimatedProperty(IAnimancerComponent animancer, string propertyName)
             : this(animancer, 1, NativeArrayOptions.UninitializedMemory)
         {
@@ -56,7 +56,7 @@ namespace Animancer
             _Properties[0] = animator.BindStreamProperty(animator.transform, typeof(Animator), propertyName);
         }
 
-        /// <summary>Initialises a group of properties.</summary>
+        /// <summary>Initializes a group of properties.</summary>
         public AnimatedProperty(IAnimancerComponent animancer, params string[] propertyNames)
             : this(animancer, propertyNames.Length, NativeArrayOptions.UninitializedMemory)
         {
@@ -65,17 +65,17 @@ namespace Animancer
             var animator = animancer.Animator;
             var transform = animator.transform;
             for (int i = 0; i < count; i++)
-                InitialiseProperty(animator, i, transform, typeof(Animator), propertyNames[i]);
+                InitializeProperty(animator, i, transform, typeof(Animator), propertyNames[i]);
         }
 
         /************************************************************************************************************************/
 
-        /// <summary>Initialises a property on the target <see cref="Animator"/>.</summary>
-        public void InitialiseProperty(Animator animator, int index, string name)
-            => InitialiseProperty(animator, index, animator.transform, typeof(Animator), name);
+        /// <summary>Initializes a property on the target <see cref="Animator"/>.</summary>
+        public void InitializeProperty(Animator animator, int index, string name)
+            => InitializeProperty(animator, index, animator.transform, typeof(Animator), name);
 
-        /// <summary>Initialises the specified `index` to read a property with the specified `name`.</summary>
-        public void InitialiseProperty(Animator animator, int index, Transform transform, Type type, string name)
+        /// <summary>Initializes the specified `index` to read a property with the specified `name`.</summary>
+        public void InitializeProperty(Animator animator, int index, Transform transform, Type type, string name)
             => _Properties[index] = animator.BindStreamProperty(transform, type, name);
 
         /************************************************************************************************************************/
@@ -110,18 +110,12 @@ namespace Animancer
         /// <summary>Resizes the `values` if necessary and copies the value of each property into it.</summary>
         public void GetValues(ref TValue[] values)
         {
-            var count = _Values.Length;
-            if (values == null || values.Length != count)
-                values = new TValue[count];
-
+            AnimancerUtilities.SetLength(ref values, _Values.Length);
             _Values.CopyTo(values);
         }
 
-        /// <summary>
-        /// Returns a new array containing the values of all properties.
-        /// <para></para>
-        /// Use <see cref="GetValues(ref TValue[])"/> to avoid allocating a new array every call.
-        /// </summary>
+        /// <summary>Returns a new array containing the values of all properties.</summary>
+        /// <remarks>Use <see cref="GetValues(ref TValue[])"/> to avoid allocating a new array every call.</remarks>
         public TValue[] GetValues()
         {
             var values = new TValue[_Values.Length];

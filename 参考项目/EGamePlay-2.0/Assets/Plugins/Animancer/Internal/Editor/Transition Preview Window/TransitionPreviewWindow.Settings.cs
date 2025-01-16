@@ -1,4 +1,4 @@
-// Animancer // https://kybernetik.com.au/animancer // Copyright 2020 Kybernetik //
+// Animancer // https://kybernetik.com.au/animancer // Copyright 2018-2023 Kybernetik //
 
 #if UNITY_EDITOR
 
@@ -8,18 +8,18 @@ using System;
 using System.Collections.Generic;
 using UnityEditor;
 using UnityEngine;
-using Object = UnityEngine.Object;
 
 namespace Animancer.Editor
 {
-    internal partial class TransitionPreviewWindow
+    /// https://kybernetik.com.au/animancer/api/Animancer.Editor/TransitionPreviewWindow
+    partial class TransitionPreviewWindow
     {
         /// <summary>Persistent settings for the <see cref="TransitionPreviewWindow"/>.</summary>
         /// <remarks>
         /// Documentation: <see href="https://kybernetik.com.au/animancer/docs/manual/transitions#previews">Previews</see>
         /// </remarks>
         [Serializable]
-        internal sealed class Settings : AnimancerSettings.Group
+        internal class Settings : AnimancerSettings.Group
         {
             /************************************************************************************************************************/
 
@@ -34,10 +34,9 @@ namespace Animancer.Editor
                 EditorGUI.indentLevel++;
 
                 DoMiscGUI();
+                DoEnvironmentGUI();
                 DoModelsGUI();
-                DoFloorGUI();
-                DoGatheringExceptionsGUI();
-                _Instance._Scene.DoHierarchyGUI();
+                DoHierarchyGUI();
 
                 EditorGUI.indentLevel--;
 
@@ -51,28 +50,6 @@ namespace Animancer.Editor
             private static void DoMiscGUI()
             {
                 Instance.DoPropertyField(nameof(_AutoClose));
-                Instance.DoPropertyField(nameof(_ShowTransition));
-
-                var property = Instance.DoPropertyField(nameof(_MovementSensitivity));
-                property.floatValue = Mathf.Clamp(property.floatValue, 0.01f, 100f);
-
-                property = Instance.DoPropertyField(nameof(_RotationSensitivity));
-                property.floatValue = Mathf.Clamp(property.floatValue, 0.01f, 100f);
-            }
-
-            /************************************************************************************************************************/
-
-            [SerializeField]
-            private float _InspectorWidth = 300;
-
-            public static float InspectorWidth
-            {
-                get => Instance._InspectorWidth;
-                set
-                {
-                    Instance._InspectorWidth = value;
-                    AnimancerSettings.SetDirty();
-                }
             }
 
             /************************************************************************************************************************/
@@ -86,25 +63,69 @@ namespace Animancer.Editor
             /************************************************************************************************************************/
 
             [SerializeField]
-            [Tooltip("Should the transition be displayed in this window?" +
-                " Otherwise you can still edit it using the regular Inspector.")]
-            private bool _ShowTransition = true;
+            [Tooltip("Should the scene lighting be enabled?")]
+            private bool _SceneLighting = false;
 
-            public static bool ShowTransition => Instance._ShowTransition;
+            public static bool SceneLighting
+            {
+                get => Instance._SceneLighting;
+                set
+                {
+                    if (SceneLighting == value)
+                        return;
+
+                    var property = Instance.GetSerializedProperty(nameof(_SceneLighting));
+                    property.boolValue = value;
+                    AnimancerSettings.SerializedObject.ApplyModifiedProperties();
+                }
+            }
 
             /************************************************************************************************************************/
 
             [SerializeField]
-            [Tooltip("Determines how fast the camera moves when you Left Click and Drag")]
-            private float _MovementSensitivity = 1;
+            [Tooltip("Should the skybox be visible?")]
+            private bool _ShowSkybox = false;
 
-            public static float MovementSensitivity => Instance._MovementSensitivity;
+            public static bool ShowSkybox
+            {
+                get => Instance._ShowSkybox;
+                set
+                {
+                    if (ShowSkybox == value)
+                        return;
+
+                    var property = Instance.GetSerializedProperty(nameof(_ShowSkybox));
+                    property.boolValue = value;
+                    AnimancerSettings.SerializedObject.ApplyModifiedProperties();
+                }
+            }
+
+            /************************************************************************************************************************/
+            #endregion
+            /************************************************************************************************************************/
+            #region Environment
+            /************************************************************************************************************************/
 
             [SerializeField]
-            [Tooltip("Determines how fast the camera rotates when you Right Click and Drag")]
-            private float _RotationSensitivity = 1;
+            [Tooltip("If set, the default preview scene lighting will be replaced with this prefab.")]
+            private GameObject _SceneEnvironment;
 
-            public static float RotationSensitivity => Instance._RotationSensitivity;
+            public static GameObject SceneEnvironment => Instance._SceneEnvironment;
+
+            /************************************************************************************************************************/
+
+            private static void DoEnvironmentGUI()
+            {
+                EditorGUI.BeginChangeCheck();
+
+                Instance.DoPropertyField(nameof(_SceneEnvironment));
+
+                if (EditorGUI.EndChangeCheck())
+                {
+                    AnimancerSettings.SerializedObject.ApplyModifiedProperties();
+                    InstanceScene.OnEnvironmentPrefabChanged();
+                }
+            }
 
             /************************************************************************************************************************/
             #endregion
@@ -114,11 +135,7 @@ namespace Animancer.Editor
 
             private static void DoModelsGUI()
             {
-                var property = Instance.DoPropertyField(nameof(_MaxRecentModels));
-                property.intValue = Math.Max(property.intValue, 0);
-
-                property = ModelsProperty;
-
+                var property = ModelsProperty;
                 var count = property.arraySize = EditorGUILayout.DelayedIntField(nameof(Models), property.arraySize);
 
                 // Drag and Drop to add model.
@@ -181,33 +198,15 @@ namespace Animancer.Editor
             [SerializeField]
             private List<GameObject> _Models;
 
+            /// <summary>The models previously used in the <see cref="TransitionPreviewWindow"/>.</summary>
+            /// <remarks>Accessing this property removes missing and duplicate models from the list.</remarks>
             public static List<GameObject> Models
             {
                 get
                 {
-                    if (AnimancerUtilities.NewIfNull(ref Instance._Models))
-                        return Instance._Models;
-
-                    var previousModels = ObjectPool.AcquireSet<Object>();
-                    var modified = false;
-                    for (int i = Instance._Models.Count - 1; i >= 0; i--)
-                    {
-                        var model = Instance._Models[i];
-                        if (model == null || previousModels.Contains(model))
-                        {
-                            Instance._Models.RemoveAt(i);
-                            modified = true;
-                        }
-                        else
-                        {
-                            previousModels.Add(model);
-                        }
-                    }
-                    ObjectPool.Release(previousModels);
-                    if (modified)
-                        ModelsProperty.OnPropertyChanged();
-
-                    return Instance._Models;
+                    var instance = Instance;
+                    AnimancerEditorUtilities.RemoveMissingAndDuplicates(ref instance._Models);
+                    return instance._Models;
                 }
             }
 
@@ -215,153 +214,236 @@ namespace Animancer.Editor
 
             /************************************************************************************************************************/
 
-            [SerializeField]
-            private int _MaxRecentModels = 10;
-
-            public static int MaxRecentModels => Instance._MaxRecentModels;
-
-            /************************************************************************************************************************/
-            #endregion
-            /************************************************************************************************************************/
-            #region Floor
-            /************************************************************************************************************************/
-
-            private static void DoFloorGUI()
+            public static void AddModel(GameObject model)
             {
-                AnimancerGUI.BeginVerticalBox(GUI.skin.box);
+                if (model == DefaultHumanoid ||
+                    model == DefaultSprite)
+                    return;
 
-                var enabled = GUI.enabled;
+                if (EditorUtility.IsPersistent(model))
+                {
+                    AddModel(Models, model);
+                    AnimancerSettings.SetDirty();
+                }
+                else
+                {
+                    AddModel(TemporarySettings.PreviewModels, model);
+                }
+            }
 
-                var property = Instance.DoPropertyField(nameof(_FloorEnabled));
+            private static void AddModel(List<GameObject> models, GameObject model)
+            {
+                // Remove if it was already there so that when we add it, it will be moved to the end.
+                var index = models.LastIndexOf(model);// Search backwards because it's more likely to be near the end.
+                if (index >= 0 && index < models.Count)
+                    models.RemoveAt(index);
 
-                if (!property.boolValue)
-                    GUI.enabled = false;
-
-                EditorGUI.BeginChangeCheck();
-
-                property = Instance.DoPropertyField(nameof(_FloorMaterial));
-
-                if (property.objectReferenceValue == null)
-                    GUI.enabled = false;
-
-                Instance.DoPropertyField(nameof(_FloorTexturePropertyName));
-
-                if (EditorGUI.EndChangeCheck())
-                    Scene.Floor.DiscardCustomMaterial();
-
-                if (GUILayout.Button(AnimancerGUI.TempContent("Apply Changes",
-                    $"Changes to the {nameof(Material)} itself will not be automatically applied")))
-                    Scene.Floor.DiscardCustomMaterial();
-
-                GUI.enabled = enabled;
-
-                AnimancerGUI.EndVerticalBox(GUI.skin.box);
+                models.Add(model);
             }
 
             /************************************************************************************************************************/
 
-            [SerializeField]
-            private bool _FloorEnabled = true;
+            private static GameObject _DefaultHumanoid;
 
-            public static bool FloorEnabled => Instance._FloorEnabled;
+            public static GameObject DefaultHumanoid
+            {
+                get
+                {
+                    if (_DefaultHumanoid == null)
+                    {
+                        // Try to load Animancer's DefaultHumanoid.
+                        var path = AssetDatabase.GUIDToAssetPath("c9f3e1113795a054c939de9883b31fed");
+                        if (!string.IsNullOrEmpty(path))
+                        {
+                            _DefaultHumanoid = AssetDatabase.LoadAssetAtPath<GameObject>(path);
+                            if (_DefaultHumanoid != null)
+                                return _DefaultHumanoid;
+                        }
+
+                        // Otherwise try to load Unity's DefaultAvatar.
+                        _DefaultHumanoid = EditorGUIUtility.Load("Avatar/DefaultAvatar.fbx") as GameObject;
+
+                        if (_DefaultHumanoid == null)
+                        {
+                            // Otherwise just create an empty object.
+                            _DefaultHumanoid = EditorUtility.CreateGameObjectWithHideFlags(
+                                "DefaultAvatar", HideFlags.HideAndDontSave, typeof(Animator));
+                            _DefaultHumanoid.transform.parent = _Instance._Scene.PreviewSceneRoot;
+                        }
+                    }
+
+                    return _DefaultHumanoid;
+                }
+            }
+
+            public static bool IsDefaultHumanoid(GameObject gameObject) => gameObject == DefaultHumanoid;
 
             /************************************************************************************************************************/
 
-            [SerializeField]
-            [Tooltip("Scriptable Render Pipelines regularly break the default shader, so this field allows custom material to be" +
-                " assigned if necessary. A transparent shader like 'Mobile/Particles/Alpha Blended' is recommended.")]
-            private Material _FloorMaterial;
+            private static GameObject _DefaultSprite;
 
-            public static Material FloorMaterial => Instance._FloorMaterial;
+            public static GameObject DefaultSprite
+            {
+                get
+                {
+                    if (_DefaultSprite == null)
+                    {
+                        _DefaultSprite = EditorUtility.CreateGameObjectWithHideFlags(
+                            "DefaultSprite", HideFlags.HideAndDontSave, typeof(Animator), typeof(SpriteRenderer));
+                        _DefaultSprite.transform.parent = _Instance._Scene.PreviewSceneRoot;
+                    }
+
+                    return _DefaultSprite;
+                }
+            }
+
+            public static bool IsDefaultSprite(GameObject gameObject) => gameObject == DefaultSprite;
 
             /************************************************************************************************************************/
 
-            [SerializeField]
-            [Tooltip("The name of the property to assign the grid texture for the Floor Material (default '_MainTex')")]
-            private string _FloorTexturePropertyName = "_MainTex";
+            /// <summary>
+            /// Tries to choose the most appropriate model to use based on the properties animated by the target
+            /// <see cref="Transition"/>.
+            /// </summary>
+            public static Transform TrySelectBestModel()
+            {
+                var transition = Transition;
+                if (transition == null)
+                    return null;
 
-            public static string FloorTexturePropertyName => Instance._FloorTexturePropertyName;
+                using (ObjectPool.Disposable.AcquireSet<AnimationClip>(out var clips))
+                {
+                    clips.GatherFromSource(transition);
+                    if (clips.Count == 0)
+                        return null;
+
+                    var model = TrySelectBestModel(clips, TemporarySettings.PreviewModels);
+                    if (model != null)
+                        return model;
+
+                    model = TrySelectBestModel(clips, Models);
+                    if (model != null)
+                        return model;
+
+                    foreach (var clip in clips)
+                    {
+                        var type = AnimationBindings.GetAnimationType(clip);
+                        switch (type)
+                        {
+                            case AnimationType.Humanoid:
+                                return DefaultHumanoid.transform;
+
+                            case AnimationType.Sprite:
+                                return DefaultSprite.transform;
+                        }
+                    }
+
+                    return null;
+                }
+            }
+
+            /************************************************************************************************************************/
+
+            private static Transform TrySelectBestModel(HashSet<AnimationClip> clips, List<GameObject> models)
+            {
+                var animatableBindings = new HashSet<EditorCurveBinding>[models.Count];
+
+                for (int i = 0; i < models.Count; i++)
+                {
+                    animatableBindings[i] = AnimationBindings.GetBindings(models[i]).ObjectBindings;
+                }
+
+                var bestMatchIndex = -1;
+                var bestMatchCount = 0;
+                foreach (var clip in clips)
+                {
+                    var clipBindings = AnimationBindings.GetBindings(clip);
+
+                    for (int iModel = animatableBindings.Length - 1; iModel >= 0; iModel--)
+                    {
+                        var modelBindings = animatableBindings[iModel];
+                        var matches = 0;
+
+                        for (int iBinding = 0; iBinding < clipBindings.Length; iBinding++)
+                        {
+                            if (modelBindings.Contains(clipBindings[iBinding]))
+                                matches++;
+                        }
+
+                        if (bestMatchCount < matches && matches > clipBindings.Length / 2)
+                        {
+                            bestMatchCount = matches;
+                            bestMatchIndex = iModel;
+
+                            // If it matches all bindings, use it.
+                            if (bestMatchCount == clipBindings.Length)
+                                goto FoundBestMatch;
+                        }
+                    }
+                }
+
+                FoundBestMatch:
+                if (bestMatchIndex >= 0)
+                    return models[bestMatchIndex].transform;
+                else
+                    return null;
+            }
 
             /************************************************************************************************************************/
             #endregion
             /************************************************************************************************************************/
-            #region Exceptions
+            #region Scene Hierarchy
             /************************************************************************************************************************/
 
-            private struct ExceptionDetails
+            private static void DoHierarchyGUI()
             {
-                public Exception Exception { get; private set; }
-                public bool isExpanded;
-
-                public ExceptionDetails(Exception exception)
-                {
-                    Exception = exception;
-                    isExpanded = false;
-                    _ToString = null;
-                }
-
-                private string _ToString;
-                public override string ToString() => _ToString ?? (_ToString = Exception.ToString());
+                GUILayout.BeginVertical(GUI.skin.box);
+                GUILayout.Label("Preview Scene Hierarchy");
+                DoHierarchyGUI(_Instance._Scene.PreviewSceneRoot);
+                GUILayout.EndVertical();
             }
 
-            private static List<ExceptionDetails> _ExceptionDetails;
-
             /************************************************************************************************************************/
 
-            private static void DoGatheringExceptionsGUI()
+            private static GUIStyle _HierarchyButtonStyle;
+
+            private static void DoHierarchyGUI(Transform root)
             {
-                var exceptions = AnimationGatherer.Exceptions;
-                if (exceptions == null || exceptions.Count == 0)
+                var area = AnimancerGUI.LayoutSingleLineRect();
+
+                if (_HierarchyButtonStyle == null)
+                    _HierarchyButtonStyle = new GUIStyle(EditorStyles.miniButton)
+                    {
+                        alignment = TextAnchor.MiddleLeft,
+                    };
+
+                if (GUI.Button(EditorGUI.IndentedRect(area), root.name, _HierarchyButtonStyle))
+                {
+                    Selection.activeTransform = root;
+                    GUIUtility.ExitGUI();
+                }
+
+                var childCount = root.childCount;
+                if (childCount == 0)
                     return;
 
-                AnimancerUtilities.NewIfNull(ref _ExceptionDetails);
-
-                if (Event.current.type == EventType.Layout)
+                var expandedHierarchy = _Instance._Scene.ExpandedHierarchy;
+                var index = expandedHierarchy != null ? expandedHierarchy.IndexOf(root) : -1;
+                var isExpanded = EditorGUI.Foldout(area, index >= 0, GUIContent.none);
+                if (isExpanded)
                 {
-                    while (_ExceptionDetails.Count < exceptions.Count)
-                        _ExceptionDetails.Add(new ExceptionDetails(exceptions[_ExceptionDetails.Count]));
+                    if (index < 0)
+                        expandedHierarchy.Add(root);
+
+                    EditorGUI.indentLevel++;
+                    for (int i = 0; i < childCount; i++)
+                        DoHierarchyGUI(root.GetChild(i));
+                    EditorGUI.indentLevel--;
                 }
-
-                EditorGUILayout.LabelField("Gathering Exceptions", _ExceptionDetails.Count.ToString());
-                EditorGUI.indentLevel++;
-
-                if (GUILayout.Button("Log All"))
+                else if (index >= 0)
                 {
-                    for (int i = 0; i < _ExceptionDetails.Count; i++)
-                        Debug.LogException(_ExceptionDetails[i].Exception);
+                    expandedHierarchy.RemoveAt(index);
                 }
-
-                if (GUILayout.Button("Clear"))
-                {
-                    _ExceptionDetails = null;
-                    return;
-                }
-
-                for (int i = 0; i < _ExceptionDetails.Count; i++)
-                {
-                    var exception = _ExceptionDetails[i];
-                    Rect area;
-
-                    if (exception.isExpanded)
-                    {
-                        var size = GUI.skin.label.CalcSize(AnimancerGUI.TempContent(exception.ToString()));
-                        area = GUILayoutUtility.GetRect(size.x + AnimancerGUI.IndentSize, size.y);
-                        area.xMin += AnimancerGUI.IndentSize;
-                        GUI.Label(area, exception.ToString());
-                    }
-                    else
-                    {
-                        area = AnimancerGUI.LayoutSingleLineRect(AnimancerGUI.SpacingMode.After);
-                        area.xMin += AnimancerGUI.IndentSize;
-                        GUI.Label(area, exception.ToString());
-                    }
-
-                    area.x = 0;
-                    exception.isExpanded = EditorGUI.Foldout(area, exception.isExpanded, GUIContent.none, true);
-                    _ExceptionDetails[i] = exception;
-                }
-
-                EditorGUI.indentLevel--;
             }
 
             /************************************************************************************************************************/

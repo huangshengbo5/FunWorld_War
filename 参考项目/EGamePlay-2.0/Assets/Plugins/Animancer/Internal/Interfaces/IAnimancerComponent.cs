@@ -1,4 +1,4 @@
-// Animancer // https://kybernetik.com.au/animancer // Copyright 2020 Kybernetik //
+// Animancer // https://kybernetik.com.au/animancer // Copyright 2018-2023 Kybernetik //
 
 using UnityEngine;
 
@@ -19,11 +19,10 @@ namespace Animancer
     public interface IAnimancerComponent
     {
         /************************************************************************************************************************/
-#pragma warning disable IDE0079 // Remove unnecessary suppression.
 #pragma warning disable IDE1006 // Naming Styles.
         /************************************************************************************************************************/
 
-        /// <summary>Indicates whether this component will be updated.</summary>
+        /// <summary>Will this component be updated?</summary>
         bool enabled { get; }
 
         /// <summary>The <see cref="GameObject"/> this component is attached to.</summary>
@@ -31,7 +30,6 @@ namespace Animancer
 
         /************************************************************************************************************************/
 #pragma warning restore IDE1006 // Naming Styles.
-#pragma warning restore IDE0079 // Remove unnecessary suppression.
         /************************************************************************************************************************/
 
         /// <summary>The <see cref="UnityEngine.Animator"/> component which this script controls.</summary>
@@ -40,10 +38,10 @@ namespace Animancer
         /// <summary>The internal system which manages the playing animations.</summary>
         AnimancerPlayable Playable { get; }
 
-        /// <summary>Indicates whether the <see cref="Playable"/> has been initialised (is not null).</summary>
-        bool IsPlayableInitialised { get; }
+        /// <summary>Has the <see cref="Playable"/> been initialized?</summary>
+        bool IsPlayableInitialized { get; }
 
-        /// <summary>Determines whether the object will be reset to its original values when disabled.</summary>
+        /// <summary>Will the object be reset to its original values when disabled?</summary>
         bool ResetOnDisable { get; }
 
         /// <summary>
@@ -69,7 +67,11 @@ namespace Animancer
         /// </summary>
         string ActionOnDisableFieldName { get; }
 
-        /// <summary>[Editor-Only] The <see cref="UpdateMode"/> what was first used when this script initialised.</summary>
+        /// <summary>[Editor-Only] The <see cref="UpdateMode"/> that was first used when this script initialized.</summary>
+        /// <remarks>
+        /// This is used to give a warning when changing to or from <see cref="AnimatorUpdateMode.AnimatePhysics"/> at
+        /// runtime since it won't work correctly.
+        /// </remarks>
         AnimatorUpdateMode? InitialUpdateMode { get; }
 
         /************************************************************************************************************************/

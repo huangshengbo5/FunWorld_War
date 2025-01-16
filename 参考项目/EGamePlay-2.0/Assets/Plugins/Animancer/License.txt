@@ -76,18 +76,6 @@ https://creativecommons.org/publicdomain/zero/1.0/
 
 
 ////////////////////////////////////////////////////////////
-// Golf Hit.ogg // CC0 //
-////////////////////////////////////////////////////////////
-
-Golf 15.wav by zolopher
-https://freesound.org/people/zolopher/sounds/75209/
-
-License: Creative Commons Zero (CC0 1.0)
-https://creativecommons.org/publicdomain/zero/1.0/
-
-
-
-////////////////////////////////////////////////////////////
 // Humanoid Animations // Similar to CC0 //
 ////////////////////////////////////////////////////////////
 
@@ -103,22 +91,6 @@ The motion capture data may be copied, modified, or redistributed without permis
 From the FAQ: http://mocap.cs.cmu.edu/faqs.php
 
 These animations have all been manually edited in Unity to reduce jitter and to suit the needs of the example scenes. Their file names all start with "Humanoid-".
-
-
-
-////////////////////////////////////////////////////////////
-// Knight.png // CC0 //
-////////////////////////////////////////////////////////////
-
-The Knight - Free Sprite by pzUH:
-https://opengameart.org/content/the-knight-free-sprite
-
-License: Creative Commons Zero (CC0 1.0)
-https://creativecommons.org/publicdomain/zero/1.0/
-
-These sprites have been altered for use in Animancer:
-- Compiled from individual images into a single sprite sheet.
-- Scaled down to reduce package size.
 
 
 
@@ -200,18 +172,6 @@ The model and animations have been altered for use in Animancer:
 
 100 Seamless Textures - 461223194 by Mitch Featherston
 https://opengameart.org/node/7904
-
-License: Creative Commons Zero (CC0 1.0)
-https://creativecommons.org/publicdomain/zero/1.0/
-
-
-
-////////////////////////////////////////////////////////////
-// Stone Wall.png // CC0 //
-////////////////////////////////////////////////////////////
-
-Stone wall vector image - no Author listed.
-https://publicdomainvectors.org/en/free-clipart/Stone-wall-vector-image/70177.html
 
 License: Creative Commons Zero (CC0 1.0)
 https://creativecommons.org/publicdomain/zero/1.0/

@@ -1,375 +1,251 @@
-// Animancer // https://kybernetik.com.au/animancer // Copyright 2020 Kybernetik //
+// Animancer // https://kybernetik.com.au/animancer // Copyright 2018-2023 Kybernetik //
 
-using System.Collections.Generic;
+using Animancer.Units;
+using System;
 using UnityEngine;
-
-#if UNITY_EDITOR
-using System.IO;
-using UnityEditor;
-using UnityEditor.Animations;
-#endif
+using Object = UnityEngine.Object;
 
 namespace Animancer
 {
     /// <summary>
-    /// A <see cref="ScriptableObject"/> based <see cref="ITransition"/>s which can create a
-    /// <see cref="ClipState"/> when passed into <see cref="AnimancerPlayable.Play(ITransition)"/>.
+    /// A serializable <see cref="ITransition"/> which can create a particular type of <see cref="AnimancerState"/>
+    /// when passed into <see cref="AnimancerPlayable.Play(ITransition)"/>.
     /// </summary>
     /// <remarks>
-    /// When adding a <see cref="CreateAssetMenuAttribute"/> to any derived classes, you can use
-    /// <see cref="Strings.MenuPrefix"/> and <see cref="Strings.AssetMenuOrder"/>.
-    /// <para></para>
-    /// Documentation: <see href="https://kybernetik.com.au/animancer/docs/manual/transitions/types#transition-assets">Transition Assets</see>
-    /// </remarks>
-    /// https://kybernetik.com.au/animancer/api/Animancer/AnimancerTransition
-    /// 
-    [HelpURL(Strings.DocsURLs.APIDocumentation + "/" + nameof(AnimancerTransition))]
-    public abstract class AnimancerTransition : ScriptableObject, ITransition, IAnimationClipSource
-    {
-        /************************************************************************************************************************/
-
-        /// <summary>Returns the <see cref="ITransition"/> wrapped by this <see cref="ScriptableObject"/>.</summary>
-        public abstract ITransition GetTransition();
-
-        /************************************************************************************************************************/
-
-        /// <summary>Wraps <see cref="ITransition.FadeDuration"/>.</summary>
-        public virtual float FadeDuration => GetTransition().FadeDuration;
-
-        /// <summary>Wraps <see cref="IHasKey.Key"/>.</summary>
-        public virtual object Key => GetTransition().Key;
-
-        /// <summary>Wraps <see cref="ITransition.FadeMode"/>.</summary>
-        public virtual FadeMode FadeMode => GetTransition().FadeMode;
-
-        /// <summary>Wraps <see cref="ITransition.CreateState"/>.</summary>
-        public virtual AnimancerState CreateState() => GetTransition().CreateState();
-
-        /// <summary>Wraps <see cref="ITransition.Apply"/>.</summary>
-        public virtual void Apply(AnimancerState state)
-        {
-            GetTransition().Apply(state);
-            state.SetDebugName(name);
-        }
-
-        /************************************************************************************************************************/
-
-        /// <summary>Wraps <see cref="AnimancerUtilities.GatherFromSource(ICollection{AnimationClip}, object)"/>.</summary>
-        public virtual void GetAnimationClips(List<AnimationClip> clips) => clips.GatherFromSource(GetTransition());
-
-        /************************************************************************************************************************/
-    }
-
-    /************************************************************************************************************************/
-
-    /// <summary>An <see cref="AnimancerTransition"/> which uses a generic field for its <see cref="ITransition"/>.</summary>
-    /// <remarks>
-    /// Documentation: <see href="https://kybernetik.com.au/animancer/docs/manual/transitions/types#transition-assets">Transition Assets</see>
+    /// Documentation: <see href="https://kybernetik.com.au/animancer/docs/manual/transitions">Transitions</see>
     /// </remarks>
     /// https://kybernetik.com.au/animancer/api/Animancer/AnimancerTransition_1
     /// 
-    [HelpURL(Strings.DocsURLs.APIDocumentation + "/" + nameof(AnimancerTransition) + "_1")]
-    public class AnimancerTransition<T> : AnimancerTransition where T : ITransition
+    [Serializable]
+    public abstract class AnimancerTransition<TState> :
+        ITransition<TState>, ITransitionDetailed, ITransitionWithEvents, ICopyable<AnimancerTransition<TState>>
+        where TState : AnimancerState
     {
         /************************************************************************************************************************/
 
         [SerializeField]
-        [UnityEngine.Serialization.FormerlySerializedAs("_Animation")]
-        private T _Transition;
+        [Tooltip(Strings.Tooltips.FadeDuration)]
+        [AnimationTime(AnimationTimeAttribute.Units.Seconds, Rule = Validate.Value.IsNotNegative)]
+        [DefaultFadeValue]
+        private float _FadeDuration = AnimancerPlayable.DefaultFadeDuration;
 
-        /// <summary>[<see cref="SerializeField"/>]
-        /// The <see cref="ITransition"/> wrapped by this <see cref="ScriptableObject"/>.
-        /// </summary>
-        /// <remarks>
-        /// WARNING: the <see cref="AnimancerState.Transition{TState}.State"/> holds the most recently played state, so
-        /// if you are sharing this transition between multiple objects it will only remember one of them.
+        /// <inheritdoc/>
+        /// <remarks>[<see cref="SerializeField"/>]</remarks>
+        /// <exception cref="ArgumentOutOfRangeException">Thrown when setting the value to a negative number.</exception>
+        public float FadeDuration
+        {
+            get => _FadeDuration;
+            set
+            {
+                if (value < 0)
+                    throw new ArgumentOutOfRangeException(nameof(value), $"{nameof(FadeDuration)} must not be negative");
+
+                _FadeDuration = value;
+            }
+        }
+
+        /************************************************************************************************************************/
+
+        /// <inheritdoc/>
+        /// <remarks>Returns <c>false</c> unless overridden.</remarks>
+        public virtual bool IsLooping => false;
+
+        /// <inheritdoc/>
+        public virtual float NormalizedStartTime
+        {
+            get => float.NaN;
+            set { }
+        }
+
+        /// <inheritdoc/>
+        /// <remarks>Returns <c>1</c> unless overridden.</remarks>
+        public virtual float Speed
+        {
+            get => 1;
+            set { }
+        }
+
+        /// <inheritdoc/>
+        public abstract float MaximumDuration { get; }
+
+        /************************************************************************************************************************/
+
+        [SerializeField, Tooltip(Strings.ProOnlyTag + "Events which will be triggered as the animation plays")]
+        private AnimancerEvent.Sequence.Serializable _Events;
+
+        /// <inheritdoc/>
+        /// <remarks>This property returns the <see cref="AnimancerEvent.Sequence.Serializable.Events"/>.</remarks>
+        /// <exception cref="NullReferenceException">
+        /// <see cref="SerializedEvents"/> is null. If this transition was created in code (using the <c>new</c>
+        /// keyword rather than being deserialized by Unity) you will need to null-check and/or assign a new
+        /// sequence to the <see cref="SerializedEvents"/> before accessing this property.
+        /// </exception>
+        public AnimancerEvent.Sequence Events
+        {
+            get
+            {
+                if (_Events == null)
+                    _Events = new AnimancerEvent.Sequence.Serializable();
+
+                return _Events.Events;
+            }
+        }
+
+        /// <inheritdoc/>
+        public ref AnimancerEvent.Sequence.Serializable SerializedEvents => ref _Events;
+
+        /************************************************************************************************************************/
+
+        /// <summary>
+        /// The state that was created by this object. Specifically, this is the state that was most recently
+        /// passed into <see cref="Apply"/> (usually by <see cref="AnimancerPlayable.Play(ITransition)"/>).
         /// <para></para>
         /// You can use <see cref="AnimancerPlayable.StateDictionary.GetOrCreate(ITransition)"/> or
         /// <see cref="AnimancerLayer.GetOrCreateState(ITransition)"/> to get or create the state for a
         /// specific object.
+        /// <para></para>
+        /// <see cref="State"/> is simply a shorthand for casting this to <typeparamref name="TState"/>.
+        /// </summary>
+        public AnimancerState BaseState { get; private set; }
+
+        /************************************************************************************************************************/
+
+        private TState _State;
+
+        /// <summary>
+        /// The state that was created by this object. Specifically, this is the state that was most recently
+        /// passed into <see cref="Apply"/> (usually by <see cref="AnimancerPlayable.Play(ITransition)"/>).
+        /// </summary>
+        /// 
+        /// <remarks>
+        /// You can use <see cref="AnimancerPlayable.StateDictionary.GetOrCreate(ITransition)"/> or
+        /// <see cref="AnimancerLayer.GetOrCreateState(ITransition)"/> to get or create the state for a
+        /// specific object.
+        /// <para></para>
+        /// This property is shorthand for casting the <see cref="BaseState"/> to <typeparamref name="TState"/>.
         /// </remarks>
-        public ref T Transition => ref _Transition;
+        /// 
+        /// <exception cref="InvalidCastException">
+        /// The <see cref="BaseState"/> is not actually a <typeparamref name="TState"/>. This should only
+        /// happen if a different type of state was created by something else and registered using the
+        /// <see cref="Key"/>, causing this <see cref="AnimancerPlayable.Play(ITransition)"/> to pass that
+        /// state into <see cref="Apply"/> instead of calling <see cref="CreateState"/> to make the correct type of
+        /// state.
+        /// </exception>
+        public TState State
+        {
+            get
+            {
+                if (_State == null)
+                    _State = (TState)BaseState;
+
+                return _State;
+            }
+            protected set
+            {
+                BaseState = _State = value;
+            }
+        }
+
+        /************************************************************************************************************************/
 
         /// <inheritdoc/>
-        public override ITransition GetTransition() => _Transition;
+        /// <remarks>Returns <c>true</c> unless overridden.</remarks>
+        public virtual bool IsValid => true;
+
+        /// <summary>The <see cref="AnimancerState.Key"/> which the created state will be registered with.</summary>
+        /// <remarks>Returns <c>this</c> unless overridden.</remarks>
+        public virtual object Key => this;
+
+        /// <inheritdoc/>
+        /// <remarks>Returns <see cref="FadeMode.FixedSpeed"/> unless overridden.</remarks>
+        public virtual FadeMode FadeMode => FadeMode.FixedSpeed;
+
+        /// <inheritdoc/>
+        public abstract TState CreateState();
+
+        /// <inheritdoc/>
+        AnimancerState ITransition.CreateState() => CreateState();
 
         /************************************************************************************************************************/
-    }
-}
 
-/************************************************************************************************************************/
-
-#if UNITY_EDITOR
-namespace Animancer.Editor
-{
-    /// <summary>A custom editor for <see cref="AnimancerTransition"/>s.</summary>
-    /// <remarks>
-    /// This class contains several context menu functions for generating <see cref="AnimancerTransition"/>s based on
-    /// Animator Controller States.
-    /// </remarks>
-    [CustomEditor(typeof(AnimancerTransition), true)]
-    internal class AnimancerTransitionEditor : ScriptableObjectEditor
-    {
-        /************************************************************************************************************************/
-
-        /// <summary>Creates an <see cref="AnimancerTransition"/> from the <see cref="MenuCommand.context"/>.</summary>
-        [MenuItem("CONTEXT/" + nameof(AnimatorState) + "/Generate Transition")]
-        [MenuItem("CONTEXT/" + nameof(BlendTree) + "/Generate Transition")]
-        [MenuItem("CONTEXT/" + nameof(AnimatorStateTransition) + "/Generate Transition")]
-        [MenuItem("CONTEXT/" + nameof(AnimatorStateMachine) + "/Generate Transitions")]
-        private static void GenerateTransition(MenuCommand command)
+        /// <inheritdoc/>
+        public virtual void Apply(AnimancerState state)
         {
-            if (command.context is AnimatorState state)
-            {
-                Selection.activeObject = GenerateTransition(state);
-            }
-            else if (command.context is BlendTree blendTree)
-            {
-                Selection.activeObject = GenerateTransition(null, blendTree);
-            }
-            else if (command.context is AnimatorStateTransition transition)
-            {
-                Selection.activeObject = GenerateTransition(transition);
-            }
-            else if (command.context is AnimatorStateMachine stateMachine)// Layer or Sub-State Machine.
-            {
-                Selection.activeObject = GenerateTransitions(stateMachine);
-            }
-        }
+            state.Events = _Events;
 
-        /************************************************************************************************************************/
-
-        /// <summary>Creates an <see cref="AnimancerTransition"/> from the `state`.</summary>
-        private static AnimancerTransition GenerateTransition(AnimatorState state)
-            => GenerateTransition(state, state.motion);
-
-        /************************************************************************************************************************/
-
-        /// <summary>Creates an <see cref="AnimancerTransition"/> from the `motion`.</summary>
-        private static AnimancerTransition GenerateTransition(Object originalAsset, Motion motion)
-        {
-            if (motion is BlendTree blendTree)
-            {
-                return GenerateTransition(originalAsset as AnimatorState, blendTree);
-            }
-            else if (motion is AnimationClip || motion == null)
-            {
-                var asset = CreateInstance<ClipTransition>();
-                asset.Transition = new ClipState.Transition
-                {
-                    Clip = (AnimationClip)motion,
-                };
-
-                GetDetailsFromState(originalAsset as AnimatorState, asset.Transition);
-                SaveTransition(originalAsset, asset);
-                return asset;
-            }
-            else
-            {
-                Debug.LogError($"Unsupported {nameof(Motion)} Type: {motion.GetType()}");
-                return null;
-            }
-        }
-
-        /************************************************************************************************************************/
-
-        /// <summary>Initialises the `transition` based on the `state`.</summary>
-        private static void GetDetailsFromState(AnimatorState state, ITransitionDetailed transition)
-        {
-            if (state == null)
-                return;
-
-            transition.Speed = state.speed;
-
-            var isForwards = state.speed >= 0;
-            var defaultEndTime = AnimancerEvent.Sequence.GetDefaultNormalizedEndTime(state.speed);
-            var endTime = defaultEndTime;
-
-            var exitTransitions = state.transitions;
-            for (int i = 0; i < exitTransitions.Length; i++)
-            {
-                var exitTransition = exitTransitions[i];
-                if (exitTransition.hasExitTime)
-                {
-                    if (isForwards)
-                    {
-                        if (endTime > exitTransition.exitTime)
-                            endTime = exitTransition.exitTime;
-                    }
-                    else
-                    {
-                        if (endTime < exitTransition.exitTime)
-                            endTime = exitTransition.exitTime;
-                    }
-                }
-            }
-
-            if (endTime != defaultEndTime)
-            {
-                transition.SerializedEvents = new AnimancerEvent.Sequence.Serializable();
-                transition.SerializedEvents.SetNormalizedEndTime(endTime);
-            }
-        }
-
-        /************************************************************************************************************************/
-
-        /// <summary>Creates an <see cref="AnimancerTransition"/> from the `blendTree`.</summary>
-        private static AnimancerTransition GenerateTransition(AnimatorState state, BlendTree blendTree)
-        {
-            var asset = CreateTransition(blendTree);
-            if (asset == null)
-                return null;
-
-            if (state != null)
-                asset.name = state.name;
-
-            GetDetailsFromState(state, (ITransitionDetailed)asset.GetTransition());
-            SaveTransition(blendTree, asset);
-            return asset;
-        }
-
-        /************************************************************************************************************************/
-
-        /// <summary>Creates an <see cref="AnimancerTransition"/> from the `transition`.</summary>
-        private static AnimancerTransition GenerateTransition(AnimatorStateTransition transition)
-        {
-            AnimancerTransition animancerTransition = null;
-
-            if (transition.destinationStateMachine != null)
-                animancerTransition = GenerateTransitions(transition.destinationStateMachine);
-
-            if (transition.destinationState != null)
-                animancerTransition = GenerateTransition(transition.destinationState);
-
-            return animancerTransition;
-        }
-
-        /************************************************************************************************************************/
-
-        /// <summary>Creates <see cref="AnimancerTransition"/>s from all states in the `stateMachine`.</summary>
-        private static AnimancerTransition GenerateTransitions(AnimatorStateMachine stateMachine)
-        {
-            AnimancerTransition transition = null;
-
-            foreach (var child in stateMachine.stateMachines)
-                transition = GenerateTransitions(child.stateMachine);
-
-            foreach (var child in stateMachine.states)
-                transition = GenerateTransition(child.state);
-
-            return transition;
-        }
-
-        /************************************************************************************************************************/
-
-        /// <summary>Creates an <see cref="AnimancerTransition"/> from the `blendTree`.</summary>
-        private static AnimancerTransition CreateTransition(BlendTree blendTree)
-        {
-            switch (blendTree.blendType)
-            {
-                case BlendTreeType.Simple1D:
-                    var linearAsset = CreateInstance<LinearMixerTransition>();
-                    InitialiseChildren(ref linearAsset.Transition, blendTree);
-                    return linearAsset;
-
-                case BlendTreeType.SimpleDirectional2D:
-                case BlendTreeType.FreeformDirectional2D:
-                    var directionalAsset = CreateInstance<MixerTransition2D>();
-                    directionalAsset.Transition = new MixerState.Transition2D
-                    {
-                        Type = MixerState.Transition2D.MixerType.Directional
-                    };
-                    InitialiseChildren(ref directionalAsset.Transition, blendTree);
-                    return directionalAsset;
-
-                case BlendTreeType.FreeformCartesian2D:
-                    var cartesianAsset = CreateInstance<MixerTransition2D>();
-                    cartesianAsset.Transition = new MixerState.Transition2D
-                    {
-                        Type = MixerState.Transition2D.MixerType.Cartesian
-                    };
-                    InitialiseChildren(ref cartesianAsset.Transition, blendTree);
-                    return cartesianAsset;
-
-                case BlendTreeType.Direct:
-                    var manualAsset = CreateInstance<ManualMixerTransition>();
-                    InitialiseChildren<ManualMixerState.Transition, ManualMixerState>(ref manualAsset.Transition, blendTree);
-                    return manualAsset;
-
-                default:
-                    Debug.LogError($"Unsupported {nameof(BlendTreeType)}: {blendTree.blendType}");
-                    return null;
-            }
-        }
-
-        /************************************************************************************************************************/
-
-        /// <summary>Initialises the `transition` based on the <see cref="BlendTree.children"/>.</summary>
-        private static void InitialiseChildren(ref LinearMixerState.Transition transition, BlendTree blendTree)
-        {
-            var children = InitialiseChildren<LinearMixerState.Transition, LinearMixerState>(ref transition, blendTree);
-            transition.Thresholds = new float[children.Length];
-            for (int i = 0; i < children.Length; i++)
-                transition.Thresholds[i] = children[i].threshold;
-        }
-
-        /// <summary>Initialises the `transition` based on the <see cref="BlendTree.children"/>.</summary>
-        private static void InitialiseChildren(ref MixerState.Transition2D transition, BlendTree blendTree)
-        {
-            var children = InitialiseChildren<MixerState.Transition2D, MixerState<Vector2>>(ref transition, blendTree);
-            transition.Thresholds = new Vector2[children.Length];
-            for (int i = 0; i < children.Length; i++)
-                transition.Thresholds[i] = children[i].position;
-        }
-
-        /// <summary>Initialises the `transition` based on the <see cref="BlendTree.children"/>.</summary>
-        private static ChildMotion[] InitialiseChildren<TTransition, TState>(ref TTransition transition, BlendTree blendTree)
-            where TTransition : ManualMixerState.Transition<TState>, new()
-            where TState : ManualMixerState
-        {
-            transition = new TTransition();
-
-            var children = blendTree.children;
-            transition.States = new Object[children.Length];
-            float[] speeds = new float[children.Length];
-            var hasCustomSpeeds = false;
-
-            for (int i = 0; i < children.Length; i++)
-            {
-                var child = children[i];
-                transition.States[i] = child.motion is AnimationClip ?
-                    child.motion :
-                    (Object)GenerateTransition(blendTree, child.motion);
-
-                if ((speeds[i] = child.timeScale) != 1)
-                    hasCustomSpeeds = true;
-            }
-
-            if (hasCustomSpeeds)
-                transition.Speeds = speeds;
-
-            return children;
-        }
-
-        /************************************************************************************************************************/
-
-        /// <summary>Saves the `transition` in the same folder as the `originalAsset`.</summary>
-        private static void SaveTransition(Object originalAsset, AnimancerTransition transition)
-        {
-            if (string.IsNullOrEmpty(transition.name))
-                transition.name = originalAsset.name;
-
-            var path = AssetDatabase.GetAssetPath(originalAsset);
-            path = Path.GetDirectoryName(path);
-            path = Path.Combine(path, transition.name + ".asset");
-            path = AssetDatabase.GenerateUniqueAssetPath(path);
-
-            AssetDatabase.CreateAsset(transition, path);
-
-            Debug.Log($"Saved {path}", transition);
-        }
-
-        /************************************************************************************************************************/
-    }
-}
+#if UNITY_ASSERTIONS
+            if (state.HasEvents)
+                state.Events.SetShouldNotModifyReason("it was created by a Transition." +
+                    $"\n\nTransitions give the played {nameof(AnimancerState)} a reference to their Events," +
+                    $" meaning that any modifications to the state.Events will also affect the transition.Events" +
+                    $" and persist when that Transition is played in the future. This is a common source of logic bugs" +
+                    $" so when a Transition is played it marks its Events as no longer expecting to be modified.");
 #endif
+
+            BaseState = state;
+
+            if (_State != state)
+                _State = null;
+        }
+
+        /************************************************************************************************************************/
+
+        /// <summary>The <see cref="AnimancerState.MainObject"/> that the created state will have.</summary>
+        public virtual Object MainObject { get; }
+
+        /// <summary>The display name of this transition.</summary>
+        public virtual string Name
+        {
+            get
+            {
+                var mainObject = MainObject;
+                return mainObject != null ? mainObject.name : null;
+            }
+        }
+
+        /// <summary>Returns the <see cref="Name"/> and type of this transition.</summary>
+        public override string ToString()
+        {
+            var type = GetType().FullName;
+
+            var name = Name;
+            if (name != null)
+                return $"{name} ({type})";
+            else
+                return type;
+        }
+
+        /************************************************************************************************************************/
+
+        /// <inheritdoc/>
+        public virtual void CopyFrom(AnimancerTransition<TState> copyFrom)
+        {
+            if (copyFrom == null)
+            {
+                _FadeDuration = AnimancerPlayable.DefaultFadeDuration;
+                _Events = default;
+                return;
+            }
+
+            _FadeDuration = copyFrom._FadeDuration;
+            _Events = copyFrom._Events.Clone();
+        }
+
+        /************************************************************************************************************************/
+
+        /// <summary>Applies the given details to the `state`.</summary>
+        public static void ApplyDetails(AnimancerState state, float speed, float normalizedStartTime)
+        {
+            if (!float.IsNaN(speed))
+                state.Speed = speed;
+
+            if (!float.IsNaN(normalizedStartTime))
+                state.NormalizedTime = normalizedStartTime;
+            else if (state.Weight == 0)
+                state.NormalizedTime = AnimancerEvent.Sequence.GetDefaultNormalizedStartTime(speed);
+        }
+
+        /************************************************************************************************************************/
+    }
+}

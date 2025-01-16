@@ -1,7 +1,6 @@
-// Animancer // https://kybernetik.com.au/animancer // Copyright 2020 Kybernetik //
+// Animancer // https://kybernetik.com.au/animancer // Copyright 2018-2023 Kybernetik //
 
 using UnityEngine.Animations;
-using UnityEngine.Experimental.Animations;
 using Unity.Collections;
 
 namespace Animancer
@@ -9,30 +8,31 @@ namespace Animancer
     /// <summary>[Pro-Only]
     /// A wrapper which allows access to the value of <see cref="float"/> properties that are controlled by animations.
     /// </summary>
-    /// <example>
-    /// Example: <see href="https://kybernetik.com.au/animancer/docs/examples/jobs">Animation Jobs</see>
-    /// </example>
+    /// <remarks>
+    /// Documentation: <see href="https://kybernetik.com.au/animancer/docs/manual/ik#animated-properties">Animated Properties</see>
+    /// </remarks>
+    /// <example><see href="https://kybernetik.com.au/animancer/docs/examples/jobs">Animation Jobs</see></example>
     /// https://kybernetik.com.au/animancer/api/Animancer/AnimatedFloat
     /// 
-    public sealed class AnimatedFloat : AnimatedProperty<AnimatedFloat.Job, float>
+    public class AnimatedFloat : AnimatedProperty<AnimatedFloat.Job, float>
     {
         /************************************************************************************************************************/
 
         /// <summary>
         /// Allocates room for a specified number of properties to be filled by
-        /// <see cref="InitialiseProperty(int, Transform, Type, string)"/>.
+        /// <see cref="InitializeProperty(int, Transform, Type, string)"/>.
         /// </summary>
         public AnimatedFloat(IAnimancerComponent animancer, int propertyCount,
             NativeArrayOptions options = NativeArrayOptions.ClearMemory)
             : base(animancer, propertyCount, options)
         { }
 
-        /// <summary>Initialises a single property.</summary>
+        /// <summary>Initializes a single property.</summary>
         public AnimatedFloat(IAnimancerComponent animancer, string propertyName)
             : base(animancer, propertyName)
         { }
 
-        /// <summary>Initialises a group of properties.</summary>
+        /// <summary>Initializes a group of properties.</summary>
         public AnimatedFloat(IAnimancerComponent animancer, params string[] propertyNames)
             : base(animancer, propertyNames)
         { }

@@ -1,4 +1,4 @@
-// Animancer // https://kybernetik.com.au/animancer // Copyright 2020 Kybernetik //
+// Animancer // https://kybernetik.com.au/animancer // Copyright 2018-2023 Kybernetik //
 
 #if UNITY_EDITOR
 
@@ -7,34 +7,59 @@
 using System;
 using System.Collections.Generic;
 using UnityEditor;
+using UnityEditor.SceneManagement;
 using UnityEngine;
+using UnityEngine.SceneManagement;
+using Object = UnityEngine.Object;
 
 namespace Animancer.Editor
 {
-    internal partial class TransitionPreviewWindow
+    /// https://kybernetik.com.au/animancer/api/Animancer.Editor/TransitionPreviewWindow
+    partial class TransitionPreviewWindow
     {
+        /************************************************************************************************************************/
+
+        /// <summary>The <see cref="Scene"/> of the current <see cref="TransitionPreviewWindow"/> instance.</summary>
+        public static Scene InstanceScene => _Instance != null ? _Instance._Scene : null;
+
+        /************************************************************************************************************************/
+
         /// <summary>Temporary scene management for the <see cref="TransitionPreviewWindow"/>.</summary>
         /// <remarks>
         /// Documentation: <see href="https://kybernetik.com.au/animancer/docs/manual/transitions#previews">Previews</see>
         /// </remarks>
         [Serializable]
-        private sealed class Scene
+        public class Scene
         {
+            /************************************************************************************************************************/
+            #region Fields and Properties
             /************************************************************************************************************************/
 
             /// <summary><see cref="HideFlags.HideAndDontSave"/> without <see cref="HideFlags.NotEditable"/>.</summary>
             private const HideFlags HideAndDontSave = HideFlags.HideInHierarchy | HideFlags.DontSave;
 
-            [NonSerialized] private PreviewRenderUtility _PreviewRenderUtility;
+            /// <summary>The scene displayed by the <see cref="TransitionPreviewWindow"/>.</summary>
+            [SerializeField]
+            private UnityEngine.SceneManagement.Scene _Scene;
 
-            [SerializeField] private Transform _PreviewSceneRoot;
-            [SerializeField] private Transform _InstanceRoot;
+            /// <summary>The root object in the preview scene.</summary>
+            public Transform PreviewSceneRoot { get; private set; }
+
+            /// <summary>The root of the model in the preview scene. A child of the <see cref="PreviewSceneRoot"/>.</summary>
+            public Transform InstanceRoot { get; private set; }
+
+            /// <summary>
+            /// An instance of the <see cref="Settings.SceneEnvironment"/>.
+            /// A child of the <see cref="PreviewSceneRoot"/>.
+            /// </summary>
+            public GameObject EnvironmentInstance { get; private set; }
 
             /************************************************************************************************************************/
 
             [SerializeField]
             private Transform _OriginalRoot;
 
+            /// <summary>The original model which was instantiated to create the <see cref="InstanceRoot"/>.</summary>
             public Transform OriginalRoot
             {
                 get => _OriginalRoot;
@@ -43,220 +68,108 @@ namespace Animancer.Editor
                     _OriginalRoot = value;
                     InstantiateModel();
 
-                    if (value == null)
-                        return;
-
-                    var gameObject = value.gameObject;
-
-                    if (gameObject == DefaultHumanoid ||
-                        !EditorUtility.IsPersistent(gameObject))
-                        return;
-
-                    var models = Settings.Models;
-                    var index = models.LastIndexOf(gameObject);
-                    if (index >= 0 && index < models.Count - 1)
-                        models.RemoveAt(index);
-                    models.Add(gameObject);
-                    AnimancerSettings.SetDirty();
+                    if (value != null)
+                        Settings.AddModel(value.gameObject);
                 }
             }
 
             /************************************************************************************************************************/
 
-            private static GameObject _DefaultHumanoid;
-
-            public static GameObject DefaultHumanoid
-            {
-                get
-                {
-                    if (_DefaultHumanoid == null)
-                    {
-                        // Try to load Animancer's DefaultHumanoid.
-                        var path = AssetDatabase.GUIDToAssetPath("c9f3e1113795a054c939de9883b31fed");
-                        if (!string.IsNullOrEmpty(path))
-                        {
-                            _DefaultHumanoid = AssetDatabase.LoadAssetAtPath<GameObject>(path);
-                            if (_DefaultHumanoid != null)
-                                return _DefaultHumanoid;
-                        }
-
-                        // Otherwise try to load Unity's DefaultAvatar.
-                        _DefaultHumanoid = EditorGUIUtility.Load("Avatar/DefaultAvatar.fbx") as GameObject;
-
-                        if (_DefaultHumanoid == null)
-                        {
-                            // Otherwise just create an empty object.
-                            _DefaultHumanoid = EditorUtility.CreateGameObjectWithHideFlags(
-                                "DefaultAvatar", HideFlags.HideAndDontSave, typeof(Animator));
-                            _DefaultHumanoid.transform.parent = _Instance._Scene._PreviewSceneRoot;
-                        }
-                    }
-
-                    return _DefaultHumanoid;
-                }
-            }
-
-            public static bool IsDefaultHumanoid(GameObject gameObject) => gameObject == _DefaultHumanoid;
-
-            /************************************************************************************************************************/
-
-            private static GameObject _DefaultSprite;
-
-            public static GameObject DefaultSprite
-            {
-                get
-                {
-                    if (_DefaultSprite == null)
-                    {
-                        _DefaultSprite = EditorUtility.CreateGameObjectWithHideFlags(
-                            "DefaultSprite", HideFlags.HideAndDontSave, typeof(Animator), typeof(SpriteRenderer));
-                        _DefaultSprite.transform.parent = _Instance._Scene._PreviewSceneRoot;
-                    }
-
-                    return _DefaultSprite;
-                }
-            }
-
-            public static bool IsDefaultSprite(GameObject gameObject) => gameObject == _DefaultSprite;
-
-            /************************************************************************************************************************/
-
-            [SerializeField]
-            private Animator[] _InstanceAnimators;
-            public Animator[] InstanceAnimators => _InstanceAnimators;
+            /// <summary>The <see cref="Animator"/> components attached to the <see cref="InstanceRoot"/> and its children.</summary>
+            public Animator[] InstanceAnimators { get; private set; }
 
             [SerializeField] private int _SelectedInstanceAnimator;
             [NonSerialized] private AnimationType _SelectedInstanceType;
 
+            /// <summary>The <see cref="Animator"/> component currently being used for the preview.</summary>
             public Animator SelectedInstanceAnimator
             {
                 get
                 {
-                    if (_InstanceAnimators == null ||
-                        _InstanceAnimators.Length == 0)
+                    if (InstanceAnimators == null ||
+                        InstanceAnimators.Length == 0)
                         return null;
 
-                    if (_SelectedInstanceAnimator > _InstanceAnimators.Length)
-                        _SelectedInstanceAnimator = _InstanceAnimators.Length;
+                    if (_SelectedInstanceAnimator > InstanceAnimators.Length)
+                        _SelectedInstanceAnimator = InstanceAnimators.Length;
 
-                    return _InstanceAnimators[_SelectedInstanceAnimator];
+                    return InstanceAnimators[_SelectedInstanceAnimator];
                 }
             }
 
             /************************************************************************************************************************/
 
             [NonSerialized]
-            private AnimancerPlayable _InstanceAnimancer;
-            public AnimancerPlayable InstanceAnimancer
+            private AnimancerPlayable _Animancer;
+
+            /// <summary>The <see cref="AnimancerPlayable"/> being used for the preview.</summary>
+            public AnimancerPlayable Animancer
             {
                 get
                 {
-                    if ((_InstanceAnimancer == null || !_InstanceAnimancer.IsValid) &&
-                        _InstanceRoot != null)
+                    if ((_Animancer == null || !_Animancer.IsValid) &&
+                        InstanceRoot != null)
                     {
                         var animator = SelectedInstanceAnimator;
                         if (animator != null)
                         {
-                            AnimancerPlayable.SetNextGraphName(animator.name + " (Animancer Preview)");
-                            _InstanceAnimancer = AnimancerPlayable.Create();
-                            _InstanceAnimancer.SetOutput(
-                                new AnimancerEditorUtilities.DummyAnimancerComponent(animator, _InstanceAnimancer));
-                            NormalizedTime = _NormalizedTime;
+                            AnimancerPlayable.SetNextGraphName($"{animator.name} (Animancer Preview)");
+                            _Animancer = AnimancerPlayable.Create();
+                            _Animancer.CreateOutput(
+                                new AnimancerEditorUtilities.DummyAnimancerComponent(animator, _Animancer));
+                            _Animancer.RequirePostUpdate(Animations.WindowMatchStateTime.Instance);
+                            _Instance._Animations.NormalizedTime = _Instance._Animations.NormalizedTime;
                         }
                     }
 
-                    return _InstanceAnimancer;
+                    return _Animancer;
                 }
             }
 
             /************************************************************************************************************************/
+            #endregion
+            /************************************************************************************************************************/
+            #region Initialization
+            /************************************************************************************************************************/
 
+            /// <summary>Initializes this <see cref="Scene"/>.</summary>
             public void OnEnable()
             {
-                if (_PreviewRenderUtility == null)
-                    _PreviewRenderUtility = new PreviewRenderUtility();
-
-                if (_PreviewSceneRoot == null)
-                {
-                    _PreviewSceneRoot = EditorUtility.CreateGameObjectWithHideFlags(
-                        $"{nameof(Animancer)}.{nameof(TransitionPreviewWindow)}", HideAndDontSave).transform;
-                    _PreviewRenderUtility.AddSingleGO(_PreviewSceneRoot.gameObject);
-
-                    const float Grey = 0.15f;
-                    _PreviewRenderUtility.ambientColor = new Color(Grey, Grey, Grey, 0f);
-                }
-
-                UnityEditor.SceneManagement.EditorSceneManager.sceneOpening += OnSceneOpening;
+                EditorSceneManager.sceneOpening += OnSceneOpening;
                 EditorApplication.playModeStateChanged += OnPlayModeChanged;
 
-                InitialiseDefaultRoot();
+                duringSceneGui += DoCustomGUI;
+
+                CreateScene();
+                if (OriginalRoot == null)
+                    OriginalRoot = Settings.TrySelectBestModel();
             }
 
             /************************************************************************************************************************/
 
-            public void OnDisable()
+            private void CreateScene()
             {
-                UnityEditor.SceneManagement.EditorSceneManager.sceneOpening -= OnSceneOpening;
-                EditorApplication.playModeStateChanged -= OnPlayModeChanged;
+                _Scene = EditorSceneManager.NewPreviewScene();
+                _Scene.name = "Transition Preview";
+                _Instance.customScene = _Scene;
 
-                DestroyAnimancerInstance();
+                PreviewSceneRoot = EditorUtility.CreateGameObjectWithHideFlags(
+                    $"{nameof(Animancer)}.{nameof(TransitionPreviewWindow)}", HideAndDontSave).transform;
+                SceneManager.MoveGameObjectToScene(PreviewSceneRoot.gameObject, _Scene);
+                _Instance.customParentForDraggedObjects = PreviewSceneRoot;
 
-                if (_PreviewRenderUtility != null)
-                {
-                    _PreviewRenderUtility.Cleanup();
-                    _PreviewRenderUtility = null;
-                }
+                OnEnvironmentPrefabChanged();
             }
 
             /************************************************************************************************************************/
 
-            public void OnDestroy()
+            internal void OnEnvironmentPrefabChanged()
             {
-                if (_PreviewSceneRoot != null)
-                {
-                    DestroyImmediate(_PreviewSceneRoot.gameObject);
-                    _PreviewSceneRoot = null;
-                }
-            }
+                DestroyImmediate(EnvironmentInstance);
 
-            /************************************************************************************************************************/
-
-            public void Update()
-            {
-                if (!_IsChangingPlayMode && _InstanceRoot == null)
-                    InstantiateModel();
-
-                if (_InstanceAnimancer != null && _InstanceAnimancer.IsGraphPlaying)
-                    _Instance.Repaint();
-            }
-
-            /************************************************************************************************************************/
-
-            [NonSerialized] private bool _IsChangingPlayMode;
-
-            private void OnPlayModeChanged(PlayModeStateChange change)
-            {
-                switch (change)
-                {
-                    case PlayModeStateChange.ExitingEditMode:
-                    case PlayModeStateChange.ExitingPlayMode:
-                        DestroyModelInstance();
-                        _IsChangingPlayMode = true;
-                        break;
-
-                    case PlayModeStateChange.EnteredEditMode:
-                    case PlayModeStateChange.EnteredPlayMode:
-                        _IsChangingPlayMode = false;
-                        break;
-                }
-            }
-
-            /************************************************************************************************************************/
-
-            private void OnSceneOpening(string path, UnityEditor.SceneManagement.OpenSceneMode mode)
-            {
-                if (mode == UnityEditor.SceneManagement.OpenSceneMode.Single)
-                    DestroyModelInstance();
+                var prefab = Settings.SceneEnvironment;
+                if (prefab != null)
+                    EnvironmentInstance = Instantiate(prefab, PreviewSceneRoot);
             }
 
             /************************************************************************************************************************/
@@ -268,30 +181,28 @@ namespace Animancer.Editor
                 if (_OriginalRoot == null)
                     return;
 
-                _PreviewSceneRoot.gameObject.SetActive(false);
-                _InstanceRoot = Instantiate(_OriginalRoot, _PreviewSceneRoot);
-                _InstanceRoot.localPosition = Vector3.zero;
-                _InstanceRoot.name = _OriginalRoot.name;
+                PreviewSceneRoot.gameObject.SetActive(false);
+                InstanceRoot = Instantiate(_OriginalRoot, PreviewSceneRoot);
+                InstanceRoot.localPosition = default;
+                InstanceRoot.name = _OriginalRoot.name;
 
-                DisableUnnecessaryComponents(_InstanceRoot.gameObject);
+                DisableUnnecessaryComponents(InstanceRoot.gameObject);
 
-                _InstanceAnimators = _InstanceRoot.GetComponentsInChildren<Animator>();
-                for (int i = 0; i < _InstanceAnimators.Length; i++)
+                InstanceAnimators = InstanceRoot.GetComponentsInChildren<Animator>();
+                for (int i = 0; i < InstanceAnimators.Length; i++)
                 {
-                    var animator = _InstanceAnimators[i];
+                    var animator = InstanceAnimators[i];
                     animator.enabled = false;
                     animator.cullingMode = AnimatorCullingMode.AlwaysAnimate;
                     animator.fireEvents = false;
                     animator.updateMode = AnimatorUpdateMode.Normal;
-                    animator.gameObject.AddComponent<RedirectRootMotion>()
-                        .animator = animator;
                 }
 
-                _PreviewSceneRoot.gameObject.SetActive(true);
+                PreviewSceneRoot.gameObject.SetActive(true);
 
                 SetSelectedAnimator(_SelectedInstanceAnimator);
-                InitialiseCamera();
-                _Instance._Inspector.GatherAnimations();
+                FocusCamera();
+                _Instance._Animations.GatherAnimations();
             }
 
             /************************************************************************************************************************/
@@ -308,14 +219,19 @@ namespace Animancer.Editor
                     if (behaviour is Animator)
                         continue;
 
+                    var type = behaviour.GetType();
+                    if (type.IsDefined(typeof(ExecuteAlways), true) ||
+                        type.IsDefined(typeof(ExecuteInEditMode), true))
+                        continue;
+
                     behaviour.enabled = false;
-                    if (behaviour is MonoBehaviour mono)
-                        mono.runInEditMode = false;
+                    behaviour.hideFlags |= HideFlags.NotEditable;
                 }
             }
 
             /************************************************************************************************************************/
 
+            /// <summary>Sets the <see cref="SelectedInstanceAnimator"/>.</summary>
             public void SetSelectedAnimator(int index)
             {
                 DestroyAnimancerInstance();
@@ -335,20 +251,13 @@ namespace Animancer.Editor
                 {
                     animator.enabled = true;
                     _SelectedInstanceType = AnimationBindings.GetAnimationType(animator);
-
-                    if (_SelectedInstanceType == AnimationType.Sprite)
-                    {
-                        CameraEulerAngles = default;
-                    }
-                    else
-                    {
-                        CameraEulerAngles = CameraEulerAngles;
-                    }
+                    _Instance.in2DMode = _SelectedInstanceType == AnimationType.Sprite;
                 }
             }
 
             /************************************************************************************************************************/
 
+            /// <summary>Called when the target transition property is changed.</summary>
             public void OnTargetPropertyChanged()
             {
                 _SelectedInstanceAnimator = 0;
@@ -356,685 +265,143 @@ namespace Animancer.Editor
                     _ExpandedHierarchy.Clear();
 
                 OriginalRoot = AnimancerEditorUtilities.FindRoot(_Instance._TransitionProperty.TargetObject);
-                InitialiseDefaultRoot();
-                _CameraPosition = Vector3NaN;
-                _NormalizedTime = 0;
+                if (OriginalRoot == null)
+                    OriginalRoot = Settings.TrySelectBestModel();
+
+                _Instance._Animations.NormalizedTime = 0;
+
+                _Instance.in2DMode = _SelectedInstanceType == AnimationType.Sprite;
             }
 
             /************************************************************************************************************************/
 
-            private void InitialiseDefaultRoot()
+            private void FocusCamera()
             {
-                if (OriginalRoot != null)
+                var bounds = CalculateBounds(InstanceRoot);
+
+                var rotation = _Instance.in2DMode ?
+                    Quaternion.identity :
+                    Quaternion.Euler(35, 135, 0);
+
+                var size = bounds.extents.magnitude * 1.5f;
+                if (size == float.PositiveInfinity)
                     return;
+                else if (size == 0)
+                    size = 10;
 
-                var collection = _Instance.GetTransition() as IAnimationClipCollection;
-                if (collection == null)
-                    return;
-
-                var models = Settings.Models;
-                var animatableBindings = new HashSet<EditorCurveBinding>[models.Count];
-
-                for (int i = 0; i < models.Count; i++)
-                {
-                    animatableBindings[i] = AnimationBindings.GetBindings(models[i]).ObjectBindings;
-                }
-
-                using (ObjectPool.Disposable.AcquireSet<AnimationClip>(out var clips))
-                {
-                    collection.GatherAnimationClips(clips);
-
-                    var bestMatchIndex = -1;
-                    var bestMatchCount = 0;
-                    foreach (var clip in clips)
-                    {
-                        var clipBindings = AnimationBindings.GetBindings(clip);
-
-                        for (int iModel = animatableBindings.Length - 1; iModel >= 0; iModel--)
-                        {
-                            var modelBindings = animatableBindings[iModel];
-                            var matches = 0;
-
-                            for (int iBinding = 0; iBinding < clipBindings.Length; iBinding++)
-                            {
-                                if (modelBindings.Contains(clipBindings[iBinding]))
-                                    matches++;
-                            }
-
-                            if (bestMatchCount < matches)
-                            {
-                                bestMatchCount = matches;
-                                bestMatchIndex = iModel;
-
-                                if (bestMatchCount == clipBindings.Length)
-                                    goto FoundBestMatch;
-                            }
-                        }
-                    }
-
-                    FoundBestMatch:
-                    if (bestMatchIndex >= 0)
-                    {
-                        OriginalRoot = models[bestMatchIndex].transform;
-                        return;
-                    }
-
-                    foreach (var clip in clips)
-                    {
-                        var type = AnimationBindings.GetAnimationType(clip);
-                        switch (type)
-                        {
-                            case AnimationType.Humanoid:
-                                OriginalRoot = DefaultHumanoid.transform;
-                                return;
-
-                            case AnimationType.Sprite:
-                                OriginalRoot = DefaultSprite.transform;
-                                return;
-                        }
-                    }
-                }
+                _Instance.LookAt(bounds.center, rotation, size, _Instance.in2DMode, true);
             }
 
             /************************************************************************************************************************/
 
-            [NonSerialized] private Texture _PreviewTexture;
-
-            public void DoPreviewGUI()
+            private static Bounds CalculateBounds(Transform transform)
             {
-                GUILayout.BeginVertical();
-                {
-                    GUILayout.FlexibleSpace();
-                }
-                GUILayout.EndVertical();
-
-                var area = GUILayoutUtility.GetLastRect();
-
-                var inspectorBorder = new Rect(area.xMax, area.y, 0, area.height);
-                _Instance._Inspector.DoResizeGUI(inspectorBorder);
-
-                if (area.width <= 0 || area.height <= 0)
-                    return;
-
-                if (Event.current.type == EventType.Repaint)
-                {
-                    DrawFloor();
-
-                    // Start the model paused at the beginning of the animation.
-                    // For some reason Unity doesn't like having this in OnEnable.
-                    if (InstanceAnimancer != null && InstanceAnimancer.Layers.Count == 0)
-                    {
-                        ShowTransitionPaused();
-                        InitialiseCamera();
-                    }
-
-                    var fog = RenderSettings.fog;
-                    Unsupported.SetRenderSettingsUseFogNoDirty(false);
-
-                    if (InstanceAnimancer != null ||
-                        _PreviewTexture == null ||
-                        _OriginalRoot == null)
-                    {
-                        _PreviewRenderUtility.BeginPreview(area, GUIStyle.none);
-                        _PreviewRenderUtility.Render(true);
-                        _PreviewTexture = _PreviewRenderUtility.EndPreview();
-                    }
-
-                    GUI.DrawTexture(area, _PreviewTexture, ScaleMode.StretchToFill, false);
-
-                    Unsupported.SetRenderSettingsUseFogNoDirty(fog);
-                }
-
-                AnimancerGUI.HandleDragAndDrop<GameObject>(area,
-                    (gameObject) => GetDragAndDropRoot() != null,
-                    (gameObject) => OriginalRoot = GetDragAndDropRoot());
-
-                HandleMouseInput(area);
-            }
-
-            /************************************************************************************************************************/
-
-            public ITransitionDetailed ShowTransitionPaused()
-            {
-                var transition = _Instance.GetTransition();
-                if (transition.IsValid())
-                {
-                    var animancer = InstanceAnimancer;
-                    animancer.Play(transition, 0);
-                    OnPlayAnimation();
-                    animancer.Evaluate();
-                    animancer.PauseGraph();
-                }
-                return transition;
-            }
-
-            /************************************************************************************************************************/
-
-            private static Transform GetDragAndDropRoot()
-            {
-                var objects = DragAndDrop.objectReferences;
-                if (objects.Length != 1)
-                    return null;
-
-                return AnimancerEditorUtilities.FindRoot(objects[0]);
-            }
-
-            /************************************************************************************************************************/
-
-            [NonSerialized] private bool _IsDraggingCamera;
-
-            private void HandleMouseInput(Rect area)
-            {
-                var currentEvent = Event.current;
-                switch (currentEvent.type)
-                {
-                    case EventType.MouseDown:
-                        _IsDraggingCamera = area.Contains(currentEvent.mousePosition);
-                        if (_IsDraggingCamera)
-                            currentEvent.Use();
-                        break;
-
-                    case EventType.MouseUp:
-                        if (_IsDraggingCamera)
-                        {
-                            _IsDraggingCamera = false;
-                            currentEvent.Use();
-                        }
-                        break;
-
-                    case EventType.MouseDrag:
-                        if (_IsDraggingCamera)
-                        {
-                            if (currentEvent.button == 1)// Right Click to Rotate.
-                            {
-                                var sensitivity = Screen.dpi * 0.01f * Settings.RotationSensitivity;
-
-                                var euler = CameraEulerAngles;
-                                euler.x += currentEvent.delta.y * sensitivity;
-                                euler.y += currentEvent.delta.x * sensitivity;
-                                CameraEulerAngles = euler;
-                            }
-                            else// Other to Move.
-                            {
-                                var previousRay = Camera.ScreenPointToRay(currentEvent.mousePosition - currentEvent.delta);
-                                var currentRay = Camera.ScreenPointToRay(currentEvent.mousePosition);
-
-                                var previousPosition = previousRay.origin + previousRay.direction * CameraZoom;
-                                var currentPosition = currentRay.origin + currentRay.direction * CameraZoom;
-                                var delta = currentPosition - previousPosition;
-                                delta = Vector3.Reflect(delta, Camera.transform.right);
-
-                                if (float.IsNaN(_CameraPosition.x))
-                                    _CameraPosition = _DefaultCameraPosition;
-
-                                CameraPosition += delta * Settings.MovementSensitivity;
-                            }
-
-                            currentEvent.Use();
-                        }
-                        break;
-
-                    case EventType.ScrollWheel:
-                        if (area.Contains(currentEvent.mousePosition))
-                        {
-                            CameraZoom *= 1 + 0.03f * currentEvent.delta.y;
-                            currentEvent.Use();
-                        }
-                        break;
-
-                    case EventType.KeyDown:
-                        if (currentEvent.keyCode == KeyCode.F)
-                        {
-                            CameraPosition = _DefaultCameraPosition;
-                            CameraZoom = _DefaultCameraZoom;
-                            CameraEulerAngles = _DefaultCameraEulerAngles;
-                            currentEvent.Use();
-                        }
-                        break;
-                }
-            }
-
-            /************************************************************************************************************************/
-
-            public void OnPlayAnimation()
-            {
-                var animancer = InstanceAnimancer;
-                if (animancer == null ||
-                    animancer.States.Current == null)
-                    return;
-
-                var state = animancer.States.Current;
-
-                state.RecreatePlayableRecursive();
-
-                if (state.HasEvents)
-                {
-                    var warnings = OptionalWarning.UnsupportedEvents.DisableTemporarily();
-                    var normalizedEndTime = state.Events.NormalizedEndTime;
-                    state.Events = null;
-                    state.Events.NormalizedEndTime = normalizedEndTime;
-                    warnings.Enable();
-                }
-            }
-
-            /************************************************************************************************************************/
-
-            [SerializeField] private float _NormalizedTime;
-
-            public float NormalizedTime
-            {
-                get => _NormalizedTime;
-                set
-                {
-                    _NormalizedTime = value;
-
-                    var animancer = InstanceAnimancer;
-                    if (animancer == null)
-                        return;
-
-                    var transition = ShowTransitionPaused();
-                    if (!transition.IsValid())
-                        return;
-
-                    var state = animancer.States.Current;
-
-                    var length = transition.MaximumDuration;
-                    var time = value * length;
-                    var fadeDuration = transition.FadeDuration;
-
-                    var startTime = transition.NormalizedStartTime * length;
-                    if (float.IsNaN(startTime))
-                        startTime = 0;
-
-                    var inspector = _Instance._Inspector;
-                    if (time < startTime)// Previous animation.
-                    {
-                        if (inspector.PreviousAnimation != null)
-                        {
-                            var fromState = animancer.States.GetOrCreate(Inspector.PreviousAnimationKey, inspector.PreviousAnimation, true);
-                            animancer.Play(fromState);
-                            OnPlayAnimation();
-                            fromState.NormalizedTime = value;
-                            value = 0;
-                        }
-                    }
-                    else if (time < startTime + fadeDuration)// Fade from previous animation to the target.
-                    {
-                        if (inspector.PreviousAnimation != null)
-                        {
-                            var fromState = animancer.States.GetOrCreate(Inspector.PreviousAnimationKey, inspector.PreviousAnimation, true);
-                            animancer.Play(fromState);
-                            OnPlayAnimation();
-                            fromState.NormalizedTime = value;
-
-                            state.IsPlaying = true;
-                            state.Weight = (time - startTime) / fadeDuration;
-                            fromState.Weight = 1 - state.Weight;
-                        }
-                    }
-                    else if (inspector.NextAnimation != null)// Fade from the target transition to the next animation.
-                    {
-                        var normalizedEndTime = state.HasEvents ? state.Events.NormalizedEndTime : float.NaN;
-                        if (float.IsNaN(normalizedEndTime))
-                            normalizedEndTime = AnimancerEvent.Sequence.GetDefaultNormalizedEndTime(state.Speed);
-
-                        if (value < normalizedEndTime)
-                        {
-                            // Just the main state.
-                        }
-                        else
-                        {
-                            var toState = animancer.States.GetOrCreate(Inspector.NextAnimationKey, inspector.NextAnimation, true);
-                            animancer.Play(toState);
-                            OnPlayAnimation();
-                            toState.NormalizedTime = value - normalizedEndTime;
-
-                            var endTime = normalizedEndTime * length;
-                            var fadeOutEnd = TimeRuler.GetFadeOutEnd(toState.Speed, endTime, length);
-                            if (time < fadeOutEnd)
-                            {
-                                state.IsPlaying = true;
-                                toState.Weight = (time - endTime) / (fadeOutEnd - endTime);
-                                state.Weight = 1 - toState.Weight;
-                            }
-                        }
-                    }
-
-                    state.NormalizedTime = state.Weight > 0 ? value : 0;
-                    animancer.Evaluate();
-
-                    _Instance.Repaint();
-                }
-            }
-
-            /************************************************************************************************************************/
-
-            public void DoHierarchyGUI()
-            {
-                GUILayout.BeginVertical(GUI.skin.box);
-                GUILayout.Label("Preview Scene Hierarchy");
-                DoHierarchyGUI(_PreviewSceneRoot);
-                GUILayout.EndVertical();
-            }
-
-            [SerializeField] private List<Transform> _ExpandedHierarchy;
-
-            private void DoHierarchyGUI(Transform transform)
-            {
-                var area = AnimancerGUI.LayoutSingleLineRect();
-
-                var style = ObjectPool.GetCachedResult(() => new GUIStyle(EditorStyles.miniButton)
-                {
-                    alignment = TextAnchor.MiddleLeft,
-                });
-
-                if (GUI.Button(EditorGUI.IndentedRect(area), transform.name, style))
-                {
-                    Selection.activeTransform = transform;
-                    GUIUtility.ExitGUI();
-                }
-
-                var childCount = transform.childCount;
-                if (childCount == 0)
-                    return;
-
-                var index = _ExpandedHierarchy != null ? _ExpandedHierarchy.IndexOf(transform) : -1;
-                var isExpanded = EditorGUI.Foldout(area, index >= 0, GUIContent.none);
-                if (isExpanded)
-                {
-                    if (index < 0)
-                    {
-                        AnimancerUtilities.NewIfNull(ref _ExpandedHierarchy);
-                        _ExpandedHierarchy.Add(transform);
-                    }
-
-                    EditorGUI.indentLevel++;
-                    for (int i = 0; i < childCount; i++)
-                        DoHierarchyGUI(transform.GetChild(i));
-                    EditorGUI.indentLevel--;
-                }
-                else if (index >= 0)
-                {
-                    _ExpandedHierarchy.RemoveAt(index);
-                }
-            }
-
-            /************************************************************************************************************************/
-            #region Camera
-            /************************************************************************************************************************/
-
-            private static Vector3 Vector3NaN => new Vector3(float.NaN, float.NaN, float.NaN);
-
-            /************************************************************************************************************************/
-
-            private Camera Camera => _PreviewRenderUtility.camera;
-
-            /************************************************************************************************************************/
-
-            private bool HasCamera => Camera != null && Camera.transform.parent != null;
-
-            /************************************************************************************************************************/
-
-            [SerializeField] private Vector3 _CameraPosition = Vector3NaN;
-            [SerializeField] private Vector3 _DefaultCameraPosition = Vector3NaN;
-
-            private Vector3 CameraPosition
-            {
-                get => _CameraPosition;
-                set
-                {
-                    _CameraPosition = value;
-
-                    if (HasCamera &&
-                        !value.IsNaN())
-                    {
-                        Camera.transform.parent.localPosition = value;
-                    }
-                }
-            }
-
-            /************************************************************************************************************************/
-
-            [SerializeField] private float _CameraZoom;
-            [SerializeField] private float _DefaultCameraZoom;
-
-            private float CameraZoom
-            {
-                get => _CameraZoom;
-                set
-                {
-                    _CameraZoom = value;
-                    if (HasCamera)
-                        Camera.transform.localPosition = new Vector3(0, 0, -_CameraZoom);
-                }
-            }
-
-            /************************************************************************************************************************/
-
-            [SerializeField] private Vector3 _CameraEulerAngles = Vector3NaN;
-            [SerializeField] private Vector3 _DefaultCameraEulerAngles = Vector3NaN;
-
-            private Vector3 CameraEulerAngles
-            {
-                get
-                {
-                    if (HasCamera)
-                        return Camera.transform.parent.localEulerAngles;
-                    else
-                        return _CameraEulerAngles;
-                }
-                set
-                {
-                    if (_SelectedInstanceType == AnimationType.Sprite)
-                    {
-                        if (HasCamera)
-                            Camera.transform.parent.localRotation = Quaternion.identity;
-                        return;
-                    }
-
-                    _CameraEulerAngles = value;
-                    if (!value.IsNaN() && HasCamera)
-                        Camera.transform.parent.localEulerAngles = value;
-                }
-            }
-
-            /************************************************************************************************************************/
-
-            private void InitialiseCamera()
-            {
-                var renderers = _InstanceRoot.GetComponentsInChildren<Renderer>();
-                var bounds = renderers.Length > 0 ? renderers[0].bounds : default;
+                var renderers = transform.GetComponentsInChildren<Renderer>();
+                if (renderers.Length == 0)
+                    return default;
+
+                var bounds = renderers[0].bounds;
                 for (int i = 1; i < renderers.Length; i++)
                 {
                     bounds.Encapsulate(renderers[i].bounds);
                 }
-
-                const string CameraParentName = "Animancer Preview Camera Root";
-                var cameraParent = _PreviewSceneRoot.Find(CameraParentName);
-                if (cameraParent == null)
-                {
-                    cameraParent = EditorUtility.CreateGameObjectWithHideFlags(CameraParentName, HideAndDontSave).transform;
-                    cameraParent.parent = _PreviewSceneRoot;
-
-                    var lights = _PreviewRenderUtility.lights;
-                    for (int i = 0; i < lights.Length; i++)
-                    {
-                        var light = lights[i];
-                        light.transform.parent = cameraParent;
-                        light.gameObject.hideFlags = HideAndDontSave;
-                    }
-
-                    Camera.transform.parent = cameraParent;
-                    Camera.transform.localRotation = Quaternion.identity;
-                }
-
-                Camera.farClipPlane = 100;
-
-                CameraPosition = _CameraPosition.IsNaN() ?
-                    bounds.center :
-                    _CameraPosition;
-
-                var zoom = CameraZoom;
-                if (zoom <= 0)
-                {
-                    zoom = bounds.extents.magnitude * 2 / Mathf.Tan(Camera.fieldOfView * Mathf.Deg2Rad);
-                    if (zoom <= 0)
-                        zoom = 10;
-                }
-                CameraZoom = zoom;
-
-                CameraEulerAngles = _CameraEulerAngles.IsNaN() ?
-                    new Vector3(45, 135, 0) :
-                    _CameraEulerAngles;
-
-                if (_DefaultCameraPosition.IsNaN())
-                {
-                    _DefaultCameraPosition = CameraPosition;
-                    _DefaultCameraZoom = CameraZoom;
-                    _DefaultCameraEulerAngles = CameraEulerAngles;
-                }
+                return bounds;
             }
 
             /************************************************************************************************************************/
             #endregion
             /************************************************************************************************************************/
-            #region Floor
+            #region Execution
             /************************************************************************************************************************/
 
-            private const float FloorScale = 5;
-
-            [NonSerialized] private Vector3 _FloorPosition;
-
-            private void DrawFloor()
+            /// <summary>Called when the window GUI is drawn.</summary>
+            public void OnGUI()
             {
-                if (!Settings.FloorEnabled)
-                    return;
+                if (!AnimancerEditorUtilities.IsChangingPlayMode && InstanceRoot == null)
+                    InstantiateModel();
 
-                var position = _FloorPosition;
+                if (_Animancer != null && _Animancer.IsGraphPlaying)
+                    AnimancerGUI.RepaintEverything();
 
-                Quaternion rotation;
-                if (_SelectedInstanceType == AnimationType.Sprite)
-                {
-                    position.z = CameraZoom * 0.01f;
-                    rotation = Quaternion.Euler(-90f, 0f, 0f);
-                }
-                else
-                {
-                    position.y = 0;
-                    rotation = Quaternion.identity;
-                }
-
-                var scale = Vector3.one * FloorScale;
-                var matrix = Matrix4x4.TRS(position, rotation, scale);
-                var layer = 0;
-                var camera = _PreviewRenderUtility.camera;
-                Graphics.DrawMesh(Floor.Plane, matrix, Floor.Material, layer, camera, 0);
+                if (Selection.activeObject == _Instance &&
+                    Event.current.type == EventType.KeyUp &&
+                    Event.current.keyCode == KeyCode.F)
+                    FocusCamera();
             }
 
             /************************************************************************************************************************/
 
-            // Initialisation based on UnityEditor.AvatarPreview.
-            internal static class Floor
+            private void OnPlayModeChanged(PlayModeStateChange change)
             {
-                /************************************************************************************************************************/
-
-                public static readonly Mesh Plane = Resources.GetBuiltinResource(typeof(Mesh), "New-Plane.fbx") as Mesh;
-
-                /************************************************************************************************************************/
-
-                private static Material _Material;
-                private static Material _DefaultMaterial;
-                private static Texture2D _Texture;
-
-                /************************************************************************************************************************/
-
-                public static Material Material
+                switch (change)
                 {
-                    get
-                    {
-                        // Initialisation based on UnityEditor.AvatarPreview.
+                    case PlayModeStateChange.ExitingEditMode:
+                    case PlayModeStateChange.ExitingPlayMode:
+                        DestroyModelInstance();
+                        break;
+                }
+            }
 
-                        if (_Material == null)
+            /************************************************************************************************************************/
+
+            private void OnSceneOpening(string path, OpenSceneMode mode)
+            {
+                if (mode == OpenSceneMode.Single)
+                    DestroyModelInstance();
+            }
+
+            /************************************************************************************************************************/
+
+            private void DoCustomGUI(SceneView sceneView)
+            {
+                var animancer = Animancer;
+                if (animancer != null &&
+                    sceneView is TransitionPreviewWindow instance &&
+                    AnimancerUtilities.TryGetWrappedObject(Transition, out ITransitionGUI gui) &&
+                    instance._TransitionProperty != null)
+                {
+                    EditorGUI.BeginChangeCheck();
+
+                    using (TransitionDrawer.DrawerContext.Get(instance._TransitionProperty))
+                    {
+                        try
                         {
-                            if (_Texture == null)
-                                _Texture = (Texture2D)EditorGUIUtility.Load("Avatar/Textures/AvatarFloor.png");
-
-                            _Material = Settings.FloorMaterial;
-                            if (_Material != null)
-                            {
-                                _Material = Instantiate(_Material);
-                                _Material.hideFlags = HideFlags.HideAndDontSave;
-
-                                var property = Settings.FloorTexturePropertyName;
-                                if (!string.IsNullOrEmpty(property))
-                                    _Material.SetTexture(property, _Texture);
-
-                                _Material.SetVector("_Alphas", new Vector4(0.5f, 0.3f, 0f, 0f));
-                            }
-                            else
-                            {
-                                if (_DefaultMaterial == null)
-                                {
-                                    var shader = EditorGUIUtility.Load("Previews/PreviewPlaneWithShadow.shader") as Shader;
-
-                                    _DefaultMaterial = new Material(shader)
-                                    {
-                                        mainTexture = _Texture,
-                                        mainTextureScale = Vector2.one * 20,
-                                        hideFlags = HideFlags.HideAndDontSave,
-                                    };
-
-                                    _DefaultMaterial.SetVector("_Alphas", new Vector4(0.5f, 0.3f, 0f, 0f));
-                                }
-
-                                _Material = _DefaultMaterial;
-                            }
+                            gui.OnPreviewSceneGUI(new TransitionPreviewDetails(animancer));
                         }
-
-                        return _Material;
+                        catch (Exception exception)
+                        {
+                            Debug.LogException(exception);
+                        }
                     }
+
+                    if (EditorGUI.EndChangeCheck())
+                        AnimancerGUI.RepaintEverything();
                 }
-
-                /************************************************************************************************************************/
-
-                public static void DiscardCustomMaterial()
-                {
-                    if (_Material != _DefaultMaterial)
-                        DestroyImmediate(_Material);
-
-                    _Material = null;
-                }
-
-                /************************************************************************************************************************/
             }
 
             /************************************************************************************************************************/
 
-            [AddComponentMenu("")]
-#if UNITY_2019_1_OR_NEWER
-            [ExecuteAlways]
-#else
-            [ExecuteInEditMode]
-#endif
-            private sealed class RedirectRootMotion : MonoBehaviour
+            /// <summary>Is the `obj` a <see cref="GameObject"/> in the preview scene?</summary>
+            public bool IsSceneObject(Object obj)
             {
-                public Animator animator;
+                return
+                    obj is GameObject gameObject &&
+                    gameObject.transform.IsChildOf(PreviewSceneRoot);
+            }
 
-                private void OnAnimatorMove()
+            /************************************************************************************************************************/
+
+            [SerializeField]
+            private List<Transform> _ExpandedHierarchy;
+
+            /// <summary>A list of all objects with their child hierarchy expanded.</summary>
+            public List<Transform> ExpandedHierarchy
+            {
+                get
                 {
-                    if (animator == null ||
-                        _Instance == null)
-                        return;
-
-                    var scene = _Instance._Scene;
-                    if (animator == scene.SelectedInstanceAnimator)
-                    {
-                        scene._FloorPosition -= animator.deltaPosition;
-
-                        scene._FloorPosition.x %= FloorScale;
-                        scene._FloorPosition.y %= FloorScale;
-                        scene._FloorPosition.z %= FloorScale;
-                    }
+                    if (_ExpandedHierarchy == null)
+                        _ExpandedHierarchy = new List<Transform>();
+                    return _ExpandedHierarchy;
                 }
             }
 
@@ -1044,27 +411,56 @@ namespace Animancer.Editor
             #region Cleanup
             /************************************************************************************************************************/
 
+            /// <summary>Called by <see cref="TransitionPreviewWindow.OnDisable"/>.</summary>
+            public void OnDisable()
+            {
+                EditorSceneManager.sceneOpening -= OnSceneOpening;
+                EditorApplication.playModeStateChanged -= OnPlayModeChanged;
+
+                duringSceneGui -= DoCustomGUI;
+
+                DestroyAnimancerInstance();
+
+                EditorSceneManager.ClosePreviewScene(_Scene);
+            }
+
+            /************************************************************************************************************************/
+
+            /// <summary>Called by <see cref="TransitionPreviewWindow.OnDestroy"/>.</summary>
+            public void OnDestroy()
+            {
+                if (PreviewSceneRoot != null)
+                {
+                    DestroyImmediate(PreviewSceneRoot.gameObject);
+                    PreviewSceneRoot = null;
+                }
+            }
+
+            /************************************************************************************************************************/
+
+            /// <summary>Destroys the <see cref="InstanceRoot"/>.</summary>
             public void DestroyModelInstance()
             {
                 DestroyAnimancerInstance();
 
-                if (_InstanceRoot == null)
+                if (InstanceRoot == null)
                     return;
 
-                DestroyImmediate(_InstanceRoot.gameObject);
-                _InstanceRoot = null;
-                _InstanceAnimators = null;
+                DestroyImmediate(InstanceRoot.gameObject);
+                InstanceRoot = null;
+                InstanceAnimators = null;
             }
 
             /************************************************************************************************************************/
 
             private void DestroyAnimancerInstance()
             {
-                if (_InstanceAnimancer == null)
+                if (_Animancer == null)
                     return;
 
-                _InstanceAnimancer.Destroy();
-                _InstanceAnimancer = null;
+                _Animancer.CancelPostUpdate(Animations.WindowMatchStateTime.Instance);
+                _Animancer.DestroyGraph();
+                _Animancer = null;
             }
 
             /************************************************************************************************************************/

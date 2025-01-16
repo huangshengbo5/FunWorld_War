@@ -29,31 +29,31 @@ namespace EGamePlay.Combat
     }
 
     /// <summary>
-    /// ¸³¸øĞ§¹ûĞĞ¶¯
+    /// ??????????
     /// </summary>
     public class EffectAssignAction : Entity, IActionExecute
     {
-        /// ´´½¨Õâ¸öĞ§¹û¸³¸øĞĞ¶¯µÄÔ´ÄÜÁ¦
+        /// ????????????????????????
         public Entity SourceAbility { get; set; }
-        /// Ä¿±êĞĞ¶¯
+        /// ??????
         public IActionExecute TargetAction { get; set; }
         public AbilityEffect AbilityEffect { get; set; }
         public Effect EffectConfig => AbilityEffect.EffectConfig;
-        /// ĞĞ¶¯ÄÜÁ¦
+        /// ???????
         public Entity ActionAbility { get; set; }
-        /// Ğ§¹û¸³¸øĞĞ¶¯Ô´
+        /// ???????????
         public EffectAssignAction SourceAssignAction { get; set; }
-        /// ĞĞ¶¯ÊµÌå
+        /// ??????
         public CombatEntity Creator { get; set; }
-        /// Ä¿±ê¶ÔÏó
+        /// ??????
         public Entity Target { get; set; }
-        /// ¸³¸øÄ¿±ê
+        /// ???????
         public Entity AssignTarget { get; set; }
-        /// ´¥·¢ÉÏÏÂÎÄ
+        /// ??????????
         public TriggerContext TriggerContext { get; set; }
 
 
-        /// Ç°ÖÃ´¦Àí
+        /// ??ô???
         private void PreProcess()
         {
             if (Target == null)
@@ -81,7 +81,7 @@ namespace EGamePlay.Combat
             FinishAction();
         }
 
-        /// ºóÖÃ´¦Àí
+        /// ???ô???
         private void PostProcess()
         {
             Creator.TriggerActionPoint(ActionPointType.AssignEffect, this);

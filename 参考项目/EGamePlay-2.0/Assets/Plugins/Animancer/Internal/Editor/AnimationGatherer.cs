@@ -1,4 +1,4 @@
-// Animancer // https://kybernetik.com.au/animancer // Copyright 2020 Kybernetik //
+// Animancer // https://kybernetik.com.au/animancer // Copyright 2018-2023 Kybernetik //
 
 #if UNITY_EDITOR
 
@@ -15,7 +15,7 @@ namespace Animancer.Editor
     /// </summary>
     /// https://kybernetik.com.au/animancer/api/Animancer.Editor/AnimationGatherer
     /// 
-    public sealed class AnimationGatherer : IAnimationClipCollection
+    public class AnimationGatherer : IAnimationClipCollection
     {
         /************************************************************************************************************************/
         #region Recursion Guard
@@ -89,10 +89,8 @@ namespace Animancer.Editor
 
         static AnimationGatherer()
         {
-#if UNITY_EDITOR
             UnityEditor.EditorApplication.hierarchyChanged += ClearCache;
             UnityEditor.Selection.selectionChanged += ClearCache;
-#endif
         }
 
         /************************************************************************************************************************/
@@ -103,73 +101,17 @@ namespace Animancer.Editor
         /************************************************************************************************************************/
         #endregion
         /************************************************************************************************************************/
-        #region Exceptions
-        /************************************************************************************************************************/
-#if UNITY_EDITOR
-        /************************************************************************************************************************/
 
-        /// <summary>[Editor-Only] [Internal]
-        /// The exceptions that have been stored according to the <see cref="ExceptionCapacity"/>.
-        /// This property is null if no exceptions have been thrown yet.
-        /// </summary>
-        internal static List<Exception> Exceptions { get; private set; }
+        /// <summary>Should exceptions thrown while gathering animations be logged? Default is false to ignore them.</summary>
+        public static bool logExceptions;
 
-        private static int _ExceptionCapacity = 10;
-
-        /// <summary>[Editor-Only]
-        /// A positive value causes exceptions thrown while gathering animations to be stores in a list so they can be
-        /// displayed in the <see cref="TransitionPreviewWindow"/> if the user wants to debug them rather than logging
-        /// them immediately.
-        /// <para></para>
-        /// 0 causes exceptions to be ignored entirely and any negative value causes them to be logged immediately.
-        /// </summary>
-        public static int ExceptionCapacity
-        {
-            get => _ExceptionCapacity;
-            set
-            {
-                _ExceptionCapacity = value;
-                if (Exceptions != null)
-                {
-                    if (value > 0)
-                    {
-                        if (value < Exceptions.Count)
-                            Exceptions.RemoveRange(value, Exceptions.Count - value);
-
-                        Exceptions.Capacity = value;
-                    }
-                    else
-                    {
-                        Exceptions = null;
-                    }
-                }
-            }
-        }
-
-        /************************************************************************************************************************/
-#endif
-        /************************************************************************************************************************/
-
+        /// <summary>Logs the `exception` if <see cref="logExceptions"/> is true. Otherwise does nothing.</summary>
         private static void HandleException(Exception exception)
         {
-#if UNITY_EDITOR
-            if (_ExceptionCapacity > 0)
-            {
-                if (Exceptions == null)
-                    Exceptions = new List<Exception>(_ExceptionCapacity);
-
-                if (Exceptions.Count < Exceptions.Capacity)
-                    Exceptions.Add(exception);
-            }
-            else if (_ExceptionCapacity < 0)
-#endif
-            {
+            if (logExceptions)
                 Debug.LogException(exception);
-            }
         }
 
-        /************************************************************************************************************************/
-        #endregion
         /************************************************************************************************************************/
 
         /// <summary>
@@ -228,10 +170,7 @@ namespace Animancer.Editor
             using (ObjectPool.Disposable.AcquireSet<AnimationClip>(out var clipSet))
             {
                 gatherer.GatherAnimationClips(clipSet);
-
-                if (clips == null || clips.Length != clipSet.Count)
-                    clips = new AnimationClip[clipSet.Count];
-
+                AnimancerUtilities.SetLength(ref clips, clipSet.Count);
                 clipSet.CopyTo(clips);
             }
 
@@ -277,6 +216,9 @@ namespace Animancer.Editor
         /// <summary>Gathers all animations from the `source`s fields.</summary>
         private void GatherFromObject(object source, int depth)
         {
+            if (source == null)
+                return;
+
             if (source is AnimationClip clip)
             {
                 Clips.Add(clip);
